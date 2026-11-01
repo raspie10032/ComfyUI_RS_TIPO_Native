@@ -1,0 +1,9 @@
+Kohaku architecture implementation adapted from KohakUwULLM.
+Upstream: https://github.com/KohakuBlueleaf/KohakUwULLM
+Source revision: d4a52f77c683e6a0622d76a4f42752d97ced97ba
+Source: src/kohakuwullm/export/hf/modeling_kohaku.py
+Copyright 2024 Shih-Ying Yeh; distributed under Apache License 2.0.
+
+This project modifies the architecture to remove Transformers dependencies,
+provide an explicit request-owned KV cache, integrate ComfyUI model management,
+and expose native text generation. Upstream model weights are not bundled.
