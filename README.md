@@ -83,6 +83,11 @@ does not claim to be faster than llama.cpp.
 ## Setup
 
 Use the Python environment that runs ComfyUI. Install `requirements.txt` if needed.
+No project-specific prebuilt wheel or C++/CUDA compilation is required. Inference
+uses ComfyUI's PyTorch installation (`torch>=2.5`), plus `safetensors>=0.4` and
+`tokenizers>=0.21`. These dependencies may themselves install standard binary
+wheels; they are not a separate RS TIPO runtime. Model weights are downloaded
+separately from Python packages.
 Model download is explicit and happens separately from import or node execution:
 
 ```sh

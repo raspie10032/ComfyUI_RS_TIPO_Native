@@ -11,6 +11,11 @@ TIPO v2.1을 PyTorch로 실행하고, 모델 적재·해제는 ComfyUI가 관리
 
 ## 1. 설치와 모델 준비
 
+**RS TIPO 전용 프리빌트 휠이나 C++·CUDA 컴파일은 필요하지 않습니다.**
+ComfyUI의 PyTorch(`torch>=2.5`)와 `safetensors>=0.4`, `tokenizers>=0.21`로
+실행합니다. 이 의존성 자체는 pip에서 일반 바이너리 휠로 설치될 수 있지만,
+별도 RS TIPO 실행기를 설치하는 구조는 아닙니다. 모델 가중치는 별도로 받습니다.
+
 1. ComfyUI의 `custom_nodes` 폴더에서 아래 명령으로 설치하거나, 저장소의
    Code → Download ZIP을 받아 폴더를 풀어 넣습니다.
 
