@@ -49,6 +49,18 @@ class ControlTests(unittest.TestCase):
         expected = model(ids, attention_mask=policy.mask(0, 7, "cpu", torch.float32))
         torch.testing.assert_close(actual, expected, atol=1e-6, rtol=1e-5)
 
+    def test_shared_interaction_uses_learned_caption_format_with_own_attention(self):
+        tokenizer = make_tokenizer()
+        text, policy = controlled_prompt(tokenizer, "garden", "blonde hair",
+            interaction="Two women hug each other.")
+        self.assertIn("<|long_to_tag|>", text)
+        self.assertIn("long: Two women hug each other.\ntag: garden, blonde hair", text)
+        self.assertIn(0, policy.owners)
+        self.assertIn(1, policy.owners)
+        self.assertIn(1., policy.weights)
+        # No artificial role instruction/character-number protocol is invented.
+        self.assertNotIn("character_1:", text)
+
     def test_weight_is_log_bias_and_causality_is_preserved(self):
         policy = OwnedAttention((-1, 0, 1), (1., .5, 2.), 1)
         mask = policy.mask(3, 1, "cpu", torch.float32)

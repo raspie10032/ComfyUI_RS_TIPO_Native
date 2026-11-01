@@ -15,6 +15,7 @@ package = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = package
 spec.loader.exec_module(package)
 from rs_tipo_native.expansion import expand_pipe
+from rs_tipo_native.interface import make_building_pipe
 
 
 def main():
@@ -90,6 +91,26 @@ def main():
     assert "sunshine" in restored.prompt
     assert restored.text_regions == source.text_regions
     cases.append("actual NAIContext: settings/snapshot preserved; bridge restores edited prompt and original mask/LoRA/text")
+    compat = importlib.import_module("fixture_mc.pipe_compat")
+    adapter = (builder, compat)
+    assembled = make_building_pipe(adapter, None, "scene expanded", ("first expanded", "second expanded"))
+    final = builder.finalize(assembled)
+    assert final.prompt == "scene expanded"
+    assert tuple(c.prompt for c in final.characters) == ("first expanded", "second expanded")
+    for incoming in (draft, source, context):
+        assembled = make_building_pipe(adapter, incoming, "scene expanded", ("first expanded", "second expanded"))
+        final = builder.finalize(assembled, apply_cameras=False)
+        assert final.prompt == "scene expanded" and len(final.characters) == 2 and not final.text_regions
+        assert final.characters[0].region_mask.tensor().equal(region.tensor())
+        assert final.characters[0].lora_name == first.lora_name
+        assert final.characters[0].uc == first.uc
+        assert final.interaction_json == compat.building_pipe(incoming).interaction_json
+        if incoming is draft:
+            assert assembled.camera_settings == draft.camera_settings
+    short = make_building_pipe(adapter, assembled, "scene", ("only first",))
+    assert len(builder.finalize(short, apply_cameras=False).characters) == 1
+    assert make_building_pipe(adapter, None, "scene", ()) is None
+    cases.append("STRING interface: common + individual outputs finalize identically; incoming BuildPipe/final/NAI geometry and metadata preserved; count shrink excludes stale slots")
     args.output.write_text(json.dumps({"cases": cases, "all_passed": True,
         "scope": "real installed classes and conversion with deterministic text callback; no TIPO/image/NovelAI inference"},
         ensure_ascii=False, indent=2) + "\n")

@@ -58,7 +58,7 @@ class OwnedAttention:
 
 
 def controlled_prompt(tokenizer, common, character=None, *, length="long",
-                      common_weight=0.5, character_weight=1.5):
+                      common_weight=0.5, character_weight=1.5, interaction="", interaction_weight=1.0):
     """Keep the learned tag format; owner labels live outside the model text.
 
     Each target gets an independent sequence/cache. Other characters are never
@@ -66,16 +66,23 @@ def controlled_prompt(tokenizer, common, character=None, *, length="long",
     """
     if length not in ("short", "long", "very_long"):
         raise ValueError("Unknown TIPO target length.")
-    for weight in (common_weight, character_weight):
+    for weight in (common_weight, character_weight, interaction_weight):
         if not math.isfinite(weight) or weight < 0:
             raise ValueError("TIPO attention weights must be finite and nonnegative.")
-    prefix = f"target: <|{length}|>\ntag: "
+    interaction = interaction.strip()
+    prefix = f"target: <|{length}|>" + (" <|long_to_tag|>" if interaction else "") + "\n"
     common = common.strip().rstrip(",")
     character = None if character is None else character.strip().rstrip(",")
     if not common and not character:
         raise ValueError("Enter a common or character prompt before running TIPO.")
     text = prefix
     spans = []
+    if interaction:
+        text += "long: "
+        start = len(text)
+        text += interaction + "\n"
+        spans.append((start, len(text), 0, interaction_weight))
+    text += "tag: "
     if common:
         start = len(text)
         text += common + ", "

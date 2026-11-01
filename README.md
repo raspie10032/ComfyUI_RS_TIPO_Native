@@ -4,6 +4,37 @@ Independent experimental project for running **TIPO v2.1** using native PyTorch
 and ComfyUI model management, with no llama.cpp, GGUF or Transformers in the
 inference path, with experimental input-span attention control.
 
+## STRING interface
+
+Search for **RS TIPO Prompt (Experimental)**. Connect common and character
+prompts as separate STRING sockets. Choose 0–10 characters. The outputs are an
+RS building pipe, the common STRING, and individual character STRINGs. The pipe
+and STRINGs contain the same expanded texts; they do not generate separately.
+An optional incoming RS pipe retains LoRA/mask/position/reference/camera settings.
+STRING outputs work without installing the MultiCharacter pack. Pipe output
+requires `ComfyUI_RS_MultiCharacter_Sampler` and at least one character.
+
+The character count is authoritative: reducing 5 to 3 excludes slots 4–5 from
+execution. Connected inactive sockets remain marked inactive to preserve links;
+inactive STRING outputs are empty. Expand the advanced toggle for inference
+settings. A results panel shows original, added and expanded text per slot.
+
+**The intended scene is shared, not independent portraits.** Put the common
+location/action in `common_prompt` and each participant's role alongside its
+appearance in its own character STRING. Optionally connect `interaction_prompt`
+with a fuller description of how the participants interact. It is fed through
+TIPO's learned `long_to_tag` caption format as shared source text (attention
+multiplier 1), alongside the weighted common/own tags. It is also passed
+unchanged to the image model via common STRING / pipe scene. Other characters'
+private appearance prompts remain excluded. No automatic role planner is claimed.
+
+Scene expansion defaults OFF to keep the original scene authoritative; turn it
+on to experiment with adding scene tags. Shared interaction text is kept even
+when scene expansion is off. All generated additions must still be reviewed.
+[Interface validation and observed limitations](docs/interface.md).
+Load [the shared interaction example](examples/shared-interaction.json) in ComfyUI.
+It uses core Text (Multiline) / Preview as Text nodes and performs text inference only.
+
 ## Current scope
 
 - Kohaku decoder, grouped-query attention, QK normalization, RoPE and sparse MoE.

@@ -153,3 +153,71 @@ class RSTIPONativePipeExpand:
 
     def expand(self, building_pipe, common_prompt="", expand_common=False, **settings):
         return run_owned(common_prompt, "", pipe=building_pipe, expand_common=expand_common, **settings)
+
+
+class RSTIPOPrompt:
+    CATEGORY = "RS/TIPO Native"
+    RETURN_TYPES = ("RS_MC_BUILD_PIPE", "STRING") + ("STRING",) * 10
+    RETURN_NAMES = ("building_pipe", "common_prompt") + tuple(f"character{i}" for i in range(1, 11))
+    FUNCTION = "expand"
+    DESCRIPTION = ("Expand character STRINGs against a shared scene and optional interaction description with native TIPO. Outputs the same results as STRINGs and an RS building pipe. "
+        "0–10 characters; out-of-count inputs are ignored. Optional incoming pipe keeps LoRA, mask, position and camera settings. "
+        "Scene expansion may invent character attributes. Experimental attention control does not guarantee semantic consistency.")
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {
+            "character_count": ("INT", {"default": 2, "min": 0, "max": 10,
+                "tooltip": "0 = common prompt only. Only slots 1–N are expanded; saved connections above N are ignored."}),
+            "expand_common": ("BOOLEAN", {"default": False,
+                "tooltip": "Expand the common prompt too. TIPO may invent appearance tags in the scene; review the result."}),
+            **control_inputs(),
+            "advanced": ("BOOLEAN", {"default": False,
+                "tooltip": "Show token limit, seed, temperature and source-attention weights. Does not reset their values."}),
+        }, "optional": {
+            "common_prompt": ("STRING", {"forceInput": True,
+                "tooltip": "Original shared scene. Each character reads this original, not another expanded output."}),
+            **{f"character{i}": ("STRING", {"forceInput": True,
+                "tooltip": f"Character {i}: positive prompt. Original text and weights are preserved."}) for i in range(1, 11)},
+            "interaction_prompt": ("STRING", {"forceInput": True,
+                "tooltip": "Optional shared interaction description, e.g. one offers a cup while the other accepts it. Put each participant role in its own character STRING. All slots read this same scene via TIPO long_to_tag; it does not automatically infer who does what."}),
+            "building_pipe": (PIPE_TYPES, {"tooltip": "Optional: retain existing LoRA, masks, positions, references and deferred cameras. STRING inputs replace the prompt table."}),
+        }, "hidden": {"prompt": "PROMPT", "unique_id": "UNIQUE_ID"}}
+
+    def expand(self, character_count=2, common_prompt="", expand_common=False,
+               building_pipe=None, prompt=None, unique_id=None, advanced=False, interaction_prompt="", **values):
+        from .interface import (validate_inputs, expand_strings, pipe_adapter,
+                                make_building_pipe, pipe_is_requested)
+        if not isinstance(interaction_prompt, str):
+            raise ValueError("TIPO: interaction_prompt must be a STRING.")
+        if not isinstance(common_prompt, str):
+            raise ValueError("TIPO: common_prompt must be a STRING.")
+        characters = validate_inputs(common_prompt or interaction_prompt, character_count, values)
+        if not characters and pipe_is_requested(prompt, unique_id):
+            raise ValueError("TIPO: a building pipe needs at least one character. Use common_prompt STRING for a scene-only expansion. / 빌딩 파이프는 최소 1명이 필요합니다. 전역만 쓸 때는 STRING 출력을 연결해 주세요.")
+        adapter = pipe_adapter()
+        if adapter is None and (building_pipe is not None or pipe_is_requested(prompt, unique_id)):
+            raise ValueError("TIPO building pipe needs ComfyUI_RS_MultiCharacter_Sampler. Install it, or use the individual STRING outputs. / 빌딩 파이프는 RS 멀티캐릭터 확장이 필요합니다. STRING 출력은 단독 사용 가능합니다.")
+        # Validate/normalize pipe before allocating the TIPO model.
+        draft = make_building_pipe(adapter, building_pipe, common_prompt, characters) if adapter else None
+        settings = {name: values.get(name, schema[1]["default"] if len(schema) > 1 else schema[0][0])
+                    for name, schema in control_inputs().items()}
+        import comfy.model_management as mm
+        from comfy.utils import ProgressBar
+        with LOCK:
+            model, tokenizer = acquire_model()
+            def run(scene, person):
+                bar = ProgressBar(settings["max_new_tokens"])
+                output, report = expand_owned(model, tokenizer, scene, person, interaction=interaction_prompt, **settings,
+                    interrupt=mm.throw_exception_if_processing_interrupted, progress=bar.update_absolute)
+                return output, report
+            scene, expanded, reports = expand_strings(common_prompt, characters, run, expand_common=expand_common)
+        if interaction_prompt.strip():
+            # The shared relationship is also sent to the image model, unchanged.
+            scene = scene + ("\n" if scene.strip() else "") + interaction_prompt
+        pipe = make_building_pipe(adapter, draft, scene, expanded) if adapter else None
+        info = {"model": MODEL_NAME, "revision": MODEL_REVISION,
+                "character_count": character_count, "interaction_prompt": interaction_prompt, "building_pipe_available": pipe is not None,
+                "seconds": round(sum(row.get("seconds", 0.) for row in reports), 4), "slots": reports}
+        return {"ui": {"tipo_report": [json.dumps(info, ensure_ascii=False)]},
+                "result": (pipe, scene, *expanded, *("" for _ in range(10-len(expanded))))}

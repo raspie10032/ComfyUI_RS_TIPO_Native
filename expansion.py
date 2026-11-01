@@ -20,15 +20,17 @@ def append_completion(original, completion):
 
 
 def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
-                 character_weight=1.5, length="long", **sampling):
+                 character_weight=1.5, length="long", interaction="", interaction_weight=1.0, **sampling):
     prompt, attention = controlled_prompt(tokenizer, common, character, length=length,
-        common_weight=common_weight, character_weight=character_weight)
+        common_weight=common_weight, character_weight=character_weight,
+        interaction=interaction, interaction_weight=interaction_weight)
     result = complete(model, tokenizer, prompt, attention_control=attention, **sampling)
     original = common if character is None else character
     expanded, added = append_completion(original, result.text)
     return expanded, {**asdict(result), "input": prompt, "original": original,
                       "added_tags": added, "output": expanded,
                       "common_weight": common_weight, "character_weight": character_weight,
+                      "interaction": interaction, "interaction_weight": interaction_weight,
                       "owner_tokens": {str(o): attention.owners.count(o) for o in set(attention.owners)}}
 
 
