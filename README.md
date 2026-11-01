@@ -10,7 +10,8 @@ GitHub: https://github.com/raspie10032/ComfyUI_RS_TIPO_Native
 
 - **[한국어 설치·사용법 — 입력 연결, 역할 분담, 결과 확인](docs/usage.ko.md)**
 - [References — original sources, adopted features and license boundaries](docs/references.md)
-- [Loadable shared-interaction example](examples/shared-interaction.json)
+- [Workflow PNG — download original and drop into ComfyUI](examples/shared-scene-workflow.png)
+- [Example JSON](examples/shared-interaction.json)
 - [Tested legacy/current ComfyUI versions and limits](docs/compatibility.md)
 - [Automatic role context and socket repair verification](docs/automatic-context.md)
 
@@ -171,3 +172,6 @@ from the Apache-2.0 architecture code. See [references and adaptation scope](doc
 New project code is licensed under **GPL-3.0-only**; see [LICENSE](LICENSE) and
 [COPYING](COPYING). Adapted upstream files retain the Apache-2.0 attribution.
 No model weights are stored in this Git repository.
+
+The trial does not yet offer a user-specified unwanted-tag/blocklist input.
+Automatic source protection only covers the documented recognized conflicts.
