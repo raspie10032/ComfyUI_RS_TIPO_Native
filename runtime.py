@@ -3,6 +3,7 @@ from functools import lru_cache
 import json
 from pathlib import Path
 import threading
+import time
 
 import torch
 from safetensors.torch import load_file
@@ -12,6 +13,33 @@ from .model import KohakuConfig, KohakuForCausalLM
 from .download import MODEL_NAME, MODEL_REVISION, FILES, complete_folder, ensure_model
 
 LOCK = threading.RLock()
+
+
+def download_status_sender():
+    """Bind transient status to the executing node and its requesting client."""
+    from server import PromptServer
+    server = PromptServer.instance
+    node = server.last_node_id
+    try:
+        from comfy_execution.utils import get_executing_context
+        context = get_executing_context()
+        if context is not None:
+            node = context.node_id
+    except ImportError:  # Older supported ComfyUI.
+        pass
+    client = server.client_id
+    previous, last = None, 0.0
+
+    def send(phase, filename, current, total):
+        nonlocal previous, last
+        key, now = (phase, filename), time.monotonic()
+        if key == previous and now - last < 0.2:
+            return
+        previous, last = key, now
+        if node is not None and client is not None:
+            server.send_sync('rs_tipo_download', dict(node=str(node), phase=phase,
+                             filename=filename, current=current, total=total), client)
+    return send
 
 
 def model_path():
@@ -29,8 +57,13 @@ def model_path():
     bar = ProgressBar(sum(size for size, _ in FILES.values()))
     destination = next((root / MODEL_NAME for root in roots if (root / MODEL_NAME).is_dir()),
                        roots[0] / MODEL_NAME)
-    return ensure_model(destination, interrupt=mm.throw_exception_if_processing_interrupted,
-                        progress=bar.update_absolute)
+    status = download_status_sender()
+    try:
+        return ensure_model(destination, interrupt=mm.throw_exception_if_processing_interrupted,
+                            progress=bar.update_absolute, status=status)
+    except BaseException:
+        status('stopped', '', 0, 0)
+        raise
 
 
 def load_weights(path, dtype=torch.float16):

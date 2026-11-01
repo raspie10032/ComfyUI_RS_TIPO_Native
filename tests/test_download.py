@@ -17,18 +17,26 @@ class DownloadTests(unittest.TestCase):
 
     def test_first_download_progress_then_offline_reuse(self):
         with TemporaryDirectory() as tmp, patch.dict(download.FILES, self.manifest, clear=True):
-            calls, progress = [], []
+            calls, progress, states = [], [], []
             def fetch(repo, filename, revision, local_dir, tqdm_class):
                 calls.append((repo, filename, revision))
                 (Path(local_dir) / filename).write_bytes(self.data[filename])
                 with tqdm_class(total=len(self.data[filename]), disable=True) as bar:
                     bar.update(len(self.data[filename]))
             with patch('huggingface_hub.hf_hub_download', side_effect=fetch) as network:
-                download.ensure_model(tmp, progress=lambda n, total: progress.append((n, total)))
+                download.ensure_model(tmp, progress=lambda n, total: progress.append((n, total)),
+                                      status=lambda *args: states.append(args))
                 self.assertEqual(len(calls), 3)
                 self.assertTrue(all(row[2] == download.MODEL_REVISION for row in calls))
                 self.assertTrue(download.complete_folder(tmp))
                 self.assertEqual(progress[-1][0], progress[-1][1])
+                self.assertEqual(states[0][0], 'starting')
+                self.assertEqual(states[-1][0], 'ready')
+                for name in self.data:
+                    self.assertTrue(any(s[0] == 'downloading' and s[1] == name for s in states))
+                    self.assertTrue(any(s[0] == 'verifying' and s[1] == name for s in states))
+                current = [s[2] for s in states if s[0] == 'downloading']
+                self.assertEqual(current, sorted(current))
                 network.reset_mock()
                 download.ensure_model(tmp)
                 network.assert_not_called()
@@ -43,6 +51,22 @@ class DownloadTests(unittest.TestCase):
                     download.ensure_model(tmp)
                 self.assertEqual(net.call_args.args[1], 'tokenizer.json')
             self.assertFalse(download.complete_folder(tmp))
+
+    def test_status_targets_request_client_and_node_with_throttling(self):
+        events = []
+        server = SimpleNamespace(last_node_id='17', client_id='request-client',
+                                 send_sync=lambda *args: events.append(args))
+        with patch.dict(sys.modules, {'server': SimpleNamespace(PromptServer=SimpleNamespace(instance=server)),
+                                      'comfy_execution.utils': SimpleNamespace(get_executing_context=lambda: None)}):
+            send = runtime.download_status_sender()
+            server.last_node_id, server.client_id = 'other-node', 'other-client'
+            send('downloading', 'model.safetensors', 1, 100)
+            send('downloading', 'model.safetensors', 2, 100)
+            send('verifying', 'model.safetensors', 100, 100)
+            self.assertEqual(len(events), 2)
+            self.assertEqual(events[0][0], 'rs_tipo_download')
+            self.assertEqual(events[0][1]['node'], '17')
+            self.assertTrue(all(e[2] == 'request-client' for e in events))
 
     def test_interrupt_and_network_failure_leave_retryable_state(self):
         def cancel():

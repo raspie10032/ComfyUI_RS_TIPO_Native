@@ -113,7 +113,9 @@ wheels; they are not a separate RS TIPO runtime.
 Missing model files download automatically on the first node execution, into
 `ComfyUI/models/tipo/TIPO-v2.1-1B-A200M` (about **1.85 GiB**). Existing complete
 installs, including configured extra `tipo` paths, are reused offline. Progress
-is shown during transfer; interrupt/retry retains the resumable download cache.
+is shown during transfer. The node panel also shows the current filename,
+percentage, received/total MiB, and SHA-256 verification/loading status.
+Interrupt/retry retains the resumable download cache.
 There is no download at extension import. Install Python dependencies using
 ComfyUI's own Python:
 

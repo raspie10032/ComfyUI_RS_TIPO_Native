@@ -34,7 +34,8 @@ def verify_file(path, expected, interrupt):
                            'Remove that damaged file and retry. / 손상된 파일을 지운 뒤 다시 실행해 주세요.')
 
 
-def ensure_model(destination, *, interrupt=lambda: None, progress=lambda n, total: None):
+def ensure_model(destination, *, interrupt=lambda: None, progress=lambda n, total: None,
+                 status=lambda phase, filename, current, total: None):
     """Reuse complete installs offline; HF file locks cover concurrent processes.
 
     Incomplete transfers stay resumable in .cache. Final filenames are published
@@ -51,10 +52,12 @@ def ensure_model(destination, *, interrupt=lambda: None, progress=lambda n, tota
         marker = destination / '.rs-tipo-download-incomplete'
         marker.touch()
         done = 0
+        status('starting', '', done, total)
         for name, (size, checksum) in FILES.items():
             interrupt()
             path = destination / name
             if path.is_file() and path.stat().st_size == size:
+                status('verifying', name, done, total)
                 verify_file(path, checksum, interrupt)
             else:
                 logging.info('RS TIPO: downloading %s (~1.85 GiB total) into %s', name, destination)
@@ -62,6 +65,16 @@ def ensure_model(destination, *, interrupt=lambda: None, progress=lambda n, tota
                 cancelled = False
 
                 class DownloadProgress(tqdm):
+                    def __init__(self, *args, **kwargs):
+                        super().__init__(*args, **kwargs)
+                        self.received = self.n
+                        self.report()
+
+                    def report(self):
+                        current = min(offset + self.received, offset + size)
+                        progress(current, total)
+                        status('downloading', name, current, total)
+
                     def update(self, n=1):
                         nonlocal cancelled
                         try:
@@ -70,7 +83,8 @@ def ensure_model(destination, *, interrupt=lambda: None, progress=lambda n, tota
                             cancelled = True
                             raise
                         result = super().update(n)
-                        progress(min(offset + self.n, total), total)
+                        self.received += n
+                        self.report()
                         return result
 
                 try:
@@ -83,8 +97,10 @@ def ensure_model(destination, *, interrupt=lambda: None, progress=lambda n, tota
                     raise RuntimeError(f'TIPO download failed for {name} ({type(exc).__name__}). '
                         'Check network, disk space and folder permissions; run again to resume. / '
                         '네트워크·여유 공간·폴더 권한을 확인하고 재실행해 주세요.') from None
+                status('verifying', name, done + size, total)
                 verify_file(path, checksum, interrupt)
             done += size
             progress(done, total)
         marker.unlink(missing_ok=True)
+        status('ready', '', total, total)
         return destination

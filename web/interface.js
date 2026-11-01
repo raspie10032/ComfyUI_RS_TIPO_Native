@@ -1,7 +1,11 @@
 import { app } from "../../scripts/app.js";
+import { api } from "../../scripts/api.js";
 import { updateSockets } from "./sockets.js";
+import { bindDownloadStatus } from "./download-status.js";
 
 const panels = new WeakMap();
+const downloadPanels = new WeakMap();
+bindDownloadStatus(api, app, downloadPanels);
 const configuredInputs = new WeakSet();
 const scheduled = new WeakSet();
 const restoring = new WeakSet();
@@ -162,6 +166,19 @@ function addReport(node) {
 app.registerExtension({
     name: "RS.TIPO.PromptInterface",
     async beforeRegisterNodeDef(nodeType, nodeData) {
+        if (!nodeData.name.startsWith("RSTIPO")) return;
+        const originalCreated = nodeType.prototype.onNodeCreated;
+        nodeType.prototype.onNodeCreated = function () {
+            const result = originalCreated?.apply(this, arguments);
+            const status = document.createElement("div");
+            status.style.cssText = "padding:6px;box-sizing:border-box;font:12px sans-serif;white-space:normal;overflow-wrap:anywhere;color:#b9dcec;";
+            status.textContent = "Model: auto-download if missing (~1.85 GiB).";
+            this.addDOMWidget("tipo_download", "rs-tipo-download", status, {
+                serialize: false, hideOnZoom: false, getMinHeight: () => 42, getMaxHeight: () => 42,
+            });
+            downloadPanels.set(this, status);
+            return result;
+        };
         if (nodeData.name !== "RSTIPOPrompt") return;
         const created = nodeType.prototype.onNodeCreated;
         nodeType.prototype.onNodeCreated = function () {
