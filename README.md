@@ -40,7 +40,10 @@ not reliable semantic planning; it may reject useful details or miss conflicts.
 [Actual paired tests and limitations](docs/source-protection.md).
 [Interface validation and observed limitations](docs/interface.md).
 Load [the shared interaction example](examples/shared-interaction.json) in ComfyUI.
-It uses core Text (Multiline) / Preview as Text nodes and performs text inference only.
+It uses core Primitive STRING nodes and the TIPO results panel, and performs text
+inference only. It does not require newer Text/Preview backend nodes.
+Legacy and current frontend checks, and their limits, are recorded in
+[compatibility and follow-up validation](docs/compatibility.md).
 
 ## Current scope
 

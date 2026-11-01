@@ -26,9 +26,16 @@ tags are still removed. Non-prompt pipe settings are untouched.
 
 This is conservative lexical protection, **not trained semantic role
 understanding**. It can discard useful detail and miss unrecognized conflicts,
-synonyms, negation or incompatibilities between two otherwise valid additions.
+synonyms, negation or unknown incompatibilities between otherwise valid additions.
 It does not invent complementary roles from an ambiguous scene or correct a
 contradiction already in the source. Review the additions before image sampling.
+
+Follow-up protection compares recognized conflicts against **accepted additions**
+as well as supplied source tags. Standalone shared posture, setting and gaze tags
+also constrain every character; prose describing different roles is not applied
+as a shared posture. Unrequested comic panels/bubbles are protected composition
+changes. Basic open-mouth emoticons are checked against closed-mouth tags.
+See the [follow-up experiment and older ComfyUI tests](compatibility.md).
 
 ## Real model comparison
 

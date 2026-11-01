@@ -74,5 +74,49 @@ class GroundingTests(unittest.TestCase):
         kept, _ = guard_additions('(blue eyes:1.3), smile', ['blue eyes', 'open mouth', 'closed mouth', 'smile'])
         self.assertEqual(kept, ['open mouth'])
 
+    def test_added_actions_must_agree_with_previous_additions(self):
+        kept, rejected = guard_additions('smile', ['sitting', 'standing', 'kneeling', 'looking at another'])
+        self.assertEqual(kept, ['sitting', 'looking at another'])
+        self.assertEqual(len(rejected), 2)
+
+    def test_shared_gaze_and_new_additions_cannot_choose_opposite_targets(self):
+        self.assertEqual(guard_additions('smile', ['looking at viewer', 'looking away'],
+            common='2girls, looking away')[0], ['looking away'])
+        self.assertEqual(guard_additions('smile', ['looking away', 'looking at viewer'])[0], ['looking away'])
+
+    def test_cannot_invent_comic_layout_or_bubbles(self):
+        self.assertEqual(guard_additions('offering cup',
+            ['3koma', 'comic', 'speech bubble', 'monochrome', 'holding cup'])[0], ['holding cup'])
+        self.assertEqual(guard_additions('comic, 3koma', ['comic', '3koma', 'holding cup'])[0], ['holding cup'])
+
+    def test_emoticon_mouth_expression_respects_supplied_and_added_tags(self):
+        self.assertEqual(guard_additions('closed mouth', [':d', ':o', 'smile'])[0], ['smile'])
+        self.assertEqual(guard_additions('smile', [':d', 'closed mouth'])[0], [':d'])
+
+    def test_shared_tags_apply_without_assigning_other_persons_prose_role(self):
+        kept, rejected = guard_additions('on left, offering cup',
+            ['on right', 'standing', 'outdoors', 'sitting', 'holding cup'],
+            common='2girls, sitting, indoors',
+            interaction='One stands, the other sits and receives a cup.')
+        self.assertEqual(kept, ['sitting', 'holding cup'])
+        self.assertEqual(len(rejected), 3)
+        self.assertEqual(guard_additions('smile', ['standing'],
+            interaction='One sits, the other stands.')[0], ['standing'])
+
+    def test_sources_are_never_rewritten_and_role_swap_has_symmetric_effect(self):
+        for source, forbidden in [('offering cup', 'receiving cup'), ('receiving cup', 'offering cup'),
+                                  ('kneeling', 'standing'), ('on right', 'on left')]:
+            with self.subTest(source=source):
+                kept, rejected = guard_additions(source, [forbidden, 'warm lighting'])
+                self.assertEqual(kept, ['warm lighting'])
+                self.assertEqual(len(rejected), 1)
+
+    def test_baseline_expansion_also_discards_truncated_tags_and_duplicates(self):
+        from rs_tipo_native.nodes import RSTIPONativeExpand
+        info = '{"input_tokens":10,"finish_reason":"length","seconds":0.1}'
+        with patch('rs_tipo_native.nodes.run_completion', return_value=('blue eyes, garden, coff', info)):
+            result = RSTIPONativeExpand().expand('blue eyes', 'long', 10, 0, 0.)
+        self.assertEqual(result[:2], ('blue eyes, garden', 'garden'))
+
 if __name__ == '__main__':
     unittest.main()

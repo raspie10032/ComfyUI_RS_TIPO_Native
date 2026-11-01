@@ -1,7 +1,7 @@
 import json
 
 from .generation import complete
-from .expansion import expand_owned, expand_pipe
+from .expansion import expand_owned, expand_pipe, append_completion, finished_completion
 from .runtime import LOCK, MODEL_NAME, MODEL_REVISION, acquire_model
 
 
@@ -74,10 +74,9 @@ class RSTIPONativeExpand:
         input_prompt = f"target: <|{length}|>\ntag: {tags.rstrip().rstrip(',')}, "
         text, info = run_completion(input_prompt, max_new_tokens, seed, temperature)
         # Only the first tag field belongs in a tag string; preserve all raw output in metadata.
-        generated = text.split("<|eos|>", 1)[0].split("\n", 1)[0].strip(" ,")
         meta = json.loads(info)
         meta["raw_completion"] = text
-        combined = tags + (", " + generated if generated else "")
+        combined, generated = append_completion(tags, finished_completion(text, meta["finish_reason"]))
         return combined, generated, json.dumps(meta, ensure_ascii=False)
 
 
@@ -160,6 +159,7 @@ class RSTIPOPrompt:
     RETURN_TYPES = ("RS_MC_BUILD_PIPE", "STRING") + ("STRING",) * 10
     RETURN_NAMES = ("building_pipe", "common_prompt") + tuple(f"character{i}" for i in range(1, 11))
     FUNCTION = "expand"
+    OUTPUT_NODE = True
     DESCRIPTION = ("Expand character STRINGs against a shared scene and optional interaction description with native TIPO. Outputs the same results as STRINGs and an RS building pipe. "
         "0–10 characters; out-of-count inputs are ignored. Optional incoming pipe keeps LoRA, mask, position and camera settings. "
         "Source protection conservatively rejects unrequested appearance, composition and recognized role conflicts. Experimental: this is not a general relationship planner.")
@@ -175,11 +175,11 @@ class RSTIPOPrompt:
             "advanced": ("BOOLEAN", {"default": False,
                 "tooltip": "Show token limit, seed, temperature and source-attention weights. Does not reset their values."}),
         }, "optional": {
-            "common_prompt": ("STRING", {"forceInput": True,
+            "common_prompt": ("STRING", {"forceInput": True, "multiline": True,
                 "tooltip": "Original shared scene. Each character reads this original, not another expanded output."}),
-            **{f"character{i}": ("STRING", {"forceInput": True,
+            **{f"character{i}": ("STRING", {"forceInput": True, "multiline": True,
                 "tooltip": f"Character {i}: positive prompt. Original text and weights are preserved."}) for i in range(1, 11)},
-            "interaction_prompt": ("STRING", {"forceInput": True,
+            "interaction_prompt": ("STRING", {"forceInput": True, "multiline": True,
                 "tooltip": "Optional shared interaction description, e.g. one offers a cup while the other accepts it. Put each participant role in its own character STRING. All slots read this same scene via TIPO long_to_tag; it does not automatically infer who does what."}),
             "protect_source": ("BOOLEAN", {"default": True,
                 "tooltip": "Keep supplied roles and appearance authoritative. Reject unrequested identity, wardrobe, style, composition and recognized action conflicts; show excluded tags in results. Conservative lexical check, not complete semantic understanding."}),

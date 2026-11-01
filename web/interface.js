@@ -2,12 +2,61 @@ import { app } from "../../scripts/app.js";
 import { updateSockets } from "./sockets.js";
 
 const panels = new WeakMap();
+const configuredInputs = new WeakSet();
+const scheduled = new WeakSet();
+const restoring = new WeakSet();
 const advancedNames = new Set(["max_new_tokens", "seed", "control_after_generate", "temperature", "common_weight", "character_weight"]);
 const value = (node, name, fallback) => node.widgets?.find(w => w.name === name)?.value ?? fallback;
 
+function scheduleRefresh(node) {
+    if (scheduled.has(node)) return;
+    scheduled.add(node);
+    const run = () => {
+        if (app.configuringGraph) { setTimeout(run, 10); return; }
+        scheduled.delete(node);
+        refresh(node);
+        if (restoring.delete(node)) {
+            // Legacy PrimitiveNode can create its STRING widget but skip
+            // restoring widgets_values. Repair only sources connected to us,
+            // once during graph load, never after an interactive edit.
+            for (const input of node.inputs ?? []) {
+                if (input.type !== "STRING" || input.link == null) continue;
+                const link = node.graph?.links?.[input.link];
+                const source = link && node.graph.getNodeById(link.origin_id);
+                if (source?.type === "PrimitiveNode" && typeof source.widgets_values?.[0] === "string" && source.widgets?.[0]) {
+                    source.widgets[0].value = source.widgets_values[0];
+                    source.applyToGraph?.();
+                }
+            }
+        }
+    };
+    queueMicrotask(run);
+}
+
 function refresh(node, sockets = true) {
     const count = Number(value(node, "character_count", 2));
-    if (sockets) updateSockets(node, count);
+    if (sockets) {
+        updateSockets(node, count, name => node.addInput(name, "STRING", { widget: { name } }));
+        // Primitive STRING nodes need the widget configuration, including after
+        // a socket is recreated or an older workflow has lost its widget field.
+        const setConfig = globalThis.comfyAPI?.widgetInputs?.setWidgetConfig;
+        for (const input of node.inputs ?? []) {
+            if (!/^(?:common_prompt|interaction_prompt|character\d+)$/.test(input.name)) continue;
+            if (!node.widgets?.some(w => w.name === input.name)) {
+                // Frontend 1.28 omits the forceInput backing widget, while
+                // PrimitiveNode still requires one to transfer its STRING.
+                const saved = node.properties?.rs_tipo_widget_values?.[input.name];
+                const w = node.addWidget("converted-widget", input.name,
+                    typeof saved === "string" ? saved : "", () => {}, {});
+                w.hidden = true;
+                w.computeSize = () => [0, -4];
+            }
+            if (!setConfig || configuredInputs.has(input)) continue;
+            input.widget ??= { name: input.name };
+            setConfig(input, ["STRING", { multiline: true, forceInput: true }]);
+            configuredInputs.add(input);
+        }
+    }
     for (const widget of node.widgets ?? []) {
         if (!advancedNames.has(widget.name)) continue;
         const hide = !value(node, "advanced", false);
@@ -72,19 +121,53 @@ app.registerExtension({
                 const callback = widget.callback;
                 widget.callback = (...args) => { callback?.apply(widget, args); refresh(this); };
             }
-            refresh(this);
+            // Core widgetInputs may convert forceInput widgets after this
+            // callback (notably frontend 1.11). Wait before managing sockets.
+            refresh(this, false);
+            scheduleRefresh(this);
             return result;
         };
         const configured = nodeType.prototype.onConfigure;
-        nodeType.prototype.onConfigure = function () {
+        nodeType.prototype.onConfigure = function (info) {
             const result = configured?.apply(this, arguments);
+            restoring.add(this);
+            // Older frontends keep forceInput STRINGs in widgets_values;
+            // newer ones omit them. Restore by name across both layouts.
+            const saved = info?.properties?.rs_tipo_widget_values;
+            if (saved && typeof saved === "object") {
+                for (const widget of this.widgets ?? []) {
+                    if (widget.name !== "tipo_results" && Object.hasOwn(saved, widget.name) &&
+                        ["string", "number", "boolean"].includes(typeof saved[widget.name])) widget.value = saved[widget.name];
+                }
+            }
             refresh(this, false);
-            queueMicrotask(() => refresh(this));
+            scheduleRefresh(this);
+            return result;
+        };
+        const serialize = nodeType.prototype.onSerialize;
+        nodeType.prototype.onSerialize = function (info) {
+            const result = serialize?.apply(this, arguments);
+            const named = {};
+            for (const w of this.widgets ?? []) {
+                if (["string", "number", "boolean"].includes(typeof w.value) && w.name !== "tipo_results") named[w.name] = w.value;
+            }
+            for (const input of this.inputs ?? []) {
+                if (input.type !== "STRING" || input.link == null) continue;
+                const link = this.graph?.links?.[input.link];
+                const source = link && this.graph.getNodeById(link.origin_id);
+                if (source?.type === "PrimitiveNode" && typeof source.widgets?.[0]?.value === "string") named[input.name] = source.widgets[0].value;
+            }
+            info.properties ??= {};
+            info.properties.rs_tipo_widget_values = named;
             return result;
         };
         const graphConfigured = nodeType.prototype.onGraphConfigured;
         nodeType.prototype.onGraphConfigured = function () {
-            const result = graphConfigured?.apply(this, arguments); refresh(this); return result;
+            const result = graphConfigured?.apply(this, arguments);
+            // Let Primitive.onAfterGraphConfigured restore saved text before
+            // setWidgetConfig can recreate its widget.
+            scheduleRefresh(this);
+            return result;
         };
         const executed = nodeType.prototype.onExecuted;
         nodeType.prototype.onExecuted = function (message) {

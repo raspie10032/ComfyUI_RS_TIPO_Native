@@ -37,7 +37,8 @@ _PROTECTED = re.compile(
     r'style|artstyle|realistic|photorealistic|photograph|3d|render|cgi|'
     r'artist|signature|watermark|dated|copyright|text|lettering|'
     r'solo|focus|pov|portrait|profile|shot|close-up|upper body|full body|out of frame|'
-    r'simple background|white background)\b|\b\d+(?:girls?|boys?)\b|\b(?:19|20)\d\d\b')
+    r'comic|manga|panels?|speech bubble|thought bubble|monochrome|greyscale|'
+    r'simple background|white background)\b|\b\d+(?:girls?|boys?|koma)\b|\b(?:19|20)\d\d\b')
 _SCENE_PEOPLE = re.compile(
     r'\b(?:holding|hug|hugging|embrace|dancing|hand|hands|arm|arms|leg|legs|'
     r'head|face|mouth|lips|blush|smile|smiling|laughing|crying|looking|gaze|'
@@ -45,6 +46,27 @@ _SCENE_PEOPLE = re.compile(
     r'kissing|walking|running|jumping|touching|clasped|interlocked|fingers?)\b')
 _VIEWS = re.compile(r'\b(?:from behind|from above|from below|from side|looking back|looking up|looking down|looking to the side|looking ahead)\b')
 _HAND_TARGET = re.compile(r"\b(?:hand|hands) on (?:another(?:'s)?|other|partner(?:'s)?) (waist|shoulder|back|head|arm|face)\b")
+_EXCLUSIVE = (
+    ('standing', 'sitting', 'kneeling', 'lying'),
+    ('offering', 'receiving'), ('leading', 'following'),
+    ('open mouth', 'closed mouth'), ('parted lips', 'closed mouth'),
+    ('on left', 'on right'), ('indoors', 'outdoors'), ('day', 'night'),
+    ('looking at viewer', 'looking at another', 'looking away'),
+)
+
+
+def _conflicting_tag(value, sources):
+    aliases = {':d': 'open mouth', ':o': 'open mouth'}
+    value = aliases.get(value, value)
+    sources = {aliases.get(source, source) for source in sources}
+    for group in _EXCLUSIVE:
+        requested = {term for term in group if any(
+            re.search(r'(?<!\w)' + re.escape(term) + r'(?!\w)', source) for source in sources)}
+        # An already ambiguous source is not a license to choose a role for it.
+        if len(requested) == 1 and any(term not in requested and re.search(
+                r'(?<!\w)' + re.escape(term) + r'(?!\w)', value) for term in group):
+            return True
+    return False
 
 
 def guard_additions(original, tags, *, common='', interaction='', character=True):
@@ -56,6 +78,11 @@ def guard_additions(original, tags, *, common='', interaction='', character=True
     own = key(original)
     context = key(' '.join((common, interaction, original)))
     explicit = {key(t) for t in original.split(',') if key(t)}
+    # Only standalone shared tags apply to every participant. A shared prose
+    # caption can describe different roles and must never assign both to one.
+    shared = {key(t) for t in common.split(',') if key(t)} & {
+        'standing', 'sitting', 'kneeling', 'lying', 'indoors', 'outdoors', 'day', 'night',
+        'looking at viewer', 'looking at another', 'looking away'}
     hand_targets = set(_HAND_TARGET.findall(own))
     accepted, rejected = [], []
     known = set(explicit)
@@ -82,20 +109,13 @@ def guard_additions(original, tags, *, common='', interaction='', character=True
         elif 'looking at viewer' in value and re.search(
                 r'look\w* (?:at )?(?:each other|one another|another|other|partner)', context):
             reason = 'viewer gaze conflicts with partner gaze'
-        elif any(re.search(r'\b(?:' + a + r')\b', own) and re.search(r'\b(?:' + b + r')\b', value)
-                 for a, b in [('standing', 'sitting|kneeling|lying'),
-                              ('sitting', 'standing|kneeling|lying'),
-                              ('lying', 'standing|sitting|kneeling'),
-                              ('offering', 'receiving'), ('receiving', 'offering'),
-                              ('offering|receiving', 'drinking|eating|kissing|hugging|dancing'),
-                              ('leading', 'following'), ('following', 'leading')]):
+        elif _conflicting_tag(value, known | shared):
+            reason = 'conflicts with source or accepted action, position, expression or scene'
+        elif re.search(r'\b(?:offering|receiving)\b', own) and re.search(
+                r'\b(?:drinking|eating|kissing|hugging|dancing)\b', value):
             reason = 'action conflicts with supplied role'
         elif hand_targets and _HAND_TARGET.search(value) and not hand_targets.intersection(_HAND_TARGET.findall(value)):
             reason = 'partner contact target conflicts with supplied role'
-        elif ('open mouth' in known and value == 'closed mouth') or (
-                'closed mouth' in known and value in ('open mouth', 'parted lips')) or (
-                'parted lips' in known and value == 'closed mouth'):
-            reason = 'conflicting expression'
         if reason:
             rejected.append({'tag': tag, 'reason': reason})
         else:

@@ -20,6 +20,12 @@ def append_completion(original, completion):
     return original + (separator + suffix if suffix and original.strip() else suffix), suffix
 
 
+def finished_completion(completion, finish_reason):
+    if finish_reason == "length" and "\n" not in completion and "<|eos|>" not in completion:
+        completion = completion.rsplit(",", 1)[0] if "," in completion else ""
+    return completion
+
+
 def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
                  character_weight=1.5, length="long", interaction="", interaction_weight=1.0,
                  protect_source=True, **sampling):
@@ -28,12 +34,10 @@ def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
         interaction=interaction, interaction_weight=interaction_weight)
     result = complete(model, tokenizer, prompt, attention_control=attention, **sampling)
     original = common if character is None else character
-    completion = result.text
     # A token cap can stop halfway through a tag. Only a model stop/EOS/newline
     # establishes that the final tag is complete; never send a cut-off fragment
     # into the image prompt.
-    if result.finish_reason == "length" and "\n" not in completion and "<|eos|>" not in completion:
-        completion = completion.rsplit(",", 1)[0] if "," in completion else ""
+    completion = finished_completion(result.text, result.finish_reason)
     _, proposed = append_completion(original, completion)
     rejected = []
     if protect_source:

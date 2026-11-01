@@ -65,7 +65,8 @@ Example: `examples/shared-interaction.json` uses core STRING/Preview nodes and
 is copied into the local workflow list as `RS TIPO - Shared Interaction`. The
 JSON has been structurally checked and its exact STRING flow executed successfully
 on the resident server (one additional real-model request, 7 total). Browser
-reload round-trip remains unverified. Raw record:
+reload round-trip was unverified in this initial experiment. It is now covered by
+the [legacy/current browser follow-up](compatibility.md). Raw initial record:
 `validation/shared-interaction-example-live.json`.
 
 ## Initial semantic findings
