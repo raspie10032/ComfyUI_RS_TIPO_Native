@@ -134,7 +134,8 @@ function addReport(node) {
     const render = () => {
         const row = rows[Number(select.value)];
         const rejected = row?.rejected_tags?.map(item => `${item.tag} — ${item.reason}`).join("\n");
-        text.value = row ? `Original\n${row.original}\n\nAdded\n${row.added_tags || '(none)'}\n\nExcluded\n${rejected || '(none)'}\n\nExpanded\n${row.output}` : "";
+        const blocked = Object.entries(row?.exclusion?.hits ?? {}).map(([tag, n]) => `${tag}: ${n}`).join("\n");
+        text.value = row ? `Original\n${row.original}\n\nAdded\n${row.added_tags || '(none)'}\n\nBlocked during generation (candidate attempts)\n${blocked || '(none)'}\n\nSource protection after generation\n${rejected || '(none)'}\n\nExpanded\n${row.output}` : "";
     };
     select.onchange = render;
     root.append(help, status, select, text);

@@ -1,5 +1,7 @@
 # ComfyUI RS TIPO Native
 
+**0.1.1 experimental:** generation-time excluded tags and automatic first-run model download.
+
 Independent experimental project for running **TIPO v2.1** using native PyTorch
 and ComfyUI model management, with no llama.cpp, GGUF or Transformers in the
 inference path, with experimental input-span attention control.
@@ -69,6 +71,27 @@ Legacy and current frontend checks, and their limits, are recorded in
 - Independent cache per character; other participants share recognized actions, not private appearance.
 - Prompt-only edits of shared draft/final pipes and modern NAI contexts.
 - Cancellation and progress during decoding; context overflow is an explicit error.
+- Optional `excluded_tags`: reject candidate tokens during generation, not a final
+  remove pass. Case, underscores and whitespace are normalized. The results panel
+  distinguishes generation blocking from existing source protection after decoding.
+- First execution downloads missing model files with progress and SHA-256 verification.
+
+## Excluded tags (0.1.1)
+
+Enter comma/newline-separated tags, e.g. `3d, white_shirt, long sleeves`, in
+`excluded_tags`. `long_sleeves` and `LONG  SLEEVES` are equivalent. This applies
+to all active generated outputs; empty keeps the previous decoding path.
+The sampler rejects a next-token candidate when its decoded tag matches the
+normalized list, then samples another candidate. Rejected tokens are never
+appended to the output or KV cache. It does not add the unwanted tags to TIPO's
+positive prompt, fine-tune the model or remove them after generation.
+
+Source strings and weights are authoritative. An excluded tag already present
+in an active source is an error before loading the model. Fix one side instead
+of silently rewriting the source. This is lexical control: synonyms and free-form
+descriptions may still appear. Blocking a short prefix may constrain longer tags,
+and alternatives can be awkward; it is not full semantic negative prompting.
+[Implementation, real-model comparisons and limits](docs/exclusion-0.1.1.md).
 
 **Still experimental:** isolation keeps private character appearance separate, but it
 does not stop TIPO inventing contradictory attributes from its learned priors.
@@ -86,12 +109,21 @@ Use the Python environment that runs ComfyUI. Install `requirements.txt` if need
 No project-specific prebuilt wheel or C++/CUDA compilation is required. Inference
 uses ComfyUI's PyTorch installation (`torch>=2.5`), plus `safetensors>=0.4` and
 `tokenizers>=0.21`. These dependencies may themselves install standard binary
-wheels; they are not a separate RS TIPO runtime. Model weights are downloaded
-separately from Python packages.
-Model download is explicit and happens separately from import or node execution:
+wheels; they are not a separate RS TIPO runtime.
+Missing model files download automatically on the first node execution, into
+`ComfyUI/models/tipo/TIPO-v2.1-1B-A200M` (about **1.85 GiB**). Existing complete
+installs, including configured extra `tipo` paths, are reused offline. Progress
+is shown during transfer; interrupt/retry retains the resumable download cache.
+There is no download at extension import. Install Python dependencies using
+ComfyUI's own Python:
 
 ```sh
-python -m pip install huggingface_hub
+python -m pip install -r requirements.txt
+```
+
+Optional manual prefetch for offline machines uses the same downloader:
+
+```sh
 python tools/download_model.py /path/to/ComfyUI/models/tipo/TIPO-v2.1-1B-A200M
 ```
 
@@ -178,5 +210,5 @@ New project code is licensed under **GPL-3.0-only**; see [LICENSE](LICENSE) and
 [COPYING](COPYING). Adapted upstream files retain the Apache-2.0 attribution.
 No model weights are stored in this Git repository.
 
-The trial does not yet offer a user-specified unwanted-tag/blocklist input.
-Automatic source protection only covers the documented recognized conflicts.
+Generation-time exclusions and automatic source protection are separate controls;
+neither provides complete semantic conflict prevention.

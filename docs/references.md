@@ -32,6 +32,14 @@ package. Reference/parity tools can require the official Transformers implementa
 
 ## Changes implemented in this project
 
+For 0.1.1, [Hugging Face generation utilities](https://huggingface.co/docs/transformers/internal/generation_utils)
+provide the reference for decoding-time token constraints. This project implements
+its own request-local decoded-tag candidate rejection; it does not import the
+Transformers generation runtime or claim semantic negative-prompt training.
+[Hub file-download documentation](https://huggingface.co/docs/huggingface_hub/package_reference/file_download)
+documents pinned revisions, `local_dir` and `tqdm_class`, used by the automatic
+downloader with an additional pinned SHA-256 manifest.
+
 The upstream decoder was adapted to remove its Transformers runtime dependency
 and use a request-owned KV cache, direct safetensors loading and ComfyUI model
 management. Baseline parity is checked against the official implementation.
@@ -73,7 +81,7 @@ miss contradictions. See [source protection](source-protection.md),
   It was consulted for prompt-format compatibility; this is not a distribution
   of the KGen inference stack.
 - Weights, downloaded reference Python and raw local validation outputs are not
-  committed in this project. The explicit download tool fetches the official
+  committed in this project. The automatic downloader and optional CLI fetch the official
   pinned model data; it does not execute downloaded Python code.
 - New project code is distributed under [GPL-3.0-only](../LICENSE); the complete
   text is in [COPYING](../COPYING). Adapted KohakUwULLM code retains its

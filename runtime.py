@@ -9,9 +9,8 @@ from safetensors.torch import load_file
 from tokenizers import Tokenizer
 
 from .model import KohakuConfig, KohakuForCausalLM
+from .download import MODEL_NAME, MODEL_REVISION, FILES, complete_folder, ensure_model
 
-MODEL_NAME = "TIPO-v2.1-1B-A200M"
-MODEL_REVISION = "f5a318524a4ab30cdbbf51816cf406170f454e65"
 LOCK = threading.RLock()
 
 
@@ -23,12 +22,15 @@ def model_path():
         roots += [Path(p) for p in folder_paths.get_folder_paths("tipo")]
     for root in roots:
         candidate = root / MODEL_NAME
-        if (candidate / "model.safetensors").is_file():
+        if complete_folder(candidate):
             return candidate
-    raise FileNotFoundError(
-        f"TIPO native model is missing. Put config.json, tokenizer.json and model.safetensors "
-        f"in models/tipo/{MODEL_NAME}/. The existing GGUF file cannot be used. "
-        "Run this project's tools/download_model.py with that destination.")
+    import comfy.model_management as mm
+    from comfy.utils import ProgressBar
+    bar = ProgressBar(sum(size for size, _ in FILES.values()))
+    destination = next((root / MODEL_NAME for root in roots if (root / MODEL_NAME).is_dir()),
+                       roots[0] / MODEL_NAME)
+    return ensure_model(destination, interrupt=mm.throw_exception_if_processing_interrupted,
+                        progress=bar.update_absolute)
 
 
 def load_weights(path, dtype=torch.float16):

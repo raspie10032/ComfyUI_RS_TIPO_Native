@@ -3,16 +3,24 @@ import json
 from .generation import complete
 from .expansion import expand_owned, expand_pipe, append_completion, finished_completion
 from .runtime import LOCK, MODEL_NAME, MODEL_REVISION, acquire_model
+from .exclusion import parse_excluded, validate_sources
 
 
-def run_completion(prompt, max_new_tokens, seed, temperature):
+def exclusion_input():
+    return {"excluded_tags": ("STRING", {"multiline": True, "default": "",
+        "tooltip": "Comma/newline-separated tags to block during token selection, for all active outputs. Not post-removal. Exact normalized tags; no synonym inference. Source conflicts are errors. / 생성 단계 제외 태그: 쉼표·줄바꿈으로 구분. 원문과 충돌하면 오류."})}
+
+
+def run_completion(prompt, max_new_tokens, seed, temperature, excluded_tags=""):
     import comfy.model_management as mm
     from comfy.utils import ProgressBar
     bar = ProgressBar(max_new_tokens)
+    validate_sources(parse_excluded(excluded_tags), [('source tag field', prompt.rsplit('tag:', 1)[-1])])
     with LOCK:
         model, tokenizer = acquire_model()
         result = complete(model, tokenizer, prompt, max_new_tokens=max_new_tokens,
                           seed=seed, temperature=temperature,
+                          excluded_tags=excluded_tags,
                           interrupt=mm.throw_exception_if_processing_interrupted,
                           progress=bar.update_absolute)
         info = json.dumps({"model": MODEL_NAME, "revision": MODEL_REVISION,
@@ -21,7 +29,8 @@ def run_completion(prompt, max_new_tokens, seed, temperature):
                            "input_tokens": result.input_tokens,
                            "output_tokens": len(result.token_ids),
                            "finish_reason": result.finish_reason,
-                           "seconds": round(result.seconds, 4), "seed": seed}, ensure_ascii=False)
+                           "seconds": round(result.seconds, 4), "seed": seed,
+                           "exclusion": result.exclusion}, ensure_ascii=False)
         return result.text, info
 
 
@@ -41,10 +50,10 @@ class RSTIPONativeCompletion:
             "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
             "temperature": ("FLOAT", {"default": 0.5, "min": 0, "max": 2, "step": 0.05,
                                          "tooltip": "0 = greedy baseline. Other values sample using the seed."}),
-        }}
+        }, "optional": exclusion_input()}
 
-    def generate(self, prompt, max_new_tokens, seed, temperature):
-        return run_completion(prompt, max_new_tokens, seed, temperature)
+    def generate(self, prompt, max_new_tokens, seed, temperature, excluded_tags=""):
+        return run_completion(prompt, max_new_tokens, seed, temperature, excluded_tags)
 
 
 class RSTIPONativeExpand:
@@ -62,9 +71,9 @@ class RSTIPONativeExpand:
             "tags": ("STRING", {"multiline": True, "default": "1girl, garden"}),
             "length": (["short", "long", "very_long"], {"default": "long"}),
             **{name: base[name] for name in ("max_new_tokens", "seed", "temperature")},
-        }}
+        }, "optional": exclusion_input()}
 
-    def expand(self, tags, length, max_new_tokens, seed, temperature):
+    def expand(self, tags, length, max_new_tokens, seed, temperature, excluded_tags=""):
         if not tags.strip():
             raise ValueError("Enter at least one tag before running TIPO.")
         if length not in ("short", "long", "very_long"):
@@ -72,7 +81,7 @@ class RSTIPONativeExpand:
         # This baseline's official tag-only format remains separate from semantic control research.
         # Do not flatten multiple characters/pipes into this field.
         input_prompt = f"target: <|{length}|>\ntag: {tags.rstrip().rstrip(',')}, "
-        text, info = run_completion(input_prompt, max_new_tokens, seed, temperature)
+        text, info = run_completion(input_prompt, max_new_tokens, seed, temperature, excluded_tags)
         # Only the first tag field belongs in a tag string; preserve all raw output in metadata.
         meta = json.loads(info)
         meta["raw_completion"] = text
@@ -90,9 +99,19 @@ def control_inputs():
 
 
 def run_owned(common, character, length, max_new_tokens, seed, temperature,
-              common_weight, character_weight, pipe=None, expand_common=False):
+              common_weight, character_weight, pipe=None, expand_common=False, excluded_tags=""):
     import comfy.model_management as mm
     from comfy.utils import ProgressBar
+    sources = [('common_prompt', common), ('character', character)]
+    if pipe is not None:
+        source = getattr(pipe, 'source_pipe', None) if hasattr(pipe, 'slots') else pipe
+        if not common.strip():
+            sources.append(('pipe common', getattr(source, 'prompt', '') or ''))
+        for i, row in enumerate(getattr(pipe, 'slots', getattr(pipe, 'characters', ())), 1):
+            if hasattr(pipe, 'slots') and (pipe.prompt_count is None or row.number > pipe.prompt_count or not row.enabled or row.kind != 'character'):
+                continue
+            sources.append((f'character {i}', row.prompt))
+    validate_sources(parse_excluded(excluded_tags), sources)
     with LOCK:
         model, tokenizer = acquire_model()
         def run(scene, person):
@@ -100,6 +119,7 @@ def run_owned(common, character, length, max_new_tokens, seed, temperature,
             return expand_owned(model, tokenizer, scene, person, length=length,
                 max_new_tokens=max_new_tokens, seed=seed, temperature=temperature,
                 common_weight=common_weight, character_weight=character_weight,
+                excluded_tags=excluded_tags,
                 interrupt=mm.throw_exception_if_processing_interrupted, progress=bar.update_absolute)
         if pipe is None:
             prompt, report = run(common, character if character.strip() else None)
@@ -124,7 +144,7 @@ class RSTIPONativeControlledExpand:
         return {"required": {
             "common_prompt": ("STRING", {"multiline": True, "default": "university campus, autumn, afternoon"}),
             "character_prompt": ("STRING", {"multiline": True, "default": "blonde hair, blue eyes, pink cardigan"}),
-            **control_inputs()}}
+            **control_inputs()}, "optional": exclusion_input()}
 
     def expand(self, common_prompt, character_prompt, **settings):
         return run_owned(common_prompt, character_prompt, **settings)
@@ -148,7 +168,8 @@ class RSTIPONativePipeExpand:
             "expand_common": ("BOOLEAN", {"default": False,
                 "tooltip": "Also expand the scene. Experimental: TIPO may add character attributes to the common caption."})},
             "optional": {"common_prompt": ("STRING", {"multiline": True, "default": "",
-                "tooltip": "Empty uses the pipe scene. Draft pipes without a source return this scene as STRING; connect it to the sampler."})}}
+                "tooltip": "Empty uses the pipe scene. Draft pipes without a source return this scene as STRING; connect it to the sampler."}),
+                **exclusion_input()}}
 
     def expand(self, building_pipe, common_prompt="", expand_common=False, **settings):
         return run_owned(common_prompt, "", pipe=building_pipe, expand_common=expand_common, **settings)
@@ -182,14 +203,17 @@ class RSTIPOPrompt:
             "protect_source": ("BOOLEAN", {"default": True,
                 "tooltip": "Keep supplied roles and appearance authoritative. Reject unrequested identity, wardrobe, style, composition and recognized action conflicts; show excluded tags in results. Conservative lexical check, not complete semantic understanding."}),
             "building_pipe": (PIPE_TYPES, {"tooltip": "Optional: retain existing LoRA, masks, positions, references and deferred cameras. STRING inputs replace the prompt table."}),
+            **exclusion_input(),
         }, "hidden": {"prompt": "PROMPT", "unique_id": "UNIQUE_ID"}}
 
     def expand(self, character_count=2, common_prompt="", expand_common=False,
                building_pipe=None, prompt=None, unique_id=None, advanced=False,
-               protect_source=True, **values):
+               protect_source=True, excluded_tags="", **values):
         from .interface import (validate_inputs, expand_strings, pipe_adapter,
                                 make_building_pipe, pipe_is_requested)
         characters = validate_inputs(common_prompt, character_count, values)
+        validate_sources(parse_excluded(excluded_tags), [('common_prompt', common_prompt),
+            *((f'character {i}', text) for i, text in enumerate(characters, 1))])
         if not characters and pipe_is_requested(prompt, unique_id):
             raise ValueError("TIPO: a building pipe needs at least one character. Use common_prompt STRING for a scene-only expansion. / 빌딩 파이프는 최소 1명이 필요합니다. 전역만 쓸 때는 STRING 출력을 연결해 주세요.")
         adapter = pipe_adapter()
@@ -215,6 +239,7 @@ class RSTIPOPrompt:
                 output, report = expand_owned(model, tokenizer, scene, person, interaction=context,
                     interaction_weight=settings["common_weight"] if person is not None else 1.0,
                     protect_source=protect_source,
+                    excluded_tags=excluded_tags,
                     peer_actions=tuple(action for i, actions in enumerate(roles) if i != slot_index for action in actions) if person is not None else (),
                     **settings,
                     interrupt=mm.throw_exception_if_processing_interrupted, progress=bar.update_absolute)
@@ -224,6 +249,7 @@ class RSTIPOPrompt:
         pipe = make_building_pipe(adapter, draft, scene, expanded) if adapter else None
         info = {"model": MODEL_NAME, "revision": MODEL_REVISION,
                 "protect_source": protect_source,
+                "excluded_tags": list(parse_excluded(excluded_tags)),
                 "character_count": character_count, "shared_context": shared_context,
                 "participant_roles": roles, "context_source": "common_and_character_inputs",
                 "building_pipe_available": pipe is not None,

@@ -1,11 +1,12 @@
 """Request-local text sampling. No llama.cpp, Transformers, or global RNG changes."""
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import math
 import time
 
 import torch
 
 from .model import KVCache
+from .exclusion import TagExclusion, parse_excluded
 
 
 @dataclass
@@ -15,10 +16,12 @@ class Completion:
     input_tokens: int
     finish_reason: str
     seconds: float
+    exclusion: dict = field(default_factory=dict)
 
 
 def choose_token(logits, history, rng, temperature=0.5, top_k=80, top_p=0.95,
-                 min_p=0.05, repetition_penalty=1.17):
+                 min_p=0.05, repetition_penalty=1.17, token_allowed=None,
+                 interrupt=lambda: None):
     scores = logits.detach().to(device="cpu", dtype=torch.float32).flatten().clone()
     if not torch.isfinite(scores).all():
         raise RuntimeError("TIPO produced invalid scores (NaN/Inf). Check the model and dtype.")
@@ -27,8 +30,23 @@ def choose_token(logits, history, rng, temperature=0.5, top_k=80, top_p=0.95,
         original = scores[ids]
         scores[ids] = torch.where(original < 0, original * repetition_penalty,
                                   original / repetition_penalty)
-    if temperature == 0:
-        return int(scores.argmax())
+    # Lazy exact rejection: candidates are checked before acceptance/cache append.
+    # Recompute truncation after each mask so top_k=1 can still find an allowed
+    # alternative. The no-constraint path keeps the original RNG behavior.
+    def select(current):
+        if temperature == 0:
+            return int(current.argmax())
+        return _sample(current, rng, temperature, top_k, top_p, min_p)
+    while torch.isfinite(scores).any():
+        token = select(scores.clone())
+        if token_allowed is None or token_allowed(token):
+            return token
+        interrupt()
+        scores[token] = -torch.inf
+    raise RuntimeError('TIPO excluded_tags blocks every next token. Shorten the exclusion list. / 제외 목록을 줄여 주세요.')
+
+
+def _sample(scores, rng, temperature, top_k, top_p, min_p):
     scores /= temperature
     if top_k > 0:
         threshold = scores.topk(min(top_k, scores.numel())).values[-1]
@@ -48,7 +66,7 @@ def choose_token(logits, history, rng, temperature=0.5, top_k=80, top_p=0.95,
 def complete(model, tokenizer, prompt, *, max_new_tokens=128, seed=0,
              temperature=0.5, top_k=80, top_p=0.95, min_p=0.05,
              repetition_penalty=1.17, interrupt=lambda: None, progress=lambda n, total: None,
-             attention_control=None):
+             attention_control=None, excluded_tags=""):
     if not prompt.strip():
         raise ValueError("TIPO input is empty. Enter tags or a native completion prompt.")
     if not 1 <= max_new_tokens <= 4096:
@@ -71,6 +89,8 @@ def complete(model, tokenizer, prompt, *, max_new_tokens=128, seed=0,
                 else attention_control.readable_history(input_ids))
     generated = []
     rng = torch.Generator(device="cpu").manual_seed(int(seed))
+    excluded = parse_excluded(excluded_tags)
+    exclusion = TagExclusion(tokenizer, excluded) if excluded else None
     eos = tokenizer.token_to_id("<|eos|>")
     start = time.perf_counter()
     def forward(ids):
@@ -87,7 +107,9 @@ def complete(model, tokenizer, prompt, *, max_new_tokens=128, seed=0,
     for step in range(max_new_tokens):
         interrupt()
         token = choose_token(scores, sequence, rng, temperature, top_k, top_p, min_p,
-                             repetition_penalty)
+                             repetition_penalty,
+                             token_allowed=(lambda token: exclusion.allows(generated, token)) if exclusion else None,
+                             interrupt=interrupt)
         generated.append(token)
         sequence.append(token)
         progress(step + 1, max_new_tokens)
@@ -97,4 +119,5 @@ def complete(model, tokenizer, prompt, *, max_new_tokens=128, seed=0,
         if step + 1 < max_new_tokens:
             scores = forward([token])
     return Completion(tokenizer.decode(generated, skip_special_tokens=False), generated,
-                      len(input_ids), reason, time.perf_counter() - start)
+                      len(input_ids), reason, time.perf_counter() - start,
+                      exclusion.report() if exclusion else {})

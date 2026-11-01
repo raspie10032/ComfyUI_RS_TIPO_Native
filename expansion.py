@@ -4,6 +4,7 @@ from dataclasses import asdict, is_dataclass, replace
 from .control import controlled_prompt
 from .generation import complete
 from .grounding import guard_additions
+from .exclusion import parse_excluded, validate_sources
 
 
 def append_completion(original, completion):
@@ -29,6 +30,8 @@ def finished_completion(completion, finish_reason):
 def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
                  character_weight=1.5, length="long", interaction="", interaction_weight=1.0,
                  protect_source=True, peer_actions=(), **sampling):
+    validate_sources(parse_excluded(sampling.get('excluded_tags', '')),
+                     [('common_prompt', common), ('character', character or '')])
     prompt, attention = controlled_prompt(tokenizer, common, character, length=length,
         common_weight=common_weight, character_weight=character_weight,
         interaction=interaction, interaction_weight=interaction_weight)

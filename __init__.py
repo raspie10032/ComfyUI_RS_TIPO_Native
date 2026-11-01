@@ -2,6 +2,7 @@ from .nodes import (RSTIPONativeCompletion, RSTIPONativeExpand,
                     RSTIPONativeControlledExpand, RSTIPONativePipeExpand, RSTIPOPrompt)
 
 WEB_DIRECTORY = "./web"
+__version__ = "0.1.1"
 
 NODE_CLASS_MAPPINGS = {
     "RSTIPOPrompt": RSTIPOPrompt,
