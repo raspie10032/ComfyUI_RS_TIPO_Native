@@ -7,3 +7,13 @@ Copyright 2024 Shih-Ying Yeh; distributed under Apache License 2.0.
 This project modifies the architecture to remove Transformers dependencies,
 provide an explicit request-owned KV cache, integrate ComfyUI model management,
 and expose native text generation. Upstream model weights are not bundled.
+
+Additional changes include input-span/owner attention control in prefill and
+decode, owner-aware MoE dispatch and repetition history, independent character
+expansion with a shared caption, source-preserving tag guards, and RS pipe/UI
+integration. The learned caption-to-tag format was consulted in KGen
+(KohakuBlueleaf/KGen, Apache-2.0); KGen is not bundled as an inference dependency.
+
+The model card for the pinned TIPO-v2.1 checkpoint identifies weight terms as
+Kohaku License 1.0. Architecture attribution does not license the model weights.
+See docs/references.md for exact sources, revisions and adaptation boundaries.

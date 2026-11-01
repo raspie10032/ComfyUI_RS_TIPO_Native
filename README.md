@@ -4,6 +4,13 @@ Independent experimental project for running **TIPO v2.1** using native PyTorch
 and ComfyUI model management, with no llama.cpp, GGUF or Transformers in the
 inference path, with experimental input-span attention control.
 
+## Documentation
+
+- **[한국어 설치·사용법 — 입력 연결, 역할 분담, 결과 확인](docs/usage.ko.md)**
+- [References — original sources, adopted features and license boundaries](docs/references.md)
+- [Loadable shared-interaction example](examples/shared-interaction.json)
+- [Tested legacy/current ComfyUI versions and limits](docs/compatibility.md)
+
 ## STRING interface
 
 Search for **RS TIPO Prompt (Experimental)**. Connect common and character
@@ -154,6 +161,7 @@ The architecture is adapted from the official
 [KohakUwULLM HF export](https://github.com/KohakuBlueleaf/KohakUwULLM/tree/d4a52f77c683e6a0622d76a4f42752d97ced97ba/src/kohakuwullm/export/hf),
 whose code matches the pinned model repository's architecture source byte for byte.
 See `KohakUwULLM-APACHE-LICENSE` and `NOTICE` for upstream attribution.
-Model weights have their own terms, separately from the architecture code.
+The pinned model card identifies model weights as Kohaku License 1.0, separately
+from the Apache-2.0 architecture code. See [references and adaptation scope](docs/references.md).
 No model weights are stored in this Git repository. This project has not been
 published; the license for new project code will be selected before publication.

@@ -79,7 +79,9 @@ Resident UI verification: run the existing `RS TIPO - Shared Interaction`
 workflow through the actual Run button; result panel shows the original shared
 caption, source protection ON, per-character additions and exclusions with
 reasons. Its two-character model time was 2.9092 s. Full browser save/reload and
-count-change round-trip remain unverified. No image/API generation was run.
+count-change round-trip were unverified at this initial stage; the subsequent
+[compatibility study](compatibility.md) covers them on three frontends.
+No image generation or NovelAI API request was run.
 
 ## Rejected inference variant
 

@@ -61,8 +61,8 @@ multi-agent role planner; independent caches do not prove coordinated semantics.
 Raw resident execution records are in ignored `validation/interface-live.json`.
 Class fixture report: `validation/interface-pipe-protocols.json`.
 
-Example: `examples/shared-interaction.json` uses core STRING/Preview nodes and
-is copied into the local workflow list as `RS TIPO - Shared Interaction`. The
+Example: `examples/shared-interaction.json` uses core Primitive STRING nodes and
+the TIPO results panel, and is copied into the local workflow list as `RS TIPO - Shared Interaction`. The
 JSON has been structurally checked and its exact STRING flow executed successfully
 on the resident server (one additional real-model request, 7 total). Browser
 reload round-trip was unverified in this initial experiment. It is now covered by
