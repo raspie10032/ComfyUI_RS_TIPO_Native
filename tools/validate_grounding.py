@@ -51,7 +51,7 @@ def main():
             graph = {
                 '1':node('RSTIPOPrompt', common_prompt=common, character_count=2,
                     character1=first, character2=second, character3='STALE PRIVATE INPUT',
-                    interaction_prompt=interaction, protect_source=protected,
+                    protect_source=protected,
                     expand_common=True, max_new_tokens=96, temperature=0., seed=8910),
                 '2':node('RSMultiCharacterFinalize', building_pipe=['1',0]),
                 '3':node('PreviewAny', source=['2',0]),

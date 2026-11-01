@@ -4,12 +4,15 @@ Independent experimental project for running **TIPO v2.1** using native PyTorch
 and ComfyUI model management, with no llama.cpp, GGUF or Transformers in the
 inference path, with experimental input-span attention control.
 
+GitHub: https://github.com/raspie10032/ComfyUI_RS_TIPO_Native
+
 ## Documentation
 
 - **[한국어 설치·사용법 — 입력 연결, 역할 분담, 결과 확인](docs/usage.ko.md)**
 - [References — original sources, adopted features and license boundaries](docs/references.md)
 - [Loadable shared-interaction example](examples/shared-interaction.json)
 - [Tested legacy/current ComfyUI versions and limits](docs/compatibility.md)
+- [Automatic role context and socket repair verification](docs/automatic-context.md)
 
 ## STRING interface
 
@@ -27,18 +30,20 @@ inactive STRING outputs are empty. Expand the advanced toggle for inference
 settings. A results panel shows original, added, excluded (with reasons) and
 expanded text per slot.
 
-**The intended scene is shared, not independent portraits.** Put the common
-location/action in `common_prompt` and each participant's role alongside its
-appearance in its own character STRING. Optionally connect `interaction_prompt`
-with a fuller description of how the participants interact. It is fed through
-TIPO's learned `long_to_tag` caption format as shared source text (attention
-multiplier 1), alongside the weighted common/own tags. It is also passed
-unchanged to the image model via common STRING / pipe scene. Other characters'
-private appearance prompts remain excluded. No automatic role planner is claimed.
+**The scene and participant roles come from the existing inputs.** Put the
+shared situation/interaction in `common_prompt` and each participant's appearance
+and action in its own character STRING. There is no separate interaction input.
+The node automatically builds caption context from the common scene and
+recognized action/position clauses across active characters, using TIPO's learned
+`long_to_tag` format. Each target also receives its own complete prompt with
+separate attention weights. Other participants' private appearance stays out of
+that target's inference input. The results panel shows the derived context.
 
-Scene expansion defaults OFF to keep the original scene authoritative; turn it
-on to experiment with adding scene tags. Shared interaction text is kept even
-when scene expansion is off. All generated additions must still be reviewed.
+This action projection is conservative English tag matching, not general
+relationship understanding. Unrecognized clauses stay in their own character
+input. The node does not invent missing roles or screen positions, and does not
+append the gathered role list to the final scene. Scene expansion defaults OFF;
+turn it on to experiment with adding scene tags. All additions need review.
 Source protection defaults ON: it removes recognized new appearance/style and
 composition changes, participant-specific scene additions and known action or
 contact-target conflicts. Explicit source weights stay in the output, while
@@ -60,13 +65,13 @@ Legacy and current frontend checks, and their limits, are recorded in
 - Request-local KV cache and sampling generator, including deterministic seed 0.
 - Completion, baseline expansion, controlled expansion and shared pipe expansion.
 - Token-owner masking during prefill and decode; common/character attention weights.
-- Independent cache per character; the other characters never enter its request.
+- Independent cache per character; other participants share recognized actions, not private appearance.
 - Prompt-only edits of shared draft/final pipes and modern NAI contexts.
 - Cancellation and progress during decoding; context overflow is an explicit error.
 
-**Still experimental:** isolation prevents reading the other characters, but it
+**Still experimental:** isolation keeps private character appearance separate, but it
 does not stop TIPO inventing contradictory attributes from its learned priors.
-Complete semantic conflict prevention, model quantization and public release are unfinished.
+Complete semantic conflict prevention and model quantization remain unfinished. This is an experimental release.
 Separate character prompts must not be flattened into the baseline node.
 
 The model currently requires full residency during a request (about 1.85 GiB of
@@ -163,5 +168,6 @@ whose code matches the pinned model repository's architecture source byte for by
 See `KohakUwULLM-APACHE-LICENSE` and `NOTICE` for upstream attribution.
 The pinned model card identifies model weights as Kohaku License 1.0, separately
 from the Apache-2.0 architecture code. See [references and adaptation scope](docs/references.md).
-No model weights are stored in this Git repository. This project has not been
-published; the license for new project code will be selected before publication.
+New project code is licensed under **GPL-3.0-only**; see [LICENSE](LICENSE) and
+[COPYING](COPYING). Adapted upstream files retain the Apache-2.0 attribution.
+No model weights are stored in this Git repository.

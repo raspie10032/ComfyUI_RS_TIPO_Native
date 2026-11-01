@@ -160,7 +160,7 @@ class RSTIPOPrompt:
     RETURN_NAMES = ("building_pipe", "common_prompt") + tuple(f"character{i}" for i in range(1, 11))
     FUNCTION = "expand"
     OUTPUT_NODE = True
-    DESCRIPTION = ("Expand character STRINGs against a shared scene and optional interaction description with native TIPO. Outputs the same results as STRINGs and an RS building pipe. "
+    DESCRIPTION = ("Expand character STRINGs using the common scene and action context derived automatically from all active character inputs. Outputs the same results as STRINGs and an RS building pipe. "
         "0–10 characters; out-of-count inputs are ignored. Optional incoming pipe keeps LoRA, mask, position and camera settings. "
         "Source protection conservatively rejects unrequested appearance, composition and recognized role conflicts. Experimental: this is not a general relationship planner.")
 
@@ -176,26 +176,20 @@ class RSTIPOPrompt:
                 "tooltip": "Show token limit, seed, temperature and source-attention weights. Does not reset their values."}),
         }, "optional": {
             "common_prompt": ("STRING", {"forceInput": True, "multiline": True,
-                "tooltip": "Original shared scene. Each character reads this original, not another expanded output."}),
+                "tooltip": "Shared scene and interaction. Character inputs supply each participant’s appearance and role; their action context is gathered automatically."}),
             **{f"character{i}": ("STRING", {"forceInput": True, "multiline": True,
                 "tooltip": f"Character {i}: positive prompt. Original text and weights are preserved."}) for i in range(1, 11)},
-            "interaction_prompt": ("STRING", {"forceInput": True, "multiline": True,
-                "tooltip": "Optional shared interaction description, e.g. one offers a cup while the other accepts it. Put each participant role in its own character STRING. All slots read this same scene via TIPO long_to_tag; it does not automatically infer who does what."}),
             "protect_source": ("BOOLEAN", {"default": True,
                 "tooltip": "Keep supplied roles and appearance authoritative. Reject unrequested identity, wardrobe, style, composition and recognized action conflicts; show excluded tags in results. Conservative lexical check, not complete semantic understanding."}),
             "building_pipe": (PIPE_TYPES, {"tooltip": "Optional: retain existing LoRA, masks, positions, references and deferred cameras. STRING inputs replace the prompt table."}),
         }, "hidden": {"prompt": "PROMPT", "unique_id": "UNIQUE_ID"}}
 
     def expand(self, character_count=2, common_prompt="", expand_common=False,
-               building_pipe=None, prompt=None, unique_id=None, advanced=False, interaction_prompt="",
+               building_pipe=None, prompt=None, unique_id=None, advanced=False,
                protect_source=True, **values):
         from .interface import (validate_inputs, expand_strings, pipe_adapter,
                                 make_building_pipe, pipe_is_requested)
-        if not isinstance(interaction_prompt, str):
-            raise ValueError("TIPO: interaction_prompt must be a STRING.")
-        if not isinstance(common_prompt, str):
-            raise ValueError("TIPO: common_prompt must be a STRING.")
-        characters = validate_inputs(common_prompt or interaction_prompt, character_count, values)
+        characters = validate_inputs(common_prompt, character_count, values)
         if not characters and pipe_is_requested(prompt, unique_id):
             raise ValueError("TIPO: a building pipe needs at least one character. Use common_prompt STRING for a scene-only expansion. / 빌딩 파이프는 최소 1명이 필요합니다. 전역만 쓸 때는 STRING 출력을 연결해 주세요.")
         adapter = pipe_adapter()
@@ -207,22 +201,32 @@ class RSTIPOPrompt:
                     for name, schema in control_inputs().items()}
         import comfy.model_management as mm
         from comfy.utils import ProgressBar
+        from .scene_context import scene_context
+        shared_context, roles = scene_context(common_prompt, characters)
+        slot_index = -1
         with LOCK:
             model, tokenizer = acquire_model()
             def run(scene, person):
+                nonlocal slot_index
+                if person is not None:
+                    slot_index += 1
+                context, _ = scene_context(scene, characters, slot_index if person is not None else None)
                 bar = ProgressBar(settings["max_new_tokens"])
-                output, report = expand_owned(model, tokenizer, scene, person, interaction=interaction_prompt,
-                    protect_source=protect_source, **settings,
+                output, report = expand_owned(model, tokenizer, scene, person, interaction=context,
+                    interaction_weight=settings["common_weight"] if person is not None else 1.0,
+                    protect_source=protect_source,
+                    peer_actions=tuple(action for i, actions in enumerate(roles) if i != slot_index for action in actions) if person is not None else (),
+                    **settings,
                     interrupt=mm.throw_exception_if_processing_interrupted, progress=bar.update_absolute)
+                report["context_source"] = "common_and_character_inputs"
                 return output, report
             scene, expanded, reports = expand_strings(common_prompt, characters, run, expand_common=expand_common)
-        if interaction_prompt.strip():
-            # The shared relationship is also sent to the image model, unchanged.
-            scene = scene + ("\n" if scene.strip() else "") + interaction_prompt
         pipe = make_building_pipe(adapter, draft, scene, expanded) if adapter else None
         info = {"model": MODEL_NAME, "revision": MODEL_REVISION,
                 "protect_source": protect_source,
-                "character_count": character_count, "interaction_prompt": interaction_prompt, "building_pipe_available": pipe is not None,
+                "character_count": character_count, "shared_context": shared_context,
+                "participant_roles": roles, "context_source": "common_and_character_inputs",
+                "building_pipe_available": pipe is not None,
                 "seconds": round(sum(row.get("seconds", 0.) for row in reports), 4), "slots": reports}
         return {"ui": {"tipo_report": [json.dumps(info, ensure_ascii=False)]},
                 "result": (pipe, scene, *expanded, *("" for _ in range(10-len(expanded))))}

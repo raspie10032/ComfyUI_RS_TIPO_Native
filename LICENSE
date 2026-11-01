@@ -1,0 +1,8 @@
+SPDX-License-Identifier: GPL-3.0-only
+
+Copyright (c) 2026 raspie10032
+
+New project code is licensed under the GNU General Public License v3.0 only.
+The complete license is in COPYING. Adapted KohakUwULLM architecture code
+retains its Apache-2.0 attribution and license; see NOTICE and
+KohakUwULLM-APACHE-LICENSE. Model weights have separate terms and are not bundled.

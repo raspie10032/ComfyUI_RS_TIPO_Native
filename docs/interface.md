@@ -1,11 +1,12 @@
 # STRING interface and shared interaction — 2026-11-01
 
-Implemented locally on `dev/native-tipo`; no GitHub publication.
+Initial implementation was developed on `dev/native-tipo`; the public version is at
+https://github.com/raspie10032/ComfyUI_RS_TIPO_Native.
 
 ## Inputs / outputs
 
-`RSTIPOPrompt` has STRING inputs `common_prompt`, `character1`–`character10`,
-and optional `interaction_prompt`. The count selects active character slots.
+`RSTIPOPrompt` has STRING inputs `common_prompt`, `character1`–`character10`.
+There is no separate interaction input. The count selects active character slots.
 Output index 0 is building pipe, 1 common STRING, 2–11 character STRINGs. A
 connected inactive socket keeps its index and connection, but returns an empty
 STRING and contributes no character to the pipe. Missing active inputs raise a
@@ -22,22 +23,25 @@ text slots must be created downstream: all selected STRING slots are characters.
 Example:
 
 - common: `2girls, university cafe, afternoon, wooden table`
-- interaction: `Two women sit across a cafe table. The woman on the left offers
-  a cup with both hands. The woman on the right reaches out to accept that same
-  cup. They look at each other.`
 - character 1: `(blonde hair:1.2), blue eyes, pink cardigan, on left, offering cup,
   extending arms`
 - character 2: `black hair, brown eyes, yellow sweater, on right, receiving cup,
   reaching out`
 
-Each expansion reads the same original scene and shared caption plus that
-character's own source. The caption uses the existing learned
-`target: <|long|> <|long_to_tag|> / long: / tag:` format, with source owner 0 and
-attention multiplier 1. This follows the installed KGen `apply_tipo_prompt`
-long-to-tag ordering rather than inventing chat instructions or role delimiters.
-It also remains in the downstream common STRING and pipe. Original participant
-roles and prompt weights are preserved verbatim. The model is not trained as a
-multi-agent role planner; independent caches do not prove coordinated semantics.
+Each expansion reads the original common scene, its own complete character
+source and a caption derived automatically from recognized action/position
+clauses across active characters (`scene_context.py`). Other characters' private
+appearance is excluded; the target's own role is repeated at the end of the
+caption. Input-slot numbers do not imply screen positions. The caption uses the
+learned `long_to_tag` format and is shown in the results panel. Unknown clauses
+remain private instead of being guessed. This is an English lexical projection,
+not a semantic planner, and output-role correctness is not guaranteed.
+
+The inferred caption is used only during TIPO inference; it is not appended to
+the image model's common STRING or pipe scene. The former low-level
+`interaction` implementation remains an internal caption transport, not a user
+input. Historical validation records below describe the earlier explicit-input
+prototype; current checks are recorded in [automatic context](automatic-context.md).
 
 ## Verification
 

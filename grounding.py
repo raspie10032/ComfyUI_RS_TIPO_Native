@@ -32,7 +32,8 @@ _PROTECTED = re.compile(
     r'adolescent|mature|young|old|asian|hetero|yuri|yaoi|couple|'
     r'shirt|dress|skirt|sweater|cardigan|jacket|coat|sleeves?|sleeveless|'
     r'gloves?|boots?|shoes?|socks?|stockings|pants|shorts|uniform|ribbon|'
-    r'earrings?|necklace|jewelry|bracelet|bangle|turtleneck|lingerie|'
+    r'earrings?|necklace|jewelry|bracelet|bangle|turtleneck|lingerie|choker|'
+    r'bowtie|bow|hairclip|off shoulder|character name|blush stickers|'
     r'underwear|bare|strap|straps|clothes|clothing|outfit|'
     r'style|artstyle|realistic|photorealistic|photograph|3d|render|cgi|'
     r'artist|signature|watermark|dated|copyright|text|lettering|'
@@ -69,7 +70,7 @@ def _conflicting_tag(value, sources):
     return False
 
 
-def guard_additions(original, tags, *, common='', interaction='', character=True):
+def guard_additions(original, tags, *, common='', interaction='', character=True, peer_actions=()):
     """Return accepted/rejected additions, with observable rejection reasons.
 
     Unspecified attributes are protected too. This intentionally sacrifices
@@ -84,6 +85,7 @@ def guard_additions(original, tags, *, common='', interaction='', character=True
         'standing', 'sitting', 'kneeling', 'lying', 'indoors', 'outdoors', 'day', 'night',
         'looking at viewer', 'looking at another', 'looking away'}
     hand_targets = set(_HAND_TARGET.findall(own))
+    peer_only = {key(tag) for tag in peer_actions} - explicit - {key(t) for t in common.split(",")}
     accepted, rejected = [], []
     known = set(explicit)
     for tag in tags:
@@ -99,6 +101,10 @@ def guard_additions(original, tags, *, common='', interaction='', character=True
             reason = 'unrequested identity, wardrobe, style or composition'
         elif not character and _SCENE_PEOPLE.search(value):
             reason = 'participant-specific addition in shared scene'
+        elif value in peer_only:
+            reason = 'action belongs to another participant, not this source'
+        elif not character and value in {':d', ':o', '^_^', '^^', ':)'}:
+            reason = 'participant-specific expression in shared scene'
         elif _VIEWS.search(value) and value not in context:
             reason = 'unrequested viewpoint or interaction orientation'
         elif 'from behind' in value and 'from behind' not in context:

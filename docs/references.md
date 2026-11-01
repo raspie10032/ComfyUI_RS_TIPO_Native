@@ -44,9 +44,10 @@ The experimental controller adds these behaviors:
   and decoding; causal/owner masks and readable-history repetition penalties.
 - Owner-separated MoE dispatch where strict isolation needs it, to prevent
   blocked inputs changing readable-token FP16 rounding through expert batching.
-- A shared interaction caption in the upstream learned format, while preserving
-  each participant's own appearance and role source. Shared prose still exposes
-  whatever the user puts in it to all participants.
+- A shared caption derived from the common scene and recognized participant
+  action/position clauses, in the upstream learned format. No separate user
+  interaction input. Each participant retains its complete private source;
+  appearance written in the common scene remains visible to every participant.
 - Preservation of original prompt strings/weights, conservative filtering of
   recognized conflicting additions, and visible reasons for rejected tags.
 - Separate STRING inputs/outputs, optional RS building-pipe creation/editing,
@@ -74,9 +75,10 @@ miss contradictions. See [source protection](source-protection.md),
 - Weights, downloaded reference Python and raw local validation outputs are not
   committed in this project. The explicit download tool fetches the official
   pinned model data; it does not execute downloaded Python code.
-- A license for this project's new code has not been selected. The local project
-  has no public release or GitHub remote configured at this documentation pass.
-  This page records provenance; it does not assign a new project-wide license.
+- New project code is distributed under [GPL-3.0-only](../LICENSE); the complete
+  text is in [COPYING](../COPYING). Adapted KohakUwULLM code retains its
+  Apache-2.0 attribution. The model weight terms remain separate.
+- Public source: https://github.com/raspie10032/ComfyUI_RS_TIPO_Native
 
 ## Reading order
 

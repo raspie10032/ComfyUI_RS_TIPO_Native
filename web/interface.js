@@ -7,6 +7,36 @@ const scheduled = new WeakSet();
 const restoring = new WeakSet();
 const advancedNames = new Set(["max_new_tokens", "seed", "control_after_generate", "temperature", "common_weight", "character_weight"]);
 const value = (node, name, fallback) => node.widgets?.find(w => w.name === name)?.value ?? fallback;
+const promptSocket = name => /^(?:common_prompt|character\d+)$/.test(name);
+
+function layoutPromptSockets(node) {
+    // Keep the backing widgets required by Primitive STRING, but give every
+    // socket a real row. A zero-height hidden widget puts every connection at
+    // y=0 in current LiteGraph, including after the next arrange() pass.
+    const rows = [];
+    for (const input of node.inputs ?? []) {
+        if (!promptSocket(input.name)) continue;
+        const widget = node.widgets?.find(w => w.name === input.name);
+        if (!widget) continue;
+        widget.type = "rs-tipo-string-socket";
+        widget.hidden = false;
+        widget.computeSize = () => [0, 20];
+        widget.draw = () => {};
+        rows.push(widget);
+    }
+    rows.sort((a, b) => {
+        const rank = name => name === "common_prompt" ? 0 : Number(name.slice(9));
+        return rank(a.name) - rank(b.name);
+    });
+    for (const widget of node.widgets ?? []) {
+        if (!promptSocket(widget.name) || rows.includes(widget)) continue;
+        widget.hidden = true;
+        widget.computeSize = () => [0, -4];
+    }
+    // Splice in place: frontend widget stores can retain the array identity.
+    if (node.widgets) node.widgets.splice(0, node.widgets.length,
+        ...rows, ...node.widgets.filter(w => !rows.includes(w)));
+}
 
 function scheduleRefresh(node) {
     if (scheduled.has(node)) return;
@@ -36,12 +66,25 @@ function scheduleRefresh(node) {
 function refresh(node, sockets = true) {
     const count = Number(value(node, "character_count", 2));
     if (sockets) {
+        // Retire the prototype's separate caption input only after graph restore.
+        // Its source node and saved text remain available for the user to reuse.
+        const legacy = node.inputs?.findIndex(s => s.name === "interaction_prompt") ?? -1;
+        if (legacy >= 0) node.removeInput(legacy);
+        const legacyWidget = node.widgets?.findIndex(w => w.name === "interaction_prompt") ?? -1;
+        if (legacyWidget >= 0) {
+            const prior = node.widgets[legacyWidget].value;
+            if (typeof prior === "string" && prior) {
+                node.properties ??= {};
+                node.properties.rs_tipo_legacy_interaction = prior;
+            }
+            node.widgets.splice(legacyWidget, 1);
+        }
         updateSockets(node, count, name => node.addInput(name, "STRING", { widget: { name } }));
         // Primitive STRING nodes need the widget configuration, including after
         // a socket is recreated or an older workflow has lost its widget field.
         const setConfig = globalThis.comfyAPI?.widgetInputs?.setWidgetConfig;
         for (const input of node.inputs ?? []) {
-            if (!/^(?:common_prompt|interaction_prompt|character\d+)$/.test(input.name)) continue;
+            if (!promptSocket(input.name)) continue;
             if (!node.widgets?.some(w => w.name === input.name)) {
                 // Frontend 1.28 omits the forceInput backing widget, while
                 // PrimitiveNode still requires one to transfer its STRING.
@@ -56,10 +99,12 @@ function refresh(node, sockets = true) {
             setConfig(input, ["STRING", { multiline: true, forceInput: true }]);
             configuredInputs.add(input);
         }
+        layoutPromptSockets(node);
     }
     for (const widget of node.widgets ?? []) {
         if (!advancedNames.has(widget.name)) continue;
-        const hide = !value(node, "advanced", false);
+        const linked = node.inputs?.find(input => input.name === widget.name)?.link != null;
+        const hide = !value(node, "advanced", false) && !linked;
         if (hide && !widget.tipoSaved && !widget.type?.startsWith("converted-widget")) {
             widget.tipoSaved = { type: widget.type, computeSize: widget.computeSize, hidden: widget.hidden };
             widget.type = "rs-tipo-hidden"; widget.hidden = true; widget.computeSize = () => [0, -4];
@@ -75,6 +120,7 @@ function refresh(node, sockets = true) {
 function addReport(node) {
     const root = document.createElement("div");
     root.style.cssText = "display:flex;flex-direction:column;gap:6px;padding:8px;box-sizing:border-box;height:100%;background:#18212b;color:#e0e8f3;font:12px sans-serif;";
+    root.style.width = "100%";
     const help = document.createElement("div");
     help.textContent = "Shared scene + participant roles · Source protection limits added attributes and known role conflicts. Review results before generation.";
     const status = document.createElement("div");
@@ -92,7 +138,11 @@ function addReport(node) {
     };
     select.onchange = render;
     root.append(help, status, select, text);
-    node.addDOMWidget("tipo_results", "rs-tipo-results", root, {
+    // Legacy ComfyUI resets display on the outer DOM widget each frame.
+    // Preserve the report's flex layout inside an independent inner element.
+    const container = document.createElement("div");
+    container.append(root);
+    node.addDOMWidget("tipo_results", "rs-tipo-results", container, {
         serialize: false, hideOnZoom: false, getMinHeight: () => 245, getMaxHeight: () => 245,
     });
     panels.set(node, report => {
@@ -102,7 +152,7 @@ function addReport(node) {
             option.value = String(i); option.textContent = row.slot === "common" ? "Common prompt" : `Character ${row.slot}`;
             return option;
         }));
-        help.textContent = report.interaction_prompt ? "Shared interaction: " + report.interaction_prompt : "Each character reads the same common scene. Write each participant’s action in its own input; add interaction_prompt for a shared description.";
+        help.textContent = report.shared_context ? "Context from common + character inputs: " + report.shared_context : "Write the scene in common_prompt and each participant’s appearance/action in its character input. Shared action context is gathered automatically.";
         status.textContent = `${report.character_count} characters · ${report.seconds}s · Source protection ${report.protect_source === false ? 'OFF' : 'ON'} · ${report.building_pipe_available ? 'RS pipe + STRINGs' : 'STRINGs (RS pack not installed)'}`;
         render();
     });
@@ -142,6 +192,32 @@ app.registerExtension({
             }
             refresh(this, false);
             scheduleRefresh(this);
+            return result;
+        };
+        const connectionsChanged = nodeType.prototype.onConnectionsChange;
+        nodeType.prototype.onConnectionsChange = function () {
+            const result = connectionsChanged?.apply(this, arguments);
+            scheduleRefresh(this);
+            return result;
+        };
+        const drawForeground = nodeType.prototype.onDrawForeground;
+        nodeType.prototype.onDrawForeground = function (ctx) {
+            const result = drawForeground?.apply(this, arguments);
+            if (this.flags?.collapsed) return result;
+            // Modern frontends suppress labels for widget-linked sockets. Our
+            // rows are connection-only, so draw their names at the actual port.
+            ctx.save();
+            ctx.font = "12px Arial";
+            ctx.fillStyle = "#c4cbd4";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "middle";
+            for (const [index, input] of (this.inputs ?? []).entries()) {
+                if (!promptSocket(input.name)) continue;
+                if (!("isWidgetInputSlot" in input)) continue; // Older core draws these labels itself.
+                const pos = this.getConnectionPos(true, index);
+                ctx.fillText(input.label || input.name, pos[0] - this.pos[0] + 12, pos[1] - this.pos[1]);
+            }
+            ctx.restore();
             return result;
         };
         const serialize = nodeType.prototype.onSerialize;

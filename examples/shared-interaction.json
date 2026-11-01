@@ -111,42 +111,6 @@
       ]
     },
     {
-      "id": 4,
-      "type": "PrimitiveNode",
-      "title": "Shared interaction",
-      "pos": [
-        40,
-        790
-      ],
-      "size": [
-        380,
-        210
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "STRING",
-          "type": "STRING",
-          "links": [
-            4
-          ],
-          "slot_index": 0,
-          "widget": {
-            "name": "interaction_prompt"
-          }
-        }
-      ],
-      "properties": {
-        "Run widget replace on values": false
-      },
-      "widgets_values": [
-        "Two women sit across a cafe table. The woman on the left offers a cup with both hands. The woman on the right reaches out to accept that same cup. They look at each other."
-      ]
-    },
-    {
       "id": 5,
       "type": "RSTIPOPrompt",
       "pos": [
@@ -183,14 +147,6 @@
           "link": 3,
           "widget": {
             "name": "character2"
-          }
-        },
-        {
-          "name": "interaction_prompt",
-          "type": "STRING",
-          "link": 4,
-          "widget": {
-            "name": "interaction_prompt"
           }
         },
         {
@@ -241,8 +197,7 @@
           "protect_source": true,
           "common_prompt": "2girls, university cafe, afternoon, wooden table",
           "character1": "(blonde hair:1.2), blue eyes, pink cardigan, on left, offering cup, extending arms",
-          "character2": "black hair, brown eyes, yellow sweater, on right, receiving cup, reaching out",
-          "interaction_prompt": "Two women sit across a cafe table. The woman on the left offers a cup with both hands. The woman on the right reaches out to accept that same cup. They look at each other."
+          "character2": "black hair, brown eyes, yellow sweater, on right, receiving cup, reaching out"
         }
       },
       "widgets_values": [
@@ -282,14 +237,6 @@
       0,
       5,
       2,
-      "STRING"
-    ],
-    [
-      4,
-      4,
-      0,
-      5,
-      3,
       "STRING"
     ]
   ],

@@ -38,9 +38,8 @@ def main():
     for label, common, interaction, first, second in scenarios:
         for coordinated in (False, True):
             graph = {
-                '1': node('RSTIPOPrompt', character_count=2, common_prompt=common,
+                '1': node('RSTIPOPrompt', character_count=2, common_prompt=common + ("\n" + interaction if coordinated else ""),
                     character1=first, character2=second, character3='STALE INPUT MUST NOT LEAK',
-                    interaction_prompt=interaction if coordinated else '',
                     expand_common=False, max_new_tokens=96, seed=8910, temperature=0.),
                 '2': node('RSMultiCharacterFinalize', building_pipe=['1', 0]),
                 '3': node('PreviewAny', source=['2', 0]),

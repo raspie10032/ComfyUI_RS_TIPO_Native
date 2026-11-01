@@ -28,7 +28,7 @@ def finished_completion(completion, finish_reason):
 
 def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
                  character_weight=1.5, length="long", interaction="", interaction_weight=1.0,
-                 protect_source=True, **sampling):
+                 protect_source=True, peer_actions=(), **sampling):
     prompt, attention = controlled_prompt(tokenizer, common, character, length=length,
         common_weight=common_weight, character_weight=character_weight,
         interaction=interaction, interaction_weight=interaction_weight)
@@ -42,7 +42,7 @@ def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
     rejected = []
     if protect_source:
         kept, rejected = guard_additions(original, proposed.split(","), common=common,
-            interaction=interaction, character=character is not None)
+            interaction=interaction, character=character is not None, peer_actions=peer_actions)
         completion = ", ".join(kept)
     expanded, added = append_completion(original, completion)
     return expanded, {**asdict(result), "input": prompt, "original": original,
