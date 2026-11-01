@@ -17,7 +17,8 @@ requires `ComfyUI_RS_MultiCharacter_Sampler` and at least one character.
 The character count is authoritative: reducing 5 to 3 excludes slots 4–5 from
 execution. Connected inactive sockets remain marked inactive to preserve links;
 inactive STRING outputs are empty. Expand the advanced toggle for inference
-settings. A results panel shows original, added and expanded text per slot.
+settings. A results panel shows original, added, excluded (with reasons) and
+expanded text per slot.
 
 **The intended scene is shared, not independent portraits.** Put the common
 location/action in `common_prompt` and each participant's role alongside its
@@ -31,6 +32,12 @@ private appearance prompts remain excluded. No automatic role planner is claimed
 Scene expansion defaults OFF to keep the original scene authoritative; turn it
 on to experiment with adding scene tags. Shared interaction text is kept even
 when scene expansion is off. All generated additions must still be reviewed.
+Source protection defaults ON: it removes recognized new appearance/style and
+composition changes, participant-specific scene additions and known action or
+contact-target conflicts. Explicit source weights stay in the output, while
+TIPO reads their unweighted tag contents. This is conservative lexical filtering,
+not reliable semantic planning; it may reject useful details or miss conflicts.
+[Actual paired tests and limitations](docs/source-protection.md).
 [Interface validation and observed limitations](docs/interface.md).
 Load [the shared interaction example](examples/shared-interaction.json) in ComfyUI.
 It uses core Text (Multiline) / Preview as Text nodes and performs text inference only.
@@ -49,7 +56,7 @@ It uses core Text (Multiline) / Preview as Text nodes and performs text inferenc
 
 **Still experimental:** isolation prevents reading the other characters, but it
 does not stop TIPO inventing contradictory attributes from its learned priors.
-Semantic conflict prevention, model quantization and public release are unfinished.
+Complete semantic conflict prevention, model quantization and public release are unfinished.
 Separate character prompts must not be flattened into the baseline node.
 
 The model currently requires full residency during a request (about 1.85 GiB of

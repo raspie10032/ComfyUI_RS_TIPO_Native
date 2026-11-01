@@ -27,7 +27,7 @@ function addReport(node) {
     const root = document.createElement("div");
     root.style.cssText = "display:flex;flex-direction:column;gap:6px;padding:8px;box-sizing:border-box;height:100%;background:#18212b;color:#e0e8f3;font:12px sans-serif;";
     const help = document.createElement("div");
-    help.textContent = "Shared scene + participant roles · Original prompts and weights kept. Review added tags before generation.";
+    help.textContent = "Shared scene + participant roles · Source protection limits added attributes and known role conflicts. Review results before generation.";
     const status = document.createElement("div");
     status.textContent = "Connect common / character STRINGs, then run. Results appear here.";
     const select = document.createElement("select");
@@ -38,7 +38,8 @@ function addReport(node) {
     let rows = [];
     const render = () => {
         const row = rows[Number(select.value)];
-        text.value = row ? `Original\n${row.original}\n\nAdded\n${row.added_tags || '(none)'}\n\nExpanded\n${row.output}` : "";
+        const rejected = row?.rejected_tags?.map(item => `${item.tag} — ${item.reason}`).join("\n");
+        text.value = row ? `Original\n${row.original}\n\nAdded\n${row.added_tags || '(none)'}\n\nExcluded\n${rejected || '(none)'}\n\nExpanded\n${row.output}` : "";
     };
     select.onchange = render;
     root.append(help, status, select, text);
@@ -53,7 +54,7 @@ function addReport(node) {
             return option;
         }));
         help.textContent = report.interaction_prompt ? "Shared interaction: " + report.interaction_prompt : "Each character reads the same common scene. Write each participant’s action in its own input; add interaction_prompt for a shared description.";
-        status.textContent = `${report.character_count} characters · ${report.seconds}s · ${report.building_pipe_available ? 'RS pipe + STRINGs' : 'STRINGs (RS pack not installed)'}`;
+        status.textContent = `${report.character_count} characters · ${report.seconds}s · Source protection ${report.protect_source === false ? 'OFF' : 'ON'} · ${report.building_pipe_available ? 'RS pipe + STRINGs' : 'STRINGs (RS pack not installed)'}`;
         render();
     });
 }

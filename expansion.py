@@ -3,6 +3,7 @@ from dataclasses import asdict, is_dataclass, replace
 
 from .control import controlled_prompt
 from .generation import complete
+from .grounding import guard_additions
 
 
 def append_completion(original, completion):
@@ -20,17 +21,32 @@ def append_completion(original, completion):
 
 
 def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
-                 character_weight=1.5, length="long", interaction="", interaction_weight=1.0, **sampling):
+                 character_weight=1.5, length="long", interaction="", interaction_weight=1.0,
+                 protect_source=True, **sampling):
     prompt, attention = controlled_prompt(tokenizer, common, character, length=length,
         common_weight=common_weight, character_weight=character_weight,
         interaction=interaction, interaction_weight=interaction_weight)
     result = complete(model, tokenizer, prompt, attention_control=attention, **sampling)
     original = common if character is None else character
-    expanded, added = append_completion(original, result.text)
+    completion = result.text
+    # A token cap can stop halfway through a tag. Only a model stop/EOS/newline
+    # establishes that the final tag is complete; never send a cut-off fragment
+    # into the image prompt.
+    if result.finish_reason == "length" and "\n" not in completion and "<|eos|>" not in completion:
+        completion = completion.rsplit(",", 1)[0] if "," in completion else ""
+    _, proposed = append_completion(original, completion)
+    rejected = []
+    if protect_source:
+        kept, rejected = guard_additions(original, proposed.split(","), common=common,
+            interaction=interaction, character=character is not None)
+        completion = ", ".join(kept)
+    expanded, added = append_completion(original, completion)
     return expanded, {**asdict(result), "input": prompt, "original": original,
                       "added_tags": added, "output": expanded,
                       "common_weight": common_weight, "character_weight": character_weight,
                       "interaction": interaction, "interaction_weight": interaction_weight,
+                      "protect_source": protect_source, "proposed_tags": proposed,
+                      "rejected_tags": rejected,
                       "owner_tokens": {str(o): attention.owners.count(o) for o in set(attention.owners)}}
 
 

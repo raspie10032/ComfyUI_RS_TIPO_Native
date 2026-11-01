@@ -162,7 +162,7 @@ class RSTIPOPrompt:
     FUNCTION = "expand"
     DESCRIPTION = ("Expand character STRINGs against a shared scene and optional interaction description with native TIPO. Outputs the same results as STRINGs and an RS building pipe. "
         "0–10 characters; out-of-count inputs are ignored. Optional incoming pipe keeps LoRA, mask, position and camera settings. "
-        "Scene expansion may invent character attributes. Experimental attention control does not guarantee semantic consistency.")
+        "Source protection conservatively rejects unrequested appearance, composition and recognized role conflicts. Experimental: this is not a general relationship planner.")
 
     @classmethod
     def INPUT_TYPES(cls):
@@ -170,7 +170,7 @@ class RSTIPOPrompt:
             "character_count": ("INT", {"default": 2, "min": 0, "max": 10,
                 "tooltip": "0 = common prompt only. Only slots 1–N are expanded; saved connections above N are ignored."}),
             "expand_common": ("BOOLEAN", {"default": False,
-                "tooltip": "Expand the common prompt too. TIPO may invent appearance tags in the scene; review the result."}),
+                "tooltip": "Expand the shared scene too. Source protection removes recognized participant-specific additions; review remaining tags."}),
             **control_inputs(),
             "advanced": ("BOOLEAN", {"default": False,
                 "tooltip": "Show token limit, seed, temperature and source-attention weights. Does not reset their values."}),
@@ -181,11 +181,14 @@ class RSTIPOPrompt:
                 "tooltip": f"Character {i}: positive prompt. Original text and weights are preserved."}) for i in range(1, 11)},
             "interaction_prompt": ("STRING", {"forceInput": True,
                 "tooltip": "Optional shared interaction description, e.g. one offers a cup while the other accepts it. Put each participant role in its own character STRING. All slots read this same scene via TIPO long_to_tag; it does not automatically infer who does what."}),
+            "protect_source": ("BOOLEAN", {"default": True,
+                "tooltip": "Keep supplied roles and appearance authoritative. Reject unrequested identity, wardrobe, style, composition and recognized action conflicts; show excluded tags in results. Conservative lexical check, not complete semantic understanding."}),
             "building_pipe": (PIPE_TYPES, {"tooltip": "Optional: retain existing LoRA, masks, positions, references and deferred cameras. STRING inputs replace the prompt table."}),
         }, "hidden": {"prompt": "PROMPT", "unique_id": "UNIQUE_ID"}}
 
     def expand(self, character_count=2, common_prompt="", expand_common=False,
-               building_pipe=None, prompt=None, unique_id=None, advanced=False, interaction_prompt="", **values):
+               building_pipe=None, prompt=None, unique_id=None, advanced=False, interaction_prompt="",
+               protect_source=True, **values):
         from .interface import (validate_inputs, expand_strings, pipe_adapter,
                                 make_building_pipe, pipe_is_requested)
         if not isinstance(interaction_prompt, str):
@@ -208,7 +211,8 @@ class RSTIPOPrompt:
             model, tokenizer = acquire_model()
             def run(scene, person):
                 bar = ProgressBar(settings["max_new_tokens"])
-                output, report = expand_owned(model, tokenizer, scene, person, interaction=interaction_prompt, **settings,
+                output, report = expand_owned(model, tokenizer, scene, person, interaction=interaction_prompt,
+                    protect_source=protect_source, **settings,
                     interrupt=mm.throw_exception_if_processing_interrupted, progress=bar.update_absolute)
                 return output, report
             scene, expanded, reports = expand_strings(common_prompt, characters, run, expand_common=expand_common)
@@ -217,6 +221,7 @@ class RSTIPOPrompt:
             scene = scene + ("\n" if scene.strip() else "") + interaction_prompt
         pipe = make_building_pipe(adapter, draft, scene, expanded) if adapter else None
         info = {"model": MODEL_NAME, "revision": MODEL_REVISION,
+                "protect_source": protect_source,
                 "character_count": character_count, "interaction_prompt": interaction_prompt, "building_pipe_available": pipe is not None,
                 "seconds": round(sum(row.get("seconds", 0.) for row in reports), 4), "slots": reports}
         return {"ui": {"tipo_report": [json.dumps(info, ensure_ascii=False)]},

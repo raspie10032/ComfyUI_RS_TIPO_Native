@@ -68,7 +68,7 @@ on the resident server (one additional real-model request, 7 total). Browser
 reload round-trip remains unverified. Raw record:
 `validation/shared-interaction-example-live.json`.
 
-## Semantic findings: unfinished
+## Initial semantic findings
 
 The shared caption changes generated tags but does not solve role consistency.
 In offer/receive, shared caption added `looking at another` and `sitting` to both
@@ -78,8 +78,9 @@ unrequested hair lengths, clothing and art styles. Hug outputs also contained
 unrequested attributes. These are model-generated contradictions, not evidence
 that another character's private source was read.
 
-Thus neither the interface nor the 6 successful requests proves accurate joint
-interaction expansion. Next work must evaluate role-preserving additions and
-shared-scene consistency rather than just independent slot isolation. Do not
-publish as a finished interaction feature or treat intact source strings as
-proof that appended tags are correct.
+Thus neither the interface nor successful requests prove accurate joint
+interaction expansion. The subsequent [source protection experiment](source-protection.md)
+adds conservative filtering, weight-syntax normalization for model inputs and
+observable rejection reasons. The unchanged model is still not a reliable role
+planner. Do not treat intact source strings or filtering as proof that all
+appended tags are semantically correct.

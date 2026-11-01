@@ -4,6 +4,8 @@ import math
 
 import torch
 
+from .grounding import model_text
+
 
 @dataclass(frozen=True)
 class OwnedAttention:
@@ -71,8 +73,8 @@ def controlled_prompt(tokenizer, common, character=None, *, length="long",
             raise ValueError("TIPO attention weights must be finite and nonnegative.")
     interaction = interaction.strip()
     prefix = f"target: <|{length}|>" + (" <|long_to_tag|>" if interaction else "") + "\n"
-    common = common.strip().rstrip(",")
-    character = None if character is None else character.strip().rstrip(",")
+    common = model_text(common).strip().rstrip(",")
+    character = None if character is None else model_text(character).strip().rstrip(",")
     if not common and not character:
         raise ValueError("Enter a common or character prompt before running TIPO.")
     text = prefix
