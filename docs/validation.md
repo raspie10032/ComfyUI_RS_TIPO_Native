@@ -1,8 +1,9 @@
 # Native baseline validation — 2026-11-01
 
-This validates the independent TIPO execution baseline. Character ownership and
-input-span attention control are still research work; these results do not prove
-that character attributes remain separate or that prompt quality improves.
+This records the initial independent TIPO execution baseline. The subsequent
+ownership/attention implementation, actual checkpoint study and updated local
+runtime evidence are in [owned-attention.md](owned-attention.md). Neither study
+establishes an image-quality improvement.
 
 ## Environment and provenance
 
@@ -73,7 +74,7 @@ This was an API execution test, not a frontend interaction or image-quality test
 
 ## Remaining scope
 
-Character/common ownership masks, weighted attention spans, multi-character pipe
-integration, Windows and non-CUDA devices, partial offloading, quantization, and
-public packaging have not been validated. No image-generation improvement or
-llama.cpp speed comparison is claimed.
+The initial baseline did not exercise ownership masks or character-pipe editing;
+the follow-up report covers those paths. Windows and non-CUDA devices, partial
+offloading, quantization, public packaging and image-generation improvement
+remain unvalidated. No llama.cpp speed comparison is claimed.

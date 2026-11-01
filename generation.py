@@ -47,7 +47,8 @@ def choose_token(logits, history, rng, temperature=0.5, top_k=80, top_p=0.95,
 @torch.inference_mode()
 def complete(model, tokenizer, prompt, *, max_new_tokens=128, seed=0,
              temperature=0.5, top_k=80, top_p=0.95, min_p=0.05,
-             repetition_penalty=1.17, interrupt=lambda: None, progress=lambda n, total: None):
+             repetition_penalty=1.17, interrupt=lambda: None, progress=lambda n, total: None,
+             attention_control=None):
     if not prompt.strip():
         raise ValueError("TIPO input is empty. Enter tags or a native completion prompt.")
     if not 1 <= max_new_tokens <= 4096:
@@ -56,6 +57,8 @@ def complete(model, tokenizer, prompt, *, max_new_tokens=128, seed=0,
             and top_k >= 0 and repetition_penalty > 0):
         raise ValueError("Invalid TIPO sampling parameters.")
     input_ids = tokenizer.encode(prompt, add_special_tokens=True).ids
+    if attention_control is not None and len(attention_control.owners) != len(input_ids):
+        raise ValueError("TIPO attention spans do not match the encoded input.")
     total = len(input_ids) + max_new_tokens
     if total > model.config.max_position_embeddings:
         raise ValueError(f"TIPO context overflow: {len(input_ids)} input + {max_new_tokens} output "
@@ -64,13 +67,22 @@ def complete(model, tokenizer, prompt, *, max_new_tokens=128, seed=0,
         raise ValueError("TIPO tokenizer is missing its end-of-sequence token.")
     param = next(model.parameters())
     cache = KVCache(model.config, total, param.device, param.dtype)
-    sequence = list(input_ids)
+    sequence = (list(input_ids) if attention_control is None
+                else attention_control.readable_history(input_ids))
     generated = []
     rng = torch.Generator(device="cpu").manual_seed(int(seed))
     eos = tokenizer.token_to_id("<|eos|>")
     start = time.perf_counter()
+    def forward(ids):
+        mask = None if attention_control is None else attention_control.mask(
+            cache.position, len(ids), param.device, param.dtype)
+        groups = None if attention_control is None else attention_control.mlp_groups(
+            cache.position, len(ids), param.device)
+        return model(torch.tensor([ids], device=param.device), cache=cache,
+                     attention_mask=mask, token_owners=groups)[0, -1]
+
     interrupt()
-    scores = model(torch.tensor([input_ids], device=param.device), cache=cache)[0, -1]
+    scores = forward(input_ids)
     reason = "length"
     for step in range(max_new_tokens):
         interrupt()
@@ -83,6 +95,6 @@ def complete(model, tokenizer, prompt, *, max_new_tokens=128, seed=0,
             reason = "eos"
             break
         if step + 1 < max_new_tokens:
-            scores = model(torch.tensor([[token]], device=param.device), cache=cache)[0, -1]
+            scores = forward([token])
     return Completion(tokenizer.decode(generated, skip_special_tokens=False), generated,
                       len(input_ids), reason, time.perf_counter() - start)

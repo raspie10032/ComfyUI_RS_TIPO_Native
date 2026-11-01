@@ -1,6 +1,7 @@
 import json
 
 from .generation import complete
+from .expansion import expand_owned, expand_pipe
 from .runtime import LOCK, MODEL_NAME, MODEL_REVISION, acquire_model
 
 
@@ -78,3 +79,77 @@ class RSTIPONativeExpand:
         meta["raw_completion"] = text
         combined = tags + (", " + generated if generated else "")
         return combined, generated, json.dumps(meta, ensure_ascii=False)
+
+
+def control_inputs():
+    base = RSTIPONativeExpand.INPUT_TYPES()["required"]
+    return {**{name: base[name] for name in ("length", "max_new_tokens", "seed", "temperature")},
+            "common_weight": ("FLOAT", {"default": 0.5, "min": 0., "max": 4., "step": 0.1,
+                "tooltip": "Common source-token attention multiplier. 0 blocks it for the character. Not an image prompt weight."}),
+            "character_weight": ("FLOAT", {"default": 1.5, "min": 0., "max": 4., "step": 0.1,
+                "tooltip": "Character source-token attention multiplier. 1 is neutral. Stronger does not guarantee correct attributes."})}
+
+
+def run_owned(common, character, length, max_new_tokens, seed, temperature,
+              common_weight, character_weight, pipe=None, expand_common=False):
+    import comfy.model_management as mm
+    from comfy.utils import ProgressBar
+    with LOCK:
+        model, tokenizer = acquire_model()
+        def run(scene, person):
+            bar = ProgressBar(max_new_tokens)
+            return expand_owned(model, tokenizer, scene, person, length=length,
+                max_new_tokens=max_new_tokens, seed=seed, temperature=temperature,
+                common_weight=common_weight, character_weight=character_weight,
+                interrupt=mm.throw_exception_if_processing_interrupted, progress=bar.update_absolute)
+        if pipe is None:
+            prompt, report = run(common, character if character.strip() else None)
+            return prompt, report["added_tags"], json.dumps(report, ensure_ascii=False)
+        result, scene, report = expand_pipe(pipe, run, common_prompt=common, expand_common=expand_common)
+        info = {"model": MODEL_NAME, "revision": MODEL_REVISION,
+                "backend": "native-pytorch-owned-attention", "seed": seed,
+                "device": str(next(model.parameters()).device), "slots": report}
+        return result, scene, json.dumps(info, ensure_ascii=False)
+
+
+class RSTIPONativeControlledExpand:
+    CATEGORY = "RS/TIPO Native"
+    RETURN_TYPES = ("STRING", "STRING", "STRING")
+    RETURN_NAMES = ("prompt", "added_tags", "info")
+    FUNCTION = "expand"
+    DESCRIPTION = ("Experimental token-span attention control. Read common scene and one character with "
+                   "separate multipliers. Source text/weights are preserved; invented contradictions remain possible.")
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {
+            "common_prompt": ("STRING", {"multiline": True, "default": "university campus, autumn, afternoon"}),
+            "character_prompt": ("STRING", {"multiline": True, "default": "blonde hair, blue eyes, pink cardigan"}),
+            **control_inputs()}}
+
+    def expand(self, common_prompt, character_prompt, **settings):
+        return run_owned(common_prompt, character_prompt, **settings)
+
+
+PIPE_TYPES = "RS_MC_BUILD_PIPE,RS_MC_CHARACTER_PIPE,NAI_CONTEXT"
+
+
+class RSTIPONativePipeExpand:
+    CATEGORY = "RS/TIPO Native"
+    RETURN_TYPES = (PIPE_TYPES, "STRING", "STRING")
+    RETURN_NAMES = ("building_pipe", "common_prompt", "info")
+    FUNCTION = "expand"
+    DESCRIPTION = ("Expand each active character in an independent TIPO cache with weighted common/own attention. "
+        "Preserves masks, positions, LoRAs, text slots and negatives. Put after Character Prompts; "
+        "other builder roles may be before or after. Common expansion is optional and may invent appearance tags.")
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": {"building_pipe": (PIPE_TYPES,), **control_inputs(),
+            "expand_common": ("BOOLEAN", {"default": False,
+                "tooltip": "Also expand the scene. Experimental: TIPO may add character attributes to the common caption."})},
+            "optional": {"common_prompt": ("STRING", {"multiline": True, "default": "",
+                "tooltip": "Empty uses the pipe scene. Draft pipes without a source return this scene as STRING; connect it to the sampler."})}}
+
+    def expand(self, building_pipe, common_prompt="", expand_common=False, **settings):
+        return run_owned(common_prompt, "", pipe=building_pipe, expand_common=expand_common, **settings)

@@ -2,7 +2,7 @@
 
 Independent experimental project for running **TIPO v2.1** using native PyTorch
 and ComfyUI model management, with no llama.cpp, GGUF or Transformers in the
-inference path. This is a baseline for later input-span attention control research.
+inference path, with experimental input-span attention control.
 
 ## Current scope
 
@@ -10,13 +10,16 @@ inference path. This is a baseline for later input-span attention control resear
 - Official safetensors checkpoint names, strictly loaded with no ignored tensors.
 - ComfyUI `ModelPatcher` for loading/offloading; one model cached in host memory.
 - Request-local KV cache and sampling generator, including deterministic seed 0.
-- Completion and tag expansion nodes; no changes to RS MultiCharacter Sampler.
+- Completion, baseline expansion, controlled expansion and shared pipe expansion.
+- Token-owner masking during prefill and decode; common/character attention weights.
+- Independent cache per character; the other characters never enter its request.
+- Prompt-only edits of shared draft/final pipes and modern NAI contexts.
 - Cancellation and progress during decoding; context overflow is an explicit error.
 
-**Not implemented yet:** character ownership isolation, weighted input spans,
-regional/NAI pipe integration, conflict prevention, model quantization, and public
-release. Separate character prompts must not be flattened into the baseline node.
-The baseline can invent conflicting attributes just like ordinary TIPO.
+**Still experimental:** isolation prevents reading the other characters, but it
+does not stop TIPO inventing contradictory attributes from its learned priors.
+Semantic conflict prevention, model quantization and public release are unfinished.
+Separate character prompts must not be flattened into the baseline node.
 
 The model currently requires full residency during a request (about 1.85 GiB of
 FP16 parameters, plus runtime/cache memory). ComfyUI can offload the whole model
@@ -39,11 +42,50 @@ Only model/tokenizer data is downloaded; remote Python code is not executed.
 The existing GGUF cannot be used as a safetensors checkpoint.
 
 Place or link this project under `ComfyUI/custom_nodes/`, restart ComfyUI, and
-search for **RS TIPO Native**. Both nodes load the model internally.
+search for **RS TIPO Native**. All nodes load the model internally.
 `RS TIPO Native Expand` accepts a tag string and preserves the original string
 while appending the generated first tag field. Check `info` for the complete raw
 completion and finish reason. `length` and `max_new_tokens` are different:
 the former is a learned target, the latter is a hard output limit.
+
+## Controlled expansion and character pipes
+
+`RS TIPO Native Controlled Expand` takes a common scene and one character. The
+common and character source tokens receive separate attention multipliers. A
+multiplier adds `log(weight)` to attention scores before softmax in every layer;
+0 blocks that source. 1 is neutral. Generated history remains at weight 1.
+These controls change TIPO's internal calculation, independently of image prompt
+syntax such as `(blonde hair:1.2)`, which is preserved verbatim in the result.
+
+`RS TIPO Native Pipe Expand` reads an RS building pipe, final character pipe or
+modern NAI context. It expands active character slots independently; negatives,
+literal text slots, masks, coordinates, LoRAs, references and camera settings are
+preserved. Connect it **after Character Prompts**; LoRA/Position can be before or
+after it. A draft must have a known active count. Finalize it before sampling as
+usual. This editor does not run image generation or call NovelAI.
+
+```text
+Character Prompts -> [LoRA / Position] -> TIPO Pipe Expand -> Finalize -> Sampler
+Common scene STRING -------------------> | common_prompt STRING -------> Sampler
+```
+
+An empty common input inherits the pipe's scene. A draft with no source scene
+cannot store the common prompt: use this node's `common_prompt` STRING output on
+the sampler too. Finished pipes/contexts store the edited scene. `expand_common`
+is off by default: TIPO can invent hair/eye/clothing tags in a common caption.
+Enable it to test full-scene expansion and inspect the generated tags.
+
+Each character sees the **original** common caption, not another character's
+completion or an expanded common caption. Other-character text is excluded before
+tokenization, with an independent KV cache. Owner masks also block indirect
+cross-owner attention during prefill. At strict zero/blocked settings MoE tokens
+dispatch by owner too, avoiding FP16 rounding changes caused by blocked tokens
+changing another owner's expert batching shapes.
+
+The 0.5 common / 1.5 character defaults are experimental starting settings, not
+an established quality optimum. `info` records raw output, additions, source,
+weights, token IDs, generation time and finish reason for every slot. Compare
+1/1 with other settings using a fixed seed; inspect the actual content.
 
 For numerical comparison use `RS TIPO Native Completion`, the official TIPO
 completion format, and temperature 0. This is a completion model, not a chat model:
@@ -56,12 +98,14 @@ tag: 1girl, garden,
 ## Verification
 
 ```sh
-python tests/test_native.py
+python -m unittest discover -s tests -v
 ```
 
 Full-checkpoint parity and ComfyUI API smoke results belong in
 [`docs/validation.md`](docs/validation.md). Unit tests using a tiny synthetic model
 do not establish real-model quality or runtime compatibility.
+The attention/pipe experiment is documented in
+[`docs/owned-attention.md`](docs/owned-attention.md).
 
 ## Upstream and licenses
 

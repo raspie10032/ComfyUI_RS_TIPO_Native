@@ -165,9 +165,16 @@ class DecoderLayer(nn.Module):
         self.input_layernorm = RMSNorm(cfg.hidden_size, cfg.rms_norm_eps)
         self.post_attention_layernorm = RMSNorm(cfg.hidden_size, cfg.rms_norm_eps)
 
-    def forward(self, x, cos, sin, cache, attention_mask):
+    def forward(self, x, cos, sin, cache, attention_mask, token_owners=None):
         x = x + self.self_attn(self.input_layernorm(x), cos, sin, cache, attention_mask)
-        return x + self.mlp(self.post_attention_layernorm(x))
+        normalized = self.post_attention_layernorm(x)
+        if token_owners is None or not isinstance(self.mlp, MoE):
+            return x + self.mlp(normalized)
+        output = torch.empty_like(normalized)
+        for owner in token_owners.unique():
+            selected = (token_owners == owner).nonzero(as_tuple=True)[0]
+            output[:, selected] = self.mlp(normalized[:, selected])
+        return x + output
 
 
 class Decoder(nn.Module):
@@ -185,7 +192,7 @@ class KohakuForCausalLM(nn.Module):
         self.model = Decoder(config)
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
 
-    def forward(self, input_ids, cache=None, attention_mask=None, last_only=True):
+    def forward(self, input_ids, cache=None, attention_mask=None, last_only=True, token_owners=None):
         if input_ids.ndim != 2 or input_ids.shape[0] != 1 or input_ids.shape[1] == 0:
             raise ValueError("TIPO native currently accepts one nonempty sequence at a time.")
         seen = 0 if cache is None else cache.position
@@ -204,7 +211,7 @@ class KohakuForCausalLM(nn.Module):
             attention_mask = (torch.arange(seen + seq, device=x.device)[None, :] <=
                               torch.arange(seen, seen + seq, device=x.device)[:, None])
         for layer in self.model.layers:
-            x = layer(x, cos, sin, cache, attention_mask)
+            x = layer(x, cos, sin, cache, attention_mask, token_owners)
         if cache is not None:
             cache.position += seq
         x = self.model.norm(x[:, -1:] if last_only else x)
