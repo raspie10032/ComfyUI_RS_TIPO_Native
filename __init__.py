@@ -4,6 +4,8 @@ from .nodes import (RSTIPONativeCompletion, RSTIPONativeExpand,
 WEB_DIRECTORY = "./web"
 __version__ = "0.1.1"
 
+# Only RSTIPOPrompt is offered for new workflows. Deprecated classes remain
+# registered so existing graphs and research fixtures keep their original behavior.
 NODE_CLASS_MAPPINGS = {
     "RSTIPOPrompt": RSTIPOPrompt,
     "RSTIPONativeCompletion": RSTIPONativeCompletion,
@@ -13,8 +15,8 @@ NODE_CLASS_MAPPINGS = {
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     "RSTIPOPrompt": "RS TIPO Prompt (Experimental)",
-    "RSTIPONativeCompletion": "RS TIPO Native Completion (Experimental)",
-    "RSTIPONativeExpand": "RS TIPO Native Expand (Experimental)",
-    "RSTIPONativeControlledExpand": "RS TIPO Native Controlled Expand (Experimental)",
-    "RSTIPONativePipeExpand": "RS TIPO Native Pipe Expand (Experimental)",
+    "RSTIPONativeCompletion": "RS TIPO Native Completion (Legacy)",
+    "RSTIPONativeExpand": "RS TIPO Native Expand (Legacy)",
+    "RSTIPONativeControlledExpand": "RS TIPO Native Controlled Expand (Legacy)",
+    "RSTIPONativePipeExpand": "RS TIPO Native Pipe Expand (Legacy)",
 }

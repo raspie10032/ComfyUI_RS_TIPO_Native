@@ -2,7 +2,9 @@
 
 이 확장은 이미지 생성 전에 **전역과 캐릭터별 프롬프트를 보강**합니다.
 TIPO v2.1을 PyTorch로 실행하고, 모델 적재·해제는 ComfyUI가 관리합니다.
-주력 노드는 **RS TIPO Prompt (Experimental)**입니다.
+새 워크플로에서는 **RS TIPO Prompt (Experimental)** 하나를 사용합니다.
+초기 실험용 노드 4개는 기본 추가 목록에서 숨겼으며, 옛 워크플로를 불러오면
+기존 동작을 유지합니다. [이전 노드와 이전 방법](legacy-nodes.md).
 
 캐릭터들은 같은 장면·상호작용을 참고하면서 각자의 외형과 담당 행동을
 보강합니다. 다른 캐릭터의 외형 STRING은 해당 캐릭터의 추론에 넣지 않습니다.
@@ -144,7 +146,8 @@ black hair, brown eyes, yellow sweater, on right, receiving cup, reaching out
 주력 `RS TIPO Prompt`의 **프롬프트 원문은 STRING 입력이 기준**입니다.
 파이프만 연결해서 그 안의 캐릭터 문장을 자동으로 가져오는 모드가 아닙니다.
 선택한 활성 슬롯은 STRING 표로 갱신되며 글자 삽입 슬롯은 뒤에서 추가하세요.
-기존 파이프를 직접 읽어 보강할 때는 아래의 `Native Pipe Expand`를 사용합니다.
+기존 `Native Pipe Expand` 워크플로는 계속 열 수 있습니다. 새로 구성할 때는
+전역·캐릭터 STRING을 통합 노드에 연결하세요. [입력 규칙 차이](legacy-nodes.md).
 
 위치·LoRA 같은 설정 노드는 TIPO 앞뒤에 둘 수 있습니다. 캐릭터 프롬프트를
 다시 쓰는 노드를 TIPO 뒤에 놓으면 그 노드가 보강 문장을 덮어쓸 수 있으니
@@ -234,20 +237,23 @@ TIPO 입력에는 지원하는 가중치 문법을 정리한 태그 내용을 �
 추론·캐시에 추가 메모리를 씁니다. 캐릭터는 각각 독립 추론하므로 인원수가
 늘면 텍스트 보강 시간도 늘어납니다. 부분 레이어 오프로딩·양자화는 미지원입니다.
 
-## 7. 다른 노드는 언제 쓰나요?
+## 7. 노드 하나로 사용하기
 
-| 노드 | 사용 목적 |
+| 사용할 입력 | RS TIPO Prompt 설정 |
 | --- | --- |
-| RS TIPO Prompt | 보통 사용. 분리 STRING 입력 → 분리 STRING + 빌딩 파이프 |
-| RS TIPO Native Completion | 공식 형식 원문과 원시 완성을 비교하는 저수준 시험 |
-| RS TIPO Native Expand | 문자열 하나의 기본 보강. 캐릭터 여러 명을 합쳐 넣지 않기 |
-| RS TIPO Native Controlled Expand | 전역 + 캐릭터 한 명의 어텐션 강도 시험 |
-| RS TIPO Native Pipe Expand | 기존 빌딩/최종 파이프·NAI 컨텍스트의 활성 캐릭터 문장 보강 |
+| 전역 하나 | `character_count=0`, `expand_common=ON`, 전역 STRING 출력 사용 |
+| 전역 + 캐릭터 한 명 | `character_count=1`, `common_prompt`와 `character1` 연결 |
+| 여러 캐릭터 | 인원수 1~10, 각 번호의 STRING 연결 |
+| RS 파이프 | 같은 노드의 `building_pipe` 출력 사용. LoRA·위치 등은 앞뒤로 연결 |
 
-`Native Pipe Expand`는 캐릭터 프롬프트가 정해진 뒤 연결합니다. 비활성·글자
-슬롯은 보강하지 않고 기존 설정을 보존합니다. 전역 STRING이 비면 기존 장면을
-계승합니다. 장면을 저장하지 않는 새 초안 파이프에서는 이 노드의 전역 STRING도
-생성기에 직접 연결하세요. 주력 STRING 노드와 입력 계승 규칙이 다릅니다.
+별도 모델 로더나 보강 노드를 추가할 필요가 없습니다. 전역만 보강할 때
+`expand_common=OFF`이면 추론 없이 원문을 그대로 전달합니다.
+
+초기 Completion / Expand / Controlled Expand / Pipe Expand는 **호환용**입니다.
+기본 검색·추가 목록에서는 숨기고 ComfyUI의 폐기 노드 표시를 켠 경우
+`RS/TIPO Native/Legacy`에서 찾을 수 있습니다. 기존 워크플로의 노드 ID·입출력·
+연결은 보존합니다. 옛 노드의 결과는 새 노드와 같지 않을 수 있어 자동 변환하지
+않습니다. [차이와 수동 이전 방법](legacy-nodes.md).
 
 ## 검증 범위와 출처
 
@@ -269,5 +275,6 @@ v0.3.64 / 1.27.10, 현재 0.41.0 / 1.55.17의 실제 텍스트 실행·화면 �
 ComfyUI 화면에 끌어다 놓으면 예제를 불러올 수 있습니다. 노드 설치와 모델 준비는
 먼저 완료해야 합니다. 미리보기나 JPEG로 변환한 파일에는 워크플로가 없을 수 있습니다.
 
-이번 시험판에는 사용자가 원하지 않는 태그를 직접 지정하는 제외 목록 입력은
-아직 없습니다. `protect_source`는 알려진 원문 충돌을 막는 별도의 보호 기능입니다.
+`excluded_tags`에서 생성 단계 제외 태그를 지정할 수 있습니다. 밑줄과 공백은
+동일하게 비교합니다. `protect_source`는 알려진 원문 충돌을 막는 별도의 보호
+기능이며, 결과 패널에서 생성 단계 차단과 후처리 보호를 구분해서 확인합니다.

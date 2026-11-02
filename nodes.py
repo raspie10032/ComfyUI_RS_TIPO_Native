@@ -36,7 +36,9 @@ def run_completion(prompt, max_new_tokens, seed, temperature, excluded_tags=""):
 
 class RSTIPONativeCompletion:
     """Low-level baseline exposing the official TIPO completion format."""
-    CATEGORY = "RS/TIPO Native"
+    # Keep serialized class IDs and socket indexes for saved workflows.
+    DEPRECATED = True
+    CATEGORY = "RS/TIPO Native/Legacy"
     RETURN_TYPES = ("STRING", "STRING")
     RETURN_NAMES = ("completion", "info")
     FUNCTION = "generate"
@@ -57,7 +59,9 @@ class RSTIPONativeCompletion:
 
 
 class RSTIPONativeExpand:
-    CATEGORY = "RS/TIPO Native"
+    # Keep serialized class IDs and socket indexes for saved workflows.
+    DEPRECATED = True
+    CATEGORY = "RS/TIPO Native/Legacy"
     RETURN_TYPES = ("STRING", "STRING", "STRING")
     RETURN_NAMES = ("prompt", "added_tags", "info")
     FUNCTION = "expand"
@@ -132,7 +136,9 @@ def run_owned(common, character, length, max_new_tokens, seed, temperature,
 
 
 class RSTIPONativeControlledExpand:
-    CATEGORY = "RS/TIPO Native"
+    # Keep serialized class IDs and socket indexes for saved workflows.
+    DEPRECATED = True
+    CATEGORY = "RS/TIPO Native/Legacy"
     RETURN_TYPES = ("STRING", "STRING", "STRING")
     RETURN_NAMES = ("prompt", "added_tags", "info")
     FUNCTION = "expand"
@@ -154,7 +160,9 @@ PIPE_TYPES = "RS_MC_BUILD_PIPE,RS_MC_CHARACTER_PIPE,NAI_CONTEXT"
 
 
 class RSTIPONativePipeExpand:
-    CATEGORY = "RS/TIPO Native"
+    # Keep serialized class IDs and socket indexes for saved workflows.
+    DEPRECATED = True
+    CATEGORY = "RS/TIPO Native/Legacy"
     RETURN_TYPES = (PIPE_TYPES, "STRING", "STRING")
     RETURN_NAMES = ("building_pipe", "common_prompt", "info")
     FUNCTION = "expand"
