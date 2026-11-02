@@ -9,7 +9,7 @@ bindDownloadStatus(api, app, downloadPanels);
 const configuredInputs = new WeakSet();
 const scheduled = new WeakSet();
 const restoring = new WeakSet();
-const advancedNames = new Set(["max_new_tokens", "seed", "control_after_generate", "temperature", "common_weight", "character_weight"]);
+const advancedNames = new Set(["max_new_tokens", "max_added_tags", "seed", "control_after_generate", "temperature", "common_weight", "character_weight"]);
 const value = (node, name, fallback) => node.widgets?.find(w => w.name === name)?.value ?? fallback;
 const promptSocket = name => /^(?:common_prompt|character\d+)$/.test(name);
 
@@ -158,7 +158,7 @@ function addReport(node) {
             return option;
         }));
         help.textContent = report.shared_context ? "Context from common + character inputs: " + report.shared_context : "Write the scene in common_prompt and each participant’s appearance/action in its character input. Shared action context is gathered automatically.";
-        status.textContent = `${report.character_count} characters · ${report.seconds}s · Source protection ${report.protect_source === false ? 'OFF' : 'ON'} · ${report.building_pipe_available ? 'RS pipe + STRINGs' : 'STRINGs (RS pack not installed)'}`;
+        status.textContent = `${report.character_count} characters · ${report.seconds}s · Source protection ${report.protect_source === false ? 'OFF' : 'ON'} · Added tags ≤ ${report.max_added_tags ?? 'unlimited'}/output · ${report.building_pipe_available ? 'RS pipe + STRINGs' : 'STRINGs (RS pack not installed)'}`;
         render();
     });
 }

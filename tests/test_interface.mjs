@@ -14,7 +14,7 @@ globalThis.tipoTestApp = app;
 await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
 class Node {
     constructor() {
-        this.widgets = [{name: 'character_count', value: 2}, {name: 'advanced', value: false}];
+        this.widgets = [{name: 'character_count', value: 2}, {name: 'advanced', value: false}, {name:'max_added_tags', value:6}];
         this.inputs = [{name:'common_prompt',type:'STRING'}, {name:'character1',type:'STRING',link:1}];
         this.outputs = [{name:'building_pipe'}, {name:'common_prompt'}];
         this.size=[390,400]; this.properties={};
@@ -33,12 +33,14 @@ class Node {
 await extension.beforeRegisterNodeDef(Node,{name:'RSTIPOPrompt'});
 const node=new Node();
 app.configuringGraph=true;
-node.onConfigure({properties:{rs_tipo_widget_values:{character_count:1, advanced:false, tipo_results:{bad:true}}}});
+node.onConfigure({properties:{rs_tipo_widget_values:{character_count:1, advanced:false, max_added_tags:2, tipo_results:{bad:true}}}});
 await new Promise(r=>setTimeout(r,15));
 assert.equal(node.inputs.length,2,'must not change sockets while core configures forceInput');
 app.configuringGraph=false;
 await new Promise(r=>setTimeout(r,30));
 assert.equal(node.widgets.find(w=>w.name==='character_count').value,1);
+assert.equal(node.widgets.find(w=>w.name==='max_added_tags').value,2);
+assert.equal(node.widgets.find(w=>w.name==='max_added_tags').type,'rs-tipo-hidden');
 assert.equal(node.inputs.filter(i=>i.name==='character1').length,1);
 assert(node.inputs.find(i=>i.name==='character1').configured);
 assert.equal(node.widgets.find(w=>w.name==='character1').type,'rs-tipo-string-socket');
@@ -53,6 +55,7 @@ assert.equal(node.primitive.widgets[0].value,'edited after loading','must never 
 const saved={}; node.onSerialize(saved);
 assert.equal(saved.properties.rs_tipo_widget_values.character1,'edited after loading');
 assert.equal(saved.properties.rs_tipo_widget_values.character_count,1);
+assert.equal(saved.properties.rs_tipo_widget_values.max_added_tags,2);
 assert.doesNotThrow(()=>structuredClone(saved));
 node.addInput('interaction_prompt', 'STRING', {link:2});
 node.addWidget('converted-widget','interaction_prompt','older description');

@@ -201,17 +201,23 @@ class RSTIPOPrompt:
             **{f"character{i}": ("STRING", {"forceInput": True, "multiline": True,
                 "tooltip": f"Character {i}: positive prompt. Original text and weights are preserved."}) for i in range(1, 11)},
             "protect_source": ("BOOLEAN", {"default": True,
-                "tooltip": "Keep supplied roles and appearance authoritative. Reject unrequested identity, wardrobe, style, composition and recognized action conflicts; show excluded tags in results. Conservative lexical check, not complete semantic understanding."}),
+                "tooltip": "Keep supplied roles and appearance. Add action details and limited basic posture/gaze support; reject unrelated props and redundant tags. Limited English vocabulary. / 역할과 외형을 지키며 행동·기본 자세를 보강. 무관한 소품과 중복은 줄입니다."}),
             "building_pipe": (PIPE_TYPES, {"tooltip": "Optional: retain existing LoRA, masks, positions, references and deferred cameras. STRING inputs replace the prompt table."}),
             **exclusion_input(),
+            # Append new widgets so old positional widgets_values retain the
+            # excluded_tags index even without our named restore properties.
+            "max_added_tags": ("INT", {"default": 6, "min": 1, "max": 32,
+                "tooltip": "Maximum added tags per output, not a target to fill. Does not change the decoder token budget. / 출력별 추가 태그 상한입니다. 개수를 채우려고 추가하지 않습니다."}),
         }, "hidden": {"prompt": "PROMPT", "unique_id": "UNIQUE_ID"}}
 
     def expand(self, character_count=2, common_prompt="", expand_common=False,
                building_pipe=None, prompt=None, unique_id=None, advanced=False,
-               protect_source=True, excluded_tags="", **values):
+               protect_source=True, excluded_tags="", max_added_tags=6, **values):
         from .interface import (validate_inputs, expand_strings, pipe_adapter,
                                 make_building_pipe, pipe_is_requested)
         characters = validate_inputs(common_prompt, character_count, values)
+        if type(max_added_tags) is not int or not 1 <= max_added_tags <= 32:
+            raise ValueError('TIPO max_added_tags must be between 1 and 32. / 추가 태그 상한은 1~32입니다.')
         validate_sources(parse_excluded(excluded_tags), [('common_prompt', common_prompt),
             *((f'character {i}', text) for i, text in enumerate(characters, 1))])
         if not characters and pipe_is_requested(prompt, unique_id):
@@ -239,6 +245,7 @@ class RSTIPOPrompt:
                 output, report = expand_owned(model, tokenizer, scene, person, interaction=context,
                     interaction_weight=settings["common_weight"] if person is not None else 1.0,
                     protect_source=protect_source,
+                    max_added_tags=max_added_tags, grounded_additions=True,
                     excluded_tags=excluded_tags,
                     peer_actions=tuple(action for i, actions in enumerate(roles) if i != slot_index for action in actions) if person is not None else (),
                     **settings,
@@ -249,6 +256,7 @@ class RSTIPOPrompt:
         pipe = make_building_pipe(adapter, draft, scene, expanded) if adapter else None
         info = {"model": MODEL_NAME, "revision": MODEL_REVISION,
                 "protect_source": protect_source,
+                "max_added_tags": max_added_tags,
                 "excluded_tags": list(parse_excluded(excluded_tags)),
                 "character_count": character_count, "shared_context": shared_context,
                 "participant_roles": roles, "context_source": "common_and_character_inputs",

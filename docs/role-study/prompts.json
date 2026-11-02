@@ -1,0 +1,2258 @@
+{
+  "revision": "f5a318524a4ab30cdbbf51816cf406170f454e65",
+  "device": "cuda",
+  "sampling": {
+    "seed": 8910,
+    "temperature": 0.0,
+    "max_new_tokens": 96
+  },
+  "cases": [
+    {
+      "name": "cup",
+      "common": "2girls, cafe, afternoon, wooden table, passing a cup, looking at each other",
+      "original": [
+        "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms",
+        "brown hair, green eyes, blue dress, on right, receiving cup, reaching out"
+      ],
+      "previous": [
+        "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms, holding, teacup, holding cup, sitting, saucer, indoors, chair, tea, table, smile, open mouth, outstretched hand",
+        "brown hair, green eyes, blue dress, on right, receiving cup, reaching out, holding, holding cup, sitting, chair, teacup, smile, closed mouth, blush, table, indoors, window, saucer, tea, curtains"
+      ],
+      "focused": [
+        "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms, holding cup, sitting, smile, outstretched hand",
+        "brown hair, green eyes, blue dress, on right, receiving cup, reaching out, holding cup, sitting, smile"
+      ],
+      "reports": [
+        {
+          "slot": 1,
+          "previous": {
+            "text": "3d, long sleeves, holding, english text, short hair, teacup, cup, holding cup, sitting, saucer, indoors, shirt, chair, tea, table, smile, open mouth, collared shirt, solo focus, pov hands, pov, outstretched hand, looking at viewer, out of frame<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              11630,
+              14,
+              33010,
+              3051,
+              14,
+              3107,
+              8078,
+              14,
+              4827,
+              1425,
+              14,
+              9778,
+              14,
+              11630,
+              9778,
+              14,
+              13507,
+              14,
+              826,
+              44526,
+              14,
+              54793,
+              14,
+              30298,
+              14,
+              12817,
+              14,
+              15131,
+              14,
+              4184,
+              14,
+              14088,
+              14,
+              2526,
+              10485,
+              14,
+              4523,
+              1947,
+              30298,
+              14,
+              15619,
+              3568,
+              14,
+              46186,
+              6099,
+              14,
+              46186,
+              14,
+              798,
+              318,
+              61106,
+              1893,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              798,
+              294,
+              10411,
+              64001
+            ],
+            "input_tokens": 117,
+            "finish_reason": "eos",
+            "seconds": 1.7370315729640424,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other Person 1: on left, offering cup, extending arms. Person 2: on right, receiving cup, reaching out. The person being described: on left, offering cup, extending arms.\ntag: 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other, blonde hair, blue eyes, white shirt, on left, offering cup, extending arms, ",
+            "original": "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms",
+            "added_tags": "holding, teacup, holding cup, sitting, saucer, indoors, chair, tea, table, smile, open mouth, outstretched hand",
+            "output": "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms, holding, teacup, holding cup, sitting, saucer, indoors, chair, tea, table, smile, open mouth, outstretched hand",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, cafe, afternoon, wooden table, passing a cup, looking at each other Person 1: on left, offering cup, extending arms. Person 2: on right, receiving cup, reaching out. The person being described: on left, offering cup, extending arms.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, long sleeves, holding, english text, short hair, teacup, cup, holding cup, sitting, saucer, indoors, shirt, chair, tea, table, smile, open mouth, collared shirt, solo focus, pov hands, pov, outstretched hand, looking at viewer, out of frame",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "collared shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "solo focus",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pov hands",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pov",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking at viewer",
+                "reason": "viewer gaze conflicts with partner gaze"
+              },
+              {
+                "tag": "out of frame",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              }
+            ],
+            "max_added_tags": null,
+            "grounded_additions": false,
+            "owner_tokens": {
+              "0": 83,
+              "1": 20,
+              "-1": 14
+            }
+          },
+          "focused": {
+            "text": "3d, long sleeves, holding, english text, short hair, teacup, cup, holding cup, sitting, saucer, indoors, shirt, chair, tea, table, smile, open mouth, collared shirt, solo focus, pov hands, pov, outstretched hand, looking at viewer, out of frame<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              11630,
+              14,
+              33010,
+              3051,
+              14,
+              3107,
+              8078,
+              14,
+              4827,
+              1425,
+              14,
+              9778,
+              14,
+              11630,
+              9778,
+              14,
+              13507,
+              14,
+              826,
+              44526,
+              14,
+              54793,
+              14,
+              30298,
+              14,
+              12817,
+              14,
+              15131,
+              14,
+              4184,
+              14,
+              14088,
+              14,
+              2526,
+              10485,
+              14,
+              4523,
+              1947,
+              30298,
+              14,
+              15619,
+              3568,
+              14,
+              46186,
+              6099,
+              14,
+              46186,
+              14,
+              798,
+              318,
+              61106,
+              1893,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              798,
+              294,
+              10411,
+              64001
+            ],
+            "input_tokens": 117,
+            "finish_reason": "eos",
+            "seconds": 1.7370315729640424,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other Person 1: on left, offering cup, extending arms. Person 2: on right, receiving cup, reaching out. The person being described: on left, offering cup, extending arms.\ntag: 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other, blonde hair, blue eyes, white shirt, on left, offering cup, extending arms, ",
+            "original": "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms",
+            "added_tags": "holding cup, sitting, smile, outstretched hand",
+            "output": "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms, holding cup, sitting, smile, outstretched hand",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, cafe, afternoon, wooden table, passing a cup, looking at each other Person 1: on left, offering cup, extending arms. Person 2: on right, receiving cup, reaching out. The person being described: on left, offering cup, extending arms.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, long sleeves, holding, english text, short hair, teacup, cup, holding cup, sitting, saucer, indoors, shirt, chair, tea, table, smile, open mouth, collared shirt, solo focus, pov hands, pov, outstretched hand, looking at viewer, out of frame",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "collared shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "solo focus",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pov hands",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pov",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking at viewer",
+                "reason": "viewer gaze conflicts with partner gaze"
+              },
+              {
+                "tag": "out of frame",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "holding",
+                "reason": "incomplete action without a supplied object or target"
+              },
+              {
+                "tag": " teacup",
+                "reason": "already expressed by source or accepted additions"
+              },
+              {
+                "tag": " saucer",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " indoors",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " chair",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " tea",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " table",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " open mouth",
+                "reason": "not grounded in this participant or shared action"
+              }
+            ],
+            "max_added_tags": 6,
+            "grounded_additions": true,
+            "owner_tokens": {
+              "0": 83,
+              "1": 20,
+              "-1": 14
+            }
+          }
+        },
+        {
+          "slot": 2,
+          "previous": {
+            "text": "3koma, comic, long sleeves, english text, short hair, holding, holding cup, sitting, chair, dress, teacup, smile, closed mouth, open mouth, blush, cup, table, speech bubble, indoors, window, saucer, tea, curtains<|eos|>",
+            "token_ids": [
+              21,
+              77,
+              6091,
+              14,
+              37327,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              33010,
+              3051,
+              14,
+              3107,
+              8078,
+              14,
+              11630,
+              14,
+              11630,
+              9778,
+              14,
+              13507,
+              14,
+              12817,
+              14,
+              13541,
+              14,
+              4827,
+              1425,
+              14,
+              14088,
+              14,
+              9101,
+              10485,
+              14,
+              2526,
+              10485,
+              14,
+              1201,
+              3090,
+              14,
+              9778,
+              14,
+              4184,
+              14,
+              9793,
+              34805,
+              14,
+              54793,
+              14,
+              8667,
+              14,
+              826,
+              44526,
+              14,
+              15131,
+              14,
+              40566,
+              85,
+              64001
+            ],
+            "input_tokens": 116,
+            "finish_reason": "eos",
+            "seconds": 1.0251213809824549,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other Person 1: on left, offering cup, extending arms. Person 2: on right, receiving cup, reaching out. The person being described: on right, receiving cup, reaching out.\ntag: 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other, brown hair, green eyes, blue dress, on right, receiving cup, reaching out, ",
+            "original": "brown hair, green eyes, blue dress, on right, receiving cup, reaching out",
+            "added_tags": "holding, holding cup, sitting, chair, teacup, smile, closed mouth, blush, table, indoors, window, saucer, tea, curtains",
+            "output": "brown hair, green eyes, blue dress, on right, receiving cup, reaching out, holding, holding cup, sitting, chair, teacup, smile, closed mouth, blush, table, indoors, window, saucer, tea, curtains",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, cafe, afternoon, wooden table, passing a cup, looking at each other Person 1: on left, offering cup, extending arms. Person 2: on right, receiving cup, reaching out. The person being described: on right, receiving cup, reaching out.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3koma, comic, long sleeves, english text, short hair, holding, holding cup, sitting, chair, dress, teacup, smile, closed mouth, open mouth, blush, cup, table, speech bubble, indoors, window, saucer, tea, curtains",
+            "rejected_tags": [
+              {
+                "tag": "3koma",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "comic",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "open mouth",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": "speech bubble",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              }
+            ],
+            "max_added_tags": null,
+            "grounded_additions": false,
+            "owner_tokens": {
+              "0": 83,
+              "1": 19,
+              "-1": 14
+            }
+          },
+          "focused": {
+            "text": "3koma, comic, long sleeves, english text, short hair, holding, holding cup, sitting, chair, dress, teacup, smile, closed mouth, open mouth, blush, cup, table, speech bubble, indoors, window, saucer, tea, curtains<|eos|>",
+            "token_ids": [
+              21,
+              77,
+              6091,
+              14,
+              37327,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              33010,
+              3051,
+              14,
+              3107,
+              8078,
+              14,
+              11630,
+              14,
+              11630,
+              9778,
+              14,
+              13507,
+              14,
+              12817,
+              14,
+              13541,
+              14,
+              4827,
+              1425,
+              14,
+              14088,
+              14,
+              9101,
+              10485,
+              14,
+              2526,
+              10485,
+              14,
+              1201,
+              3090,
+              14,
+              9778,
+              14,
+              4184,
+              14,
+              9793,
+              34805,
+              14,
+              54793,
+              14,
+              8667,
+              14,
+              826,
+              44526,
+              14,
+              15131,
+              14,
+              40566,
+              85,
+              64001
+            ],
+            "input_tokens": 116,
+            "finish_reason": "eos",
+            "seconds": 1.0251213809824549,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other Person 1: on left, offering cup, extending arms. Person 2: on right, receiving cup, reaching out. The person being described: on right, receiving cup, reaching out.\ntag: 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other, brown hair, green eyes, blue dress, on right, receiving cup, reaching out, ",
+            "original": "brown hair, green eyes, blue dress, on right, receiving cup, reaching out",
+            "added_tags": "holding cup, sitting, smile",
+            "output": "brown hair, green eyes, blue dress, on right, receiving cup, reaching out, holding cup, sitting, smile",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, cafe, afternoon, wooden table, passing a cup, looking at each other Person 1: on left, offering cup, extending arms. Person 2: on right, receiving cup, reaching out. The person being described: on right, receiving cup, reaching out.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3koma, comic, long sleeves, english text, short hair, holding, holding cup, sitting, chair, dress, teacup, smile, closed mouth, open mouth, blush, cup, table, speech bubble, indoors, window, saucer, tea, curtains",
+            "rejected_tags": [
+              {
+                "tag": "3koma",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "comic",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "open mouth",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": "speech bubble",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "holding",
+                "reason": "incomplete action without a supplied object or target"
+              },
+              {
+                "tag": " chair",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " teacup",
+                "reason": "already expressed by source or accepted additions"
+              },
+              {
+                "tag": " closed mouth",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " blush",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " table",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " indoors",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " window",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " saucer",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " tea",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " curtains",
+                "reason": "not grounded in this participant or shared action"
+              }
+            ],
+            "max_added_tags": 6,
+            "grounded_additions": true,
+            "owner_tokens": {
+              "0": 83,
+              "1": 19,
+              "-1": 14
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "dance",
+      "common": "2girls, ballroom, evening, dancing together",
+      "original": [
+        "pink hair, red eyes, black dress, leading dance, hand on other waist",
+        "brown hair, blue eyes, white dress, following dance, hand on other shoulder"
+      ],
+      "previous": [
+        "pink hair, red eyes, black dress, leading dance, hand on other waist, looking at viewer, indoors, smile, closed mouth, outstretched arms, blurry background, blurry, holding hands, blush, heterochromia, subtitled",
+        "brown hair, blue eyes, white dress, following dance, hand on other shoulder, looking at another, holding hands, indoors, smile, closed mouth, blush"
+      ],
+      "focused": [
+        "pink hair, red eyes, black dress, leading dance, hand on other waist, smile",
+        "brown hair, blue eyes, white dress, following dance, hand on other shoulder, looking at another, smile"
+      ],
+      "reports": [
+        {
+          "slot": 1,
+          "previous": {
+            "text": "3d, looking at viewer, long sleeves, indoors, smile, english text, closed mouth, solo focus, outstretched arms, short hair, blurry background, blurry, dress, pov hands, pov, holding hands, blush, open mouth, :d, blue eyes, heterochromia, upper body, hand on another's back, hand on another's shoulder, bob cut, subtitled, hand on another's arm<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              54793,
+              14,
+              14088,
+              14,
+              33010,
+              3051,
+              14,
+              9101,
+              10485,
+              14,
+              15619,
+              3568,
+              14,
+              798,
+              318,
+              61106,
+              11304,
+              14,
+              3107,
+              8078,
+              14,
+              34390,
+              744,
+              6951,
+              14,
+              34390,
+              744,
+              14,
+              13541,
+              14,
+              46186,
+              6099,
+              14,
+              46186,
+              14,
+              11630,
+              6099,
+              14,
+              1201,
+              3090,
+              14,
+              2526,
+              10485,
+              14,
+              1313,
+              70,
+              14,
+              8295,
+              5117,
+              14,
+              14876,
+              40790,
+              601,
+              14,
+              9509,
+              3197,
+              14,
+              1893,
+              377,
+              2658,
+              734,
+              1559,
+              14,
+              1893,
+              377,
+              2658,
+              734,
+              16884,
+              14,
+              59041,
+              4619,
+              14,
+              9868,
+              16791,
+              14,
+              1893,
+              377,
+              2658,
+              734,
+              7931,
+              64001
+            ],
+            "input_tokens": 94,
+            "finish_reason": "eos",
+            "seconds": 1.5013135679764673,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, ballroom, evening, dancing together Person 1: leading dance, hand on other waist. Person 2: following dance, hand on other shoulder. The person being described: leading dance, hand on other waist.\ntag: 2girls, ballroom, evening, dancing together, pink hair, red eyes, black dress, leading dance, hand on other waist, ",
+            "original": "pink hair, red eyes, black dress, leading dance, hand on other waist",
+            "added_tags": "looking at viewer, indoors, smile, closed mouth, outstretched arms, blurry background, blurry, holding hands, blush, heterochromia, subtitled",
+            "output": "pink hair, red eyes, black dress, leading dance, hand on other waist, looking at viewer, indoors, smile, closed mouth, outstretched arms, blurry background, blurry, holding hands, blush, heterochromia, subtitled",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, ballroom, evening, dancing together Person 1: leading dance, hand on other waist. Person 2: following dance, hand on other shoulder. The person being described: leading dance, hand on other waist.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, looking at viewer, long sleeves, indoors, smile, english text, closed mouth, solo focus, outstretched arms, short hair, blurry background, blurry, dress, pov hands, pov, holding hands, blush, open mouth, :d, blue eyes, heterochromia, upper body, hand on another's back, hand on another's shoulder, bob cut, subtitled, hand on another's arm",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "solo focus",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pov hands",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pov",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "open mouth",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": ":d",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": "blue eyes",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "upper body",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "hand on another's back",
+                "reason": "partner contact target conflicts with supplied role"
+              },
+              {
+                "tag": "hand on another's shoulder",
+                "reason": "partner contact target conflicts with supplied role"
+              },
+              {
+                "tag": "bob cut",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "hand on another's arm",
+                "reason": "partner contact target conflicts with supplied role"
+              }
+            ],
+            "max_added_tags": null,
+            "grounded_additions": false,
+            "owner_tokens": {
+              "0": 62,
+              "1": 18,
+              "-1": 14
+            }
+          },
+          "focused": {
+            "text": "3d, looking at viewer, long sleeves, indoors, smile, english text, closed mouth, solo focus, outstretched arms, short hair, blurry background, blurry, dress, pov hands, pov, holding hands, blush, open mouth, :d, blue eyes, heterochromia, upper body, hand on another's back, hand on another's shoulder, bob cut, subtitled, hand on another's arm<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              54793,
+              14,
+              14088,
+              14,
+              33010,
+              3051,
+              14,
+              9101,
+              10485,
+              14,
+              15619,
+              3568,
+              14,
+              798,
+              318,
+              61106,
+              11304,
+              14,
+              3107,
+              8078,
+              14,
+              34390,
+              744,
+              6951,
+              14,
+              34390,
+              744,
+              14,
+              13541,
+              14,
+              46186,
+              6099,
+              14,
+              46186,
+              14,
+              11630,
+              6099,
+              14,
+              1201,
+              3090,
+              14,
+              2526,
+              10485,
+              14,
+              1313,
+              70,
+              14,
+              8295,
+              5117,
+              14,
+              14876,
+              40790,
+              601,
+              14,
+              9509,
+              3197,
+              14,
+              1893,
+              377,
+              2658,
+              734,
+              1559,
+              14,
+              1893,
+              377,
+              2658,
+              734,
+              16884,
+              14,
+              59041,
+              4619,
+              14,
+              9868,
+              16791,
+              14,
+              1893,
+              377,
+              2658,
+              734,
+              7931,
+              64001
+            ],
+            "input_tokens": 94,
+            "finish_reason": "eos",
+            "seconds": 1.5013135679764673,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, ballroom, evening, dancing together Person 1: leading dance, hand on other waist. Person 2: following dance, hand on other shoulder. The person being described: leading dance, hand on other waist.\ntag: 2girls, ballroom, evening, dancing together, pink hair, red eyes, black dress, leading dance, hand on other waist, ",
+            "original": "pink hair, red eyes, black dress, leading dance, hand on other waist",
+            "added_tags": "smile",
+            "output": "pink hair, red eyes, black dress, leading dance, hand on other waist, smile",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, ballroom, evening, dancing together Person 1: leading dance, hand on other waist. Person 2: following dance, hand on other shoulder. The person being described: leading dance, hand on other waist.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, looking at viewer, long sleeves, indoors, smile, english text, closed mouth, solo focus, outstretched arms, short hair, blurry background, blurry, dress, pov hands, pov, holding hands, blush, open mouth, :d, blue eyes, heterochromia, upper body, hand on another's back, hand on another's shoulder, bob cut, subtitled, hand on another's arm",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "solo focus",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pov hands",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pov",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "open mouth",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": ":d",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": "blue eyes",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "upper body",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "hand on another's back",
+                "reason": "partner contact target conflicts with supplied role"
+              },
+              {
+                "tag": "hand on another's shoulder",
+                "reason": "partner contact target conflicts with supplied role"
+              },
+              {
+                "tag": "bob cut",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "hand on another's arm",
+                "reason": "partner contact target conflicts with supplied role"
+              },
+              {
+                "tag": "looking at viewer",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " indoors",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " closed mouth",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " outstretched arms",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " blurry background",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " blurry",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " holding hands",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " blush",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " heterochromia",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " subtitled",
+                "reason": "not grounded in this participant or shared action"
+              }
+            ],
+            "max_added_tags": 6,
+            "grounded_additions": true,
+            "owner_tokens": {
+              "0": 62,
+              "1": 18,
+              "-1": 14
+            }
+          }
+        },
+        {
+          "slot": 2,
+          "previous": {
+            "text": "3d, long sleeves, looking at another, holding hands, indoors, short hair, black jacket, english text, smile, closed mouth, dress, open clothes, shirt, open jacket, collared shirt, jacket, white shirt, blush, comic, yuri, speech bubble, parted lips, long hair, eye contact, chinese text, ponytail, hand on another's back<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              4735,
+              509,
+              2658,
+              14,
+              11630,
+              6099,
+              14,
+              54793,
+              14,
+              3107,
+              8078,
+              14,
+              5159,
+              38853,
+              14,
+              33010,
+              3051,
+              14,
+              14088,
+              14,
+              9101,
+              10485,
+              14,
+              13541,
+              14,
+              2526,
+              17273,
+              14,
+              30298,
+              14,
+              2526,
+              38853,
+              14,
+              4523,
+              1947,
+              30298,
+              14,
+              38853,
+              14,
+              5403,
+              30298,
+              14,
+              1201,
+              3090,
+              14,
+              37327,
+              14,
+              383,
+              16931,
+              14,
+              9793,
+              34805,
+              14,
+              892,
+              284,
+              19826,
+              14,
+              1606,
+              8078,
+              14,
+              8183,
+              5310,
+              14,
+              537,
+              6994,
+              3051,
+              14,
+              25720,
+              3472,
+              879,
+              14,
+              1893,
+              377,
+              2658,
+              734,
+              1559,
+              64001
+            ],
+            "input_tokens": 94,
+            "finish_reason": "eos",
+            "seconds": 1.379258379980456,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, ballroom, evening, dancing together Person 1: leading dance, hand on other waist. Person 2: following dance, hand on other shoulder. The person being described: following dance, hand on other shoulder.\ntag: 2girls, ballroom, evening, dancing together, brown hair, blue eyes, white dress, following dance, hand on other shoulder, ",
+            "original": "brown hair, blue eyes, white dress, following dance, hand on other shoulder",
+            "added_tags": "looking at another, holding hands, indoors, smile, closed mouth, blush",
+            "output": "brown hair, blue eyes, white dress, following dance, hand on other shoulder, looking at another, holding hands, indoors, smile, closed mouth, blush",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, ballroom, evening, dancing together Person 1: leading dance, hand on other waist. Person 2: following dance, hand on other shoulder. The person being described: following dance, hand on other shoulder.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, long sleeves, looking at another, holding hands, indoors, short hair, black jacket, english text, smile, closed mouth, dress, open clothes, shirt, open jacket, collared shirt, jacket, white shirt, blush, comic, yuri, speech bubble, parted lips, long hair, eye contact, chinese text, ponytail, hand on another's back",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "black jacket",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "open clothes",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "open jacket",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "collared shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "jacket",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "white shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "comic",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "yuri",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "speech bubble",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "parted lips",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": "long hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "eye contact",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "chinese text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "ponytail",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "hand on another's back",
+                "reason": "partner contact target conflicts with supplied role"
+              }
+            ],
+            "max_added_tags": null,
+            "grounded_additions": false,
+            "owner_tokens": {
+              "0": 62,
+              "1": 18,
+              "-1": 14
+            }
+          },
+          "focused": {
+            "text": "3d, long sleeves, looking at another, holding hands, indoors, short hair, black jacket, english text, smile, closed mouth, dress, open clothes, shirt, open jacket, collared shirt, jacket, white shirt, blush, comic, yuri, speech bubble, parted lips, long hair, eye contact, chinese text, ponytail, hand on another's back<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              4735,
+              509,
+              2658,
+              14,
+              11630,
+              6099,
+              14,
+              54793,
+              14,
+              3107,
+              8078,
+              14,
+              5159,
+              38853,
+              14,
+              33010,
+              3051,
+              14,
+              14088,
+              14,
+              9101,
+              10485,
+              14,
+              13541,
+              14,
+              2526,
+              17273,
+              14,
+              30298,
+              14,
+              2526,
+              38853,
+              14,
+              4523,
+              1947,
+              30298,
+              14,
+              38853,
+              14,
+              5403,
+              30298,
+              14,
+              1201,
+              3090,
+              14,
+              37327,
+              14,
+              383,
+              16931,
+              14,
+              9793,
+              34805,
+              14,
+              892,
+              284,
+              19826,
+              14,
+              1606,
+              8078,
+              14,
+              8183,
+              5310,
+              14,
+              537,
+              6994,
+              3051,
+              14,
+              25720,
+              3472,
+              879,
+              14,
+              1893,
+              377,
+              2658,
+              734,
+              1559,
+              64001
+            ],
+            "input_tokens": 94,
+            "finish_reason": "eos",
+            "seconds": 1.379258379980456,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, ballroom, evening, dancing together Person 1: leading dance, hand on other waist. Person 2: following dance, hand on other shoulder. The person being described: following dance, hand on other shoulder.\ntag: 2girls, ballroom, evening, dancing together, brown hair, blue eyes, white dress, following dance, hand on other shoulder, ",
+            "original": "brown hair, blue eyes, white dress, following dance, hand on other shoulder",
+            "added_tags": "looking at another, smile",
+            "output": "brown hair, blue eyes, white dress, following dance, hand on other shoulder, looking at another, smile",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, ballroom, evening, dancing together Person 1: leading dance, hand on other waist. Person 2: following dance, hand on other shoulder. The person being described: following dance, hand on other shoulder.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, long sleeves, looking at another, holding hands, indoors, short hair, black jacket, english text, smile, closed mouth, dress, open clothes, shirt, open jacket, collared shirt, jacket, white shirt, blush, comic, yuri, speech bubble, parted lips, long hair, eye contact, chinese text, ponytail, hand on another's back",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "black jacket",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "open clothes",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "open jacket",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "collared shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "jacket",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "white shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "comic",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "yuri",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "speech bubble",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "parted lips",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": "long hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "eye contact",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "chinese text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "ponytail",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "hand on another's back",
+                "reason": "partner contact target conflicts with supplied role"
+              },
+              {
+                "tag": " holding hands",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " indoors",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " closed mouth",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " blush",
+                "reason": "not grounded in this participant or shared action"
+              }
+            ],
+            "max_added_tags": 6,
+            "grounded_additions": true,
+            "owner_tokens": {
+              "0": 62,
+              "1": 18,
+              "-1": 14
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "backs",
+      "common": "2girls, garden, back to back, standing",
+      "original": [
+        "black hair, blue eyes, green jacket, arms crossed",
+        "blonde hair, brown eyes, red jacket, hands behind back"
+      ],
+      "previous": [
+        "black hair, blue eyes, green jacket, arms crossed, looking at viewer, smile, closed mouth, company name, brown footwear, denim, jeans, crossed arms, multiple views, logo, blunt ends, pocket",
+        "blonde hair, brown eyes, red jacket, hands behind back, looking at viewer, own hands together, smile, company name, closed mouth, logo, denim, jeans, pocket"
+      ],
+      "focused": [
+        "black hair, blue eyes, green jacket, arms crossed, smile",
+        "blonde hair, brown eyes, red jacket, hands behind back, smile"
+      ],
+      "reports": [
+        {
+          "slot": 1,
+          "previous": {
+            "text": "1990s (style), long sleeves, looking at viewer, short hair, retro artstyle, english text, smile, closed mouth, from behind, character name, copyright notice, company name, pants, brown footwear, full body, shoes, denim, jeans, jacket, crossed arms, multiple views, copyright name, logo, bob cut, blunt ends, blunt bangs, pocket, blue pants<|eos|>",
+            "token_ids": [
+              1357,
+              18,
+              85,
+              343,
+              8618,
+              754,
+              1606,
+              32294,
+              2346,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              3107,
+              8078,
+              14,
+              20789,
+              2783,
+              8618,
+              14,
+              33010,
+              3051,
+              14,
+              14088,
+              14,
+              9101,
+              10485,
+              14,
+              538,
+              5573,
+              14,
+              3053,
+              2329,
+              14,
+              23539,
+              8806,
+              14,
+              3817,
+              2329,
+              14,
+              42399,
+              14,
+              13769,
+              5539,
+              50295,
+              14,
+              3530,
+              3197,
+              14,
+              21338,
+              14,
+              2917,
+              328,
+              14,
+              56900,
+              14,
+              38853,
+              14,
+              26577,
+              11304,
+              14,
+              4990,
+              9003,
+              14,
+              23539,
+              2329,
+              14,
+              32883,
+              14,
+              59041,
+              4619,
+              14,
+              60654,
+              12802,
+              14,
+              60654,
+              291,
+              33561,
+              14,
+              24623,
+              14,
+              8295,
+              42399,
+              64001
+            ],
+            "input_tokens": 75,
+            "finish_reason": "eos",
+            "seconds": 1.4704304169863462,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, garden, back to back, standing Person 1: arms crossed. Person 2: hands behind back. The person being described: arms crossed.\ntag: 2girls, garden, back to back, standing, black hair, blue eyes, green jacket, arms crossed, ",
+            "original": "black hair, blue eyes, green jacket, arms crossed",
+            "added_tags": "looking at viewer, smile, closed mouth, company name, brown footwear, denim, jeans, crossed arms, multiple views, logo, blunt ends, pocket",
+            "output": "black hair, blue eyes, green jacket, arms crossed, looking at viewer, smile, closed mouth, company name, brown footwear, denim, jeans, crossed arms, multiple views, logo, blunt ends, pocket",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, garden, back to back, standing Person 1: arms crossed. Person 2: hands behind back. The person being described: arms crossed.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "1990s (style), long sleeves, looking at viewer, short hair, retro artstyle, english text, smile, closed mouth, from behind, character name, copyright notice, company name, pants, brown footwear, full body, shoes, denim, jeans, jacket, crossed arms, multiple views, copyright name, logo, bob cut, blunt ends, blunt bangs, pocket, blue pants",
+            "rejected_tags": [
+              {
+                "tag": "1990s (style)",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "retro artstyle",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "from behind",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "character name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "copyright notice",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pants",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "full body",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "shoes",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "copyright name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "bob cut",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "blunt bangs",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "blue pants",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              }
+            ],
+            "max_added_tags": null,
+            "grounded_additions": false,
+            "owner_tokens": {
+              "0": 48,
+              "1": 13,
+              "-1": 14
+            }
+          },
+          "focused": {
+            "text": "1990s (style), long sleeves, looking at viewer, short hair, retro artstyle, english text, smile, closed mouth, from behind, character name, copyright notice, company name, pants, brown footwear, full body, shoes, denim, jeans, jacket, crossed arms, multiple views, copyright name, logo, bob cut, blunt ends, blunt bangs, pocket, blue pants<|eos|>",
+            "token_ids": [
+              1357,
+              18,
+              85,
+              343,
+              8618,
+              754,
+              1606,
+              32294,
+              2346,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              3107,
+              8078,
+              14,
+              20789,
+              2783,
+              8618,
+              14,
+              33010,
+              3051,
+              14,
+              14088,
+              14,
+              9101,
+              10485,
+              14,
+              538,
+              5573,
+              14,
+              3053,
+              2329,
+              14,
+              23539,
+              8806,
+              14,
+              3817,
+              2329,
+              14,
+              42399,
+              14,
+              13769,
+              5539,
+              50295,
+              14,
+              3530,
+              3197,
+              14,
+              21338,
+              14,
+              2917,
+              328,
+              14,
+              56900,
+              14,
+              38853,
+              14,
+              26577,
+              11304,
+              14,
+              4990,
+              9003,
+              14,
+              23539,
+              2329,
+              14,
+              32883,
+              14,
+              59041,
+              4619,
+              14,
+              60654,
+              12802,
+              14,
+              60654,
+              291,
+              33561,
+              14,
+              24623,
+              14,
+              8295,
+              42399,
+              64001
+            ],
+            "input_tokens": 75,
+            "finish_reason": "eos",
+            "seconds": 1.4704304169863462,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, garden, back to back, standing Person 1: arms crossed. Person 2: hands behind back. The person being described: arms crossed.\ntag: 2girls, garden, back to back, standing, black hair, blue eyes, green jacket, arms crossed, ",
+            "original": "black hair, blue eyes, green jacket, arms crossed",
+            "added_tags": "smile",
+            "output": "black hair, blue eyes, green jacket, arms crossed, smile",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, garden, back to back, standing Person 1: arms crossed. Person 2: hands behind back. The person being described: arms crossed.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "1990s (style), long sleeves, looking at viewer, short hair, retro artstyle, english text, smile, closed mouth, from behind, character name, copyright notice, company name, pants, brown footwear, full body, shoes, denim, jeans, jacket, crossed arms, multiple views, copyright name, logo, bob cut, blunt ends, blunt bangs, pocket, blue pants",
+            "rejected_tags": [
+              {
+                "tag": "1990s (style)",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "retro artstyle",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "from behind",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "character name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "copyright notice",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pants",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "full body",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "shoes",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "copyright name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "bob cut",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "blunt bangs",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "blue pants",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking at viewer",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " closed mouth",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " company name",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " brown footwear",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " denim",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " jeans",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " crossed arms",
+                "reason": "already expressed by source or accepted additions"
+              },
+              {
+                "tag": " multiple views",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " logo",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " blunt ends",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " pocket",
+                "reason": "not grounded in this participant or shared action"
+              }
+            ],
+            "max_added_tags": 6,
+            "grounded_additions": true,
+            "owner_tokens": {
+              "0": 48,
+              "1": 13,
+              "-1": 14
+            }
+          }
+        },
+        {
+          "slot": 2,
+          "previous": {
+            "text": "1990s (style), long sleeves, looking at viewer, short hair, white background, own hands together, simple background, smile, retro artstyle, from behind, character name, english text, copyright notice, company name, closed mouth, pants, cowboy shot, solo focus, jacket, copyright name, logo, denim, jeans, blue pants, looking back, pocket, artist name, bob cut<|eos|>",
+            "token_ids": [
+              1357,
+              18,
+              85,
+              343,
+              8618,
+              754,
+              1606,
+              32294,
+              2346,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              3107,
+              8078,
+              14,
+              5403,
+              6951,
+              14,
+              1956,
+              6099,
+              3672,
+              14,
+              4654,
+              6951,
+              14,
+              14088,
+              14,
+              20789,
+              2783,
+              8618,
+              14,
+              538,
+              5573,
+              14,
+              3053,
+              2329,
+              14,
+              33010,
+              3051,
+              14,
+              23539,
+              8806,
+              14,
+              3817,
+              2329,
+              14,
+              9101,
+              10485,
+              14,
+              42399,
+              14,
+              21468,
+              34771,
+              10941,
+              14,
+              15619,
+              3568,
+              14,
+              38853,
+              14,
+              23539,
+              2329,
+              14,
+              32883,
+              14,
+              2917,
+              328,
+              14,
+              56900,
+              14,
+              8295,
+              42399,
+              14,
+              4735,
+              1559,
+              14,
+              24623,
+              14,
+              12966,
+              2329,
+              14,
+              59041,
+              4619,
+              64001
+            ],
+            "input_tokens": 78,
+            "finish_reason": "eos",
+            "seconds": 1.448226940992754,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, garden, back to back, standing Person 1: arms crossed. Person 2: hands behind back. The person being described: hands behind back.\ntag: 2girls, garden, back to back, standing, blonde hair, brown eyes, red jacket, hands behind back, ",
+            "original": "blonde hair, brown eyes, red jacket, hands behind back",
+            "added_tags": "looking at viewer, own hands together, smile, company name, closed mouth, logo, denim, jeans, pocket",
+            "output": "blonde hair, brown eyes, red jacket, hands behind back, looking at viewer, own hands together, smile, company name, closed mouth, logo, denim, jeans, pocket",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, garden, back to back, standing Person 1: arms crossed. Person 2: hands behind back. The person being described: hands behind back.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "1990s (style), long sleeves, looking at viewer, short hair, white background, own hands together, simple background, smile, retro artstyle, from behind, character name, english text, copyright notice, company name, closed mouth, pants, cowboy shot, solo focus, jacket, copyright name, logo, denim, jeans, blue pants, looking back, pocket, artist name, bob cut",
+            "rejected_tags": [
+              {
+                "tag": "1990s (style)",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "white background",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "simple background",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "retro artstyle",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "from behind",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "character name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "copyright notice",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pants",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "cowboy shot",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "solo focus",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "copyright name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "blue pants",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking back",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "artist name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "bob cut",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              }
+            ],
+            "max_added_tags": null,
+            "grounded_additions": false,
+            "owner_tokens": {
+              "0": 49,
+              "1": 15,
+              "-1": 14
+            }
+          },
+          "focused": {
+            "text": "1990s (style), long sleeves, looking at viewer, short hair, white background, own hands together, simple background, smile, retro artstyle, from behind, character name, english text, copyright notice, company name, closed mouth, pants, cowboy shot, solo focus, jacket, copyright name, logo, denim, jeans, blue pants, looking back, pocket, artist name, bob cut<|eos|>",
+            "token_ids": [
+              1357,
+              18,
+              85,
+              343,
+              8618,
+              754,
+              1606,
+              32294,
+              2346,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              3107,
+              8078,
+              14,
+              5403,
+              6951,
+              14,
+              1956,
+              6099,
+              3672,
+              14,
+              4654,
+              6951,
+              14,
+              14088,
+              14,
+              20789,
+              2783,
+              8618,
+              14,
+              538,
+              5573,
+              14,
+              3053,
+              2329,
+              14,
+              33010,
+              3051,
+              14,
+              23539,
+              8806,
+              14,
+              3817,
+              2329,
+              14,
+              9101,
+              10485,
+              14,
+              42399,
+              14,
+              21468,
+              34771,
+              10941,
+              14,
+              15619,
+              3568,
+              14,
+              38853,
+              14,
+              23539,
+              2329,
+              14,
+              32883,
+              14,
+              2917,
+              328,
+              14,
+              56900,
+              14,
+              8295,
+              42399,
+              14,
+              4735,
+              1559,
+              14,
+              24623,
+              14,
+              12966,
+              2329,
+              14,
+              59041,
+              4619,
+              64001
+            ],
+            "input_tokens": 78,
+            "finish_reason": "eos",
+            "seconds": 1.448226940992754,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, garden, back to back, standing Person 1: arms crossed. Person 2: hands behind back. The person being described: hands behind back.\ntag: 2girls, garden, back to back, standing, blonde hair, brown eyes, red jacket, hands behind back, ",
+            "original": "blonde hair, brown eyes, red jacket, hands behind back",
+            "added_tags": "smile",
+            "output": "blonde hair, brown eyes, red jacket, hands behind back, smile",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, garden, back to back, standing Person 1: arms crossed. Person 2: hands behind back. The person being described: hands behind back.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "1990s (style), long sleeves, looking at viewer, short hair, white background, own hands together, simple background, smile, retro artstyle, from behind, character name, english text, copyright notice, company name, closed mouth, pants, cowboy shot, solo focus, jacket, copyright name, logo, denim, jeans, blue pants, looking back, pocket, artist name, bob cut",
+            "rejected_tags": [
+              {
+                "tag": "1990s (style)",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "short hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "white background",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "simple background",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "retro artstyle",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "from behind",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "character name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "copyright notice",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "pants",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "cowboy shot",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "solo focus",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "copyright name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "blue pants",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking back",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "artist name",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "bob cut",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking at viewer",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " own hands together",
+                "reason": "already expressed by source or accepted additions"
+              },
+              {
+                "tag": " company name",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " closed mouth",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " logo",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " denim",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " jeans",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": " pocket",
+                "reason": "not grounded in this participant or shared action"
+              }
+            ],
+            "max_added_tags": 6,
+            "grounded_additions": true,
+            "owner_tokens": {
+              "0": 49,
+              "1": 15,
+              "-1": 14
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "selection_evidence": "replayed selection over unchanged real model completions"
+}

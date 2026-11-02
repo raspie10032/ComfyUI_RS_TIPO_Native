@@ -1,0 +1,1298 @@
+[
+  {
+    "case": "cup",
+    "mode": "original",
+    "prompt_id": "41c359e8-157a-4ffc-a824-8ab6ea74b499",
+    "seconds_queue_to_file": 37.266,
+    "pixel_sha256": "bb9788b7e612dfa38fb83a015fe603a10763f3dda68e97422bbba8ff46ef45f3",
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "anima-base-v1.0.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen_3_06b_base.safetensors",
+          "type": "stable_diffusion"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "RSMultiCharacterPrompts",
+        "inputs": {
+          "character_count": 2,
+          "character1_enable": true,
+          "character1": "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms",
+          "character1_uc": "",
+          "character1_x": 0.28,
+          "character1_y": 0.5,
+          "character2_enable": true,
+          "character2": "brown hair, green eyes, blue dress, on right, receiving cup, reaching out",
+          "character2_uc": "",
+          "character2_x": 0.72,
+          "character2_y": 0.5,
+          "character3_enable": true,
+          "character3": "",
+          "character3_uc": "",
+          "character3_x": 0.5,
+          "character3_y": 0.5,
+          "character4_enable": true,
+          "character4": "",
+          "character4_uc": "",
+          "character4_x": 0.5,
+          "character4_y": 0.5,
+          "character5_enable": true,
+          "character5": "",
+          "character5_uc": "",
+          "character5_x": 0.5,
+          "character5_y": 0.5,
+          "character6_enable": true,
+          "character6": "",
+          "character6_uc": "",
+          "character6_x": 0.5,
+          "character6_y": 0.5,
+          "character7_enable": true,
+          "character7": "",
+          "character7_uc": "",
+          "character7_x": 0.5,
+          "character7_y": 0.5,
+          "character8_enable": true,
+          "character8": "",
+          "character8_uc": "",
+          "character8_x": 0.5,
+          "character8_y": 0.5,
+          "character9_enable": true,
+          "character9": "",
+          "character9_uc": "",
+          "character9_x": 0.5,
+          "character9_y": 0.5,
+          "character10_enable": true,
+          "character10": "",
+          "character10_uc": "",
+          "character10_x": 0.5,
+          "character10_y": 0.5
+        }
+      },
+      "5": {
+        "class_type": "LoraLoader",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "clip": [
+            "2",
+            0
+          ],
+          "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+          "strength_model": 0.9,
+          "strength_clip": 1.0
+        }
+      },
+      "6": {
+        "class_type": "RSMultiCharacterSampler",
+        "inputs": {
+          "prompt": "masterpiece, best quality, adult women, 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other",
+          "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+          "width": 1152,
+          "height": 896,
+          "seed": 891024073,
+          "steps": 30,
+          "cfg": 4.0,
+          "sampler_name": "euler_ancestral",
+          "scheduler": "sgm_uniform",
+          "autosave": false,
+          "save_format": "PNG",
+          "webp_quality": 90,
+          "model": [
+            "5",
+            0
+          ],
+          "clip": [
+            "5",
+            1
+          ],
+          "vae": [
+            "3",
+            0
+          ],
+          "character_pipe": [
+            "4",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "6",
+            0
+          ],
+          "filename_prefix": "role-study/cup-original"
+        }
+      }
+    }
+  },
+  {
+    "case": "cup",
+    "mode": "previous",
+    "prompt_id": "0a1b9a28-6f54-4703-95cd-dc430f077e91",
+    "seconds_queue_to_file": 38.063,
+    "pixel_sha256": "106d567ecfe85f8d2b2d20e04115726a02c4522533b4126fe9df4a59ce22c2d8",
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "anima-base-v1.0.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen_3_06b_base.safetensors",
+          "type": "stable_diffusion"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "RSMultiCharacterPrompts",
+        "inputs": {
+          "character_count": 2,
+          "character1_enable": true,
+          "character1": "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms, holding, teacup, holding cup, sitting, saucer, indoors, chair, tea, table, smile, open mouth, outstretched hand",
+          "character1_uc": "",
+          "character1_x": 0.28,
+          "character1_y": 0.5,
+          "character2_enable": true,
+          "character2": "brown hair, green eyes, blue dress, on right, receiving cup, reaching out, holding, holding cup, sitting, chair, teacup, smile, closed mouth, blush, table, indoors, window, saucer, tea, curtains",
+          "character2_uc": "",
+          "character2_x": 0.72,
+          "character2_y": 0.5,
+          "character3_enable": true,
+          "character3": "",
+          "character3_uc": "",
+          "character3_x": 0.5,
+          "character3_y": 0.5,
+          "character4_enable": true,
+          "character4": "",
+          "character4_uc": "",
+          "character4_x": 0.5,
+          "character4_y": 0.5,
+          "character5_enable": true,
+          "character5": "",
+          "character5_uc": "",
+          "character5_x": 0.5,
+          "character5_y": 0.5,
+          "character6_enable": true,
+          "character6": "",
+          "character6_uc": "",
+          "character6_x": 0.5,
+          "character6_y": 0.5,
+          "character7_enable": true,
+          "character7": "",
+          "character7_uc": "",
+          "character7_x": 0.5,
+          "character7_y": 0.5,
+          "character8_enable": true,
+          "character8": "",
+          "character8_uc": "",
+          "character8_x": 0.5,
+          "character8_y": 0.5,
+          "character9_enable": true,
+          "character9": "",
+          "character9_uc": "",
+          "character9_x": 0.5,
+          "character9_y": 0.5,
+          "character10_enable": true,
+          "character10": "",
+          "character10_uc": "",
+          "character10_x": 0.5,
+          "character10_y": 0.5
+        }
+      },
+      "5": {
+        "class_type": "LoraLoader",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "clip": [
+            "2",
+            0
+          ],
+          "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+          "strength_model": 0.9,
+          "strength_clip": 1.0
+        }
+      },
+      "6": {
+        "class_type": "RSMultiCharacterSampler",
+        "inputs": {
+          "prompt": "masterpiece, best quality, adult women, 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other",
+          "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+          "width": 1152,
+          "height": 896,
+          "seed": 891024073,
+          "steps": 30,
+          "cfg": 4.0,
+          "sampler_name": "euler_ancestral",
+          "scheduler": "sgm_uniform",
+          "autosave": false,
+          "save_format": "PNG",
+          "webp_quality": 90,
+          "model": [
+            "5",
+            0
+          ],
+          "clip": [
+            "5",
+            1
+          ],
+          "vae": [
+            "3",
+            0
+          ],
+          "character_pipe": [
+            "4",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "6",
+            0
+          ],
+          "filename_prefix": "role-study/cup-previous"
+        }
+      }
+    }
+  },
+  {
+    "case": "cup",
+    "mode": "focused",
+    "prompt_id": "e02bf288-207f-41ba-b8e0-0f1b575f7e94",
+    "seconds_queue_to_file": 38.065,
+    "pixel_sha256": "ef11993b5d55473180006955aa954e4f7fbec023aeac6e3ba2adab23a05dc07f",
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "anima-base-v1.0.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen_3_06b_base.safetensors",
+          "type": "stable_diffusion"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "RSMultiCharacterPrompts",
+        "inputs": {
+          "character_count": 2,
+          "character1_enable": true,
+          "character1": "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms, holding cup, sitting, smile, outstretched hand",
+          "character1_uc": "",
+          "character1_x": 0.28,
+          "character1_y": 0.5,
+          "character2_enable": true,
+          "character2": "brown hair, green eyes, blue dress, on right, receiving cup, reaching out, holding cup, sitting, smile",
+          "character2_uc": "",
+          "character2_x": 0.72,
+          "character2_y": 0.5,
+          "character3_enable": true,
+          "character3": "",
+          "character3_uc": "",
+          "character3_x": 0.5,
+          "character3_y": 0.5,
+          "character4_enable": true,
+          "character4": "",
+          "character4_uc": "",
+          "character4_x": 0.5,
+          "character4_y": 0.5,
+          "character5_enable": true,
+          "character5": "",
+          "character5_uc": "",
+          "character5_x": 0.5,
+          "character5_y": 0.5,
+          "character6_enable": true,
+          "character6": "",
+          "character6_uc": "",
+          "character6_x": 0.5,
+          "character6_y": 0.5,
+          "character7_enable": true,
+          "character7": "",
+          "character7_uc": "",
+          "character7_x": 0.5,
+          "character7_y": 0.5,
+          "character8_enable": true,
+          "character8": "",
+          "character8_uc": "",
+          "character8_x": 0.5,
+          "character8_y": 0.5,
+          "character9_enable": true,
+          "character9": "",
+          "character9_uc": "",
+          "character9_x": 0.5,
+          "character9_y": 0.5,
+          "character10_enable": true,
+          "character10": "",
+          "character10_uc": "",
+          "character10_x": 0.5,
+          "character10_y": 0.5
+        }
+      },
+      "5": {
+        "class_type": "LoraLoader",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "clip": [
+            "2",
+            0
+          ],
+          "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+          "strength_model": 0.9,
+          "strength_clip": 1.0
+        }
+      },
+      "6": {
+        "class_type": "RSMultiCharacterSampler",
+        "inputs": {
+          "prompt": "masterpiece, best quality, adult women, 2girls, cafe, afternoon, wooden table, passing a cup, looking at each other",
+          "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+          "width": 1152,
+          "height": 896,
+          "seed": 891024073,
+          "steps": 30,
+          "cfg": 4.0,
+          "sampler_name": "euler_ancestral",
+          "scheduler": "sgm_uniform",
+          "autosave": false,
+          "save_format": "PNG",
+          "webp_quality": 90,
+          "model": [
+            "5",
+            0
+          ],
+          "clip": [
+            "5",
+            1
+          ],
+          "vae": [
+            "3",
+            0
+          ],
+          "character_pipe": [
+            "4",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "6",
+            0
+          ],
+          "filename_prefix": "role-study/cup-focused"
+        }
+      }
+    }
+  },
+  {
+    "case": "dance",
+    "mode": "original",
+    "prompt_id": "1f410b2a-ee9d-4192-a2c0-ac676a9fdf58",
+    "seconds_queue_to_file": 38.065,
+    "pixel_sha256": "fbb4d2bd77d9c558d35fe775debdbb4de341ade6ec1b5666d7a3ec22ce213ca2",
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "anima-base-v1.0.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen_3_06b_base.safetensors",
+          "type": "stable_diffusion"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "RSMultiCharacterPrompts",
+        "inputs": {
+          "character_count": 2,
+          "character1_enable": true,
+          "character1": "pink hair, red eyes, black dress, leading dance, hand on other waist",
+          "character1_uc": "",
+          "character1_x": 0.28,
+          "character1_y": 0.5,
+          "character2_enable": true,
+          "character2": "brown hair, blue eyes, white dress, following dance, hand on other shoulder",
+          "character2_uc": "",
+          "character2_x": 0.72,
+          "character2_y": 0.5,
+          "character3_enable": true,
+          "character3": "",
+          "character3_uc": "",
+          "character3_x": 0.5,
+          "character3_y": 0.5,
+          "character4_enable": true,
+          "character4": "",
+          "character4_uc": "",
+          "character4_x": 0.5,
+          "character4_y": 0.5,
+          "character5_enable": true,
+          "character5": "",
+          "character5_uc": "",
+          "character5_x": 0.5,
+          "character5_y": 0.5,
+          "character6_enable": true,
+          "character6": "",
+          "character6_uc": "",
+          "character6_x": 0.5,
+          "character6_y": 0.5,
+          "character7_enable": true,
+          "character7": "",
+          "character7_uc": "",
+          "character7_x": 0.5,
+          "character7_y": 0.5,
+          "character8_enable": true,
+          "character8": "",
+          "character8_uc": "",
+          "character8_x": 0.5,
+          "character8_y": 0.5,
+          "character9_enable": true,
+          "character9": "",
+          "character9_uc": "",
+          "character9_x": 0.5,
+          "character9_y": 0.5,
+          "character10_enable": true,
+          "character10": "",
+          "character10_uc": "",
+          "character10_x": 0.5,
+          "character10_y": 0.5
+        }
+      },
+      "5": {
+        "class_type": "LoraLoader",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "clip": [
+            "2",
+            0
+          ],
+          "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+          "strength_model": 0.9,
+          "strength_clip": 1.0
+        }
+      },
+      "6": {
+        "class_type": "RSMultiCharacterSampler",
+        "inputs": {
+          "prompt": "masterpiece, best quality, adult women, 2girls, ballroom, evening, dancing together",
+          "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+          "width": 1152,
+          "height": 896,
+          "seed": 891024073,
+          "steps": 30,
+          "cfg": 4.0,
+          "sampler_name": "euler_ancestral",
+          "scheduler": "sgm_uniform",
+          "autosave": false,
+          "save_format": "PNG",
+          "webp_quality": 90,
+          "model": [
+            "5",
+            0
+          ],
+          "clip": [
+            "5",
+            1
+          ],
+          "vae": [
+            "3",
+            0
+          ],
+          "character_pipe": [
+            "4",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "6",
+            0
+          ],
+          "filename_prefix": "role-study/dance-original"
+        }
+      }
+    }
+  },
+  {
+    "case": "dance",
+    "mode": "previous",
+    "prompt_id": "d93f36b8-fb9b-4d04-999e-fe6141c8aab3",
+    "seconds_queue_to_file": 38.065,
+    "pixel_sha256": "f172ce8f060f9cf350189ecdf454630a028eebdfeb000701b522bd897985d155",
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "anima-base-v1.0.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen_3_06b_base.safetensors",
+          "type": "stable_diffusion"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "RSMultiCharacterPrompts",
+        "inputs": {
+          "character_count": 2,
+          "character1_enable": true,
+          "character1": "pink hair, red eyes, black dress, leading dance, hand on other waist, looking at viewer, indoors, smile, closed mouth, outstretched arms, blurry background, blurry, holding hands, blush, heterochromia, subtitled",
+          "character1_uc": "",
+          "character1_x": 0.28,
+          "character1_y": 0.5,
+          "character2_enable": true,
+          "character2": "brown hair, blue eyes, white dress, following dance, hand on other shoulder, looking at another, holding hands, indoors, smile, closed mouth, blush",
+          "character2_uc": "",
+          "character2_x": 0.72,
+          "character2_y": 0.5,
+          "character3_enable": true,
+          "character3": "",
+          "character3_uc": "",
+          "character3_x": 0.5,
+          "character3_y": 0.5,
+          "character4_enable": true,
+          "character4": "",
+          "character4_uc": "",
+          "character4_x": 0.5,
+          "character4_y": 0.5,
+          "character5_enable": true,
+          "character5": "",
+          "character5_uc": "",
+          "character5_x": 0.5,
+          "character5_y": 0.5,
+          "character6_enable": true,
+          "character6": "",
+          "character6_uc": "",
+          "character6_x": 0.5,
+          "character6_y": 0.5,
+          "character7_enable": true,
+          "character7": "",
+          "character7_uc": "",
+          "character7_x": 0.5,
+          "character7_y": 0.5,
+          "character8_enable": true,
+          "character8": "",
+          "character8_uc": "",
+          "character8_x": 0.5,
+          "character8_y": 0.5,
+          "character9_enable": true,
+          "character9": "",
+          "character9_uc": "",
+          "character9_x": 0.5,
+          "character9_y": 0.5,
+          "character10_enable": true,
+          "character10": "",
+          "character10_uc": "",
+          "character10_x": 0.5,
+          "character10_y": 0.5
+        }
+      },
+      "5": {
+        "class_type": "LoraLoader",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "clip": [
+            "2",
+            0
+          ],
+          "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+          "strength_model": 0.9,
+          "strength_clip": 1.0
+        }
+      },
+      "6": {
+        "class_type": "RSMultiCharacterSampler",
+        "inputs": {
+          "prompt": "masterpiece, best quality, adult women, 2girls, ballroom, evening, dancing together",
+          "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+          "width": 1152,
+          "height": 896,
+          "seed": 891024073,
+          "steps": 30,
+          "cfg": 4.0,
+          "sampler_name": "euler_ancestral",
+          "scheduler": "sgm_uniform",
+          "autosave": false,
+          "save_format": "PNG",
+          "webp_quality": 90,
+          "model": [
+            "5",
+            0
+          ],
+          "clip": [
+            "5",
+            1
+          ],
+          "vae": [
+            "3",
+            0
+          ],
+          "character_pipe": [
+            "4",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "6",
+            0
+          ],
+          "filename_prefix": "role-study/dance-previous"
+        }
+      }
+    }
+  },
+  {
+    "case": "dance",
+    "mode": "focused",
+    "prompt_id": "f2313468-477b-4ae8-a77c-8a420363297b",
+    "seconds_queue_to_file": 38.064,
+    "pixel_sha256": "f7b5e3e126b29b1d8cf9ec62fd369484a95b89499066bb58061723eab0d43d8a",
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "anima-base-v1.0.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen_3_06b_base.safetensors",
+          "type": "stable_diffusion"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "RSMultiCharacterPrompts",
+        "inputs": {
+          "character_count": 2,
+          "character1_enable": true,
+          "character1": "pink hair, red eyes, black dress, leading dance, hand on other waist, smile",
+          "character1_uc": "",
+          "character1_x": 0.28,
+          "character1_y": 0.5,
+          "character2_enable": true,
+          "character2": "brown hair, blue eyes, white dress, following dance, hand on other shoulder, looking at another, smile",
+          "character2_uc": "",
+          "character2_x": 0.72,
+          "character2_y": 0.5,
+          "character3_enable": true,
+          "character3": "",
+          "character3_uc": "",
+          "character3_x": 0.5,
+          "character3_y": 0.5,
+          "character4_enable": true,
+          "character4": "",
+          "character4_uc": "",
+          "character4_x": 0.5,
+          "character4_y": 0.5,
+          "character5_enable": true,
+          "character5": "",
+          "character5_uc": "",
+          "character5_x": 0.5,
+          "character5_y": 0.5,
+          "character6_enable": true,
+          "character6": "",
+          "character6_uc": "",
+          "character6_x": 0.5,
+          "character6_y": 0.5,
+          "character7_enable": true,
+          "character7": "",
+          "character7_uc": "",
+          "character7_x": 0.5,
+          "character7_y": 0.5,
+          "character8_enable": true,
+          "character8": "",
+          "character8_uc": "",
+          "character8_x": 0.5,
+          "character8_y": 0.5,
+          "character9_enable": true,
+          "character9": "",
+          "character9_uc": "",
+          "character9_x": 0.5,
+          "character9_y": 0.5,
+          "character10_enable": true,
+          "character10": "",
+          "character10_uc": "",
+          "character10_x": 0.5,
+          "character10_y": 0.5
+        }
+      },
+      "5": {
+        "class_type": "LoraLoader",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "clip": [
+            "2",
+            0
+          ],
+          "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+          "strength_model": 0.9,
+          "strength_clip": 1.0
+        }
+      },
+      "6": {
+        "class_type": "RSMultiCharacterSampler",
+        "inputs": {
+          "prompt": "masterpiece, best quality, adult women, 2girls, ballroom, evening, dancing together",
+          "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+          "width": 1152,
+          "height": 896,
+          "seed": 891024073,
+          "steps": 30,
+          "cfg": 4.0,
+          "sampler_name": "euler_ancestral",
+          "scheduler": "sgm_uniform",
+          "autosave": false,
+          "save_format": "PNG",
+          "webp_quality": 90,
+          "model": [
+            "5",
+            0
+          ],
+          "clip": [
+            "5",
+            1
+          ],
+          "vae": [
+            "3",
+            0
+          ],
+          "character_pipe": [
+            "4",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "6",
+            0
+          ],
+          "filename_prefix": "role-study/dance-focused"
+        }
+      }
+    }
+  },
+  {
+    "case": "backs",
+    "mode": "original",
+    "prompt_id": "a6d0da55-0a6f-4f71-858a-8f79cbe8185d",
+    "seconds_queue_to_file": 38.058,
+    "pixel_sha256": "aa75aef4280fd706fa35a4626f5bd4baaec531c35269bce31a12a2ef62a077e2",
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "anima-base-v1.0.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen_3_06b_base.safetensors",
+          "type": "stable_diffusion"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "RSMultiCharacterPrompts",
+        "inputs": {
+          "character_count": 2,
+          "character1_enable": true,
+          "character1": "black hair, blue eyes, green jacket, arms crossed",
+          "character1_uc": "",
+          "character1_x": 0.28,
+          "character1_y": 0.5,
+          "character2_enable": true,
+          "character2": "blonde hair, brown eyes, red jacket, hands behind back",
+          "character2_uc": "",
+          "character2_x": 0.72,
+          "character2_y": 0.5,
+          "character3_enable": true,
+          "character3": "",
+          "character3_uc": "",
+          "character3_x": 0.5,
+          "character3_y": 0.5,
+          "character4_enable": true,
+          "character4": "",
+          "character4_uc": "",
+          "character4_x": 0.5,
+          "character4_y": 0.5,
+          "character5_enable": true,
+          "character5": "",
+          "character5_uc": "",
+          "character5_x": 0.5,
+          "character5_y": 0.5,
+          "character6_enable": true,
+          "character6": "",
+          "character6_uc": "",
+          "character6_x": 0.5,
+          "character6_y": 0.5,
+          "character7_enable": true,
+          "character7": "",
+          "character7_uc": "",
+          "character7_x": 0.5,
+          "character7_y": 0.5,
+          "character8_enable": true,
+          "character8": "",
+          "character8_uc": "",
+          "character8_x": 0.5,
+          "character8_y": 0.5,
+          "character9_enable": true,
+          "character9": "",
+          "character9_uc": "",
+          "character9_x": 0.5,
+          "character9_y": 0.5,
+          "character10_enable": true,
+          "character10": "",
+          "character10_uc": "",
+          "character10_x": 0.5,
+          "character10_y": 0.5
+        }
+      },
+      "5": {
+        "class_type": "LoraLoader",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "clip": [
+            "2",
+            0
+          ],
+          "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+          "strength_model": 0.9,
+          "strength_clip": 1.0
+        }
+      },
+      "6": {
+        "class_type": "RSMultiCharacterSampler",
+        "inputs": {
+          "prompt": "masterpiece, best quality, adult women, 2girls, garden, back to back, standing",
+          "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+          "width": 1152,
+          "height": 896,
+          "seed": 891024073,
+          "steps": 30,
+          "cfg": 4.0,
+          "sampler_name": "euler_ancestral",
+          "scheduler": "sgm_uniform",
+          "autosave": false,
+          "save_format": "PNG",
+          "webp_quality": 90,
+          "model": [
+            "5",
+            0
+          ],
+          "clip": [
+            "5",
+            1
+          ],
+          "vae": [
+            "3",
+            0
+          ],
+          "character_pipe": [
+            "4",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "6",
+            0
+          ],
+          "filename_prefix": "role-study/backs-original"
+        }
+      }
+    }
+  },
+  {
+    "case": "backs",
+    "mode": "previous",
+    "prompt_id": "3c6f7c28-5dde-4318-a97f-bcaf73b1ce3a",
+    "seconds_queue_to_file": 38.062,
+    "pixel_sha256": "309fbdf7db0564e303bb0fb00d7df4333e7badd4a2ad7866606279aa5fea5891",
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "anima-base-v1.0.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen_3_06b_base.safetensors",
+          "type": "stable_diffusion"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "RSMultiCharacterPrompts",
+        "inputs": {
+          "character_count": 2,
+          "character1_enable": true,
+          "character1": "black hair, blue eyes, green jacket, arms crossed, looking at viewer, smile, closed mouth, company name, brown footwear, denim, jeans, crossed arms, multiple views, logo, blunt ends, pocket",
+          "character1_uc": "",
+          "character1_x": 0.28,
+          "character1_y": 0.5,
+          "character2_enable": true,
+          "character2": "blonde hair, brown eyes, red jacket, hands behind back, looking at viewer, own hands together, smile, company name, closed mouth, logo, denim, jeans, pocket",
+          "character2_uc": "",
+          "character2_x": 0.72,
+          "character2_y": 0.5,
+          "character3_enable": true,
+          "character3": "",
+          "character3_uc": "",
+          "character3_x": 0.5,
+          "character3_y": 0.5,
+          "character4_enable": true,
+          "character4": "",
+          "character4_uc": "",
+          "character4_x": 0.5,
+          "character4_y": 0.5,
+          "character5_enable": true,
+          "character5": "",
+          "character5_uc": "",
+          "character5_x": 0.5,
+          "character5_y": 0.5,
+          "character6_enable": true,
+          "character6": "",
+          "character6_uc": "",
+          "character6_x": 0.5,
+          "character6_y": 0.5,
+          "character7_enable": true,
+          "character7": "",
+          "character7_uc": "",
+          "character7_x": 0.5,
+          "character7_y": 0.5,
+          "character8_enable": true,
+          "character8": "",
+          "character8_uc": "",
+          "character8_x": 0.5,
+          "character8_y": 0.5,
+          "character9_enable": true,
+          "character9": "",
+          "character9_uc": "",
+          "character9_x": 0.5,
+          "character9_y": 0.5,
+          "character10_enable": true,
+          "character10": "",
+          "character10_uc": "",
+          "character10_x": 0.5,
+          "character10_y": 0.5
+        }
+      },
+      "5": {
+        "class_type": "LoraLoader",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "clip": [
+            "2",
+            0
+          ],
+          "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+          "strength_model": 0.9,
+          "strength_clip": 1.0
+        }
+      },
+      "6": {
+        "class_type": "RSMultiCharacterSampler",
+        "inputs": {
+          "prompt": "masterpiece, best quality, adult women, 2girls, garden, back to back, standing",
+          "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+          "width": 1152,
+          "height": 896,
+          "seed": 891024073,
+          "steps": 30,
+          "cfg": 4.0,
+          "sampler_name": "euler_ancestral",
+          "scheduler": "sgm_uniform",
+          "autosave": false,
+          "save_format": "PNG",
+          "webp_quality": 90,
+          "model": [
+            "5",
+            0
+          ],
+          "clip": [
+            "5",
+            1
+          ],
+          "vae": [
+            "3",
+            0
+          ],
+          "character_pipe": [
+            "4",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "6",
+            0
+          ],
+          "filename_prefix": "role-study/backs-previous"
+        }
+      }
+    }
+  },
+  {
+    "case": "backs",
+    "mode": "focused",
+    "prompt_id": "1da9868c-e9b5-4107-96f1-919ca7a9ea91",
+    "seconds_queue_to_file": 38.059,
+    "pixel_sha256": "bf4fdfad3595e5b6ac6277fb0377c3a323a0ef79d421fd962db187383cbfc052",
+    "graph": {
+      "1": {
+        "class_type": "UNETLoader",
+        "inputs": {
+          "unet_name": "anima-base-v1.0.safetensors",
+          "weight_dtype": "default"
+        }
+      },
+      "2": {
+        "class_type": "CLIPLoader",
+        "inputs": {
+          "clip_name": "qwen_3_06b_base.safetensors",
+          "type": "stable_diffusion"
+        }
+      },
+      "3": {
+        "class_type": "VAELoader",
+        "inputs": {
+          "vae_name": "qwen_image_vae.safetensors"
+        }
+      },
+      "4": {
+        "class_type": "RSMultiCharacterPrompts",
+        "inputs": {
+          "character_count": 2,
+          "character1_enable": true,
+          "character1": "black hair, blue eyes, green jacket, arms crossed, smile",
+          "character1_uc": "",
+          "character1_x": 0.28,
+          "character1_y": 0.5,
+          "character2_enable": true,
+          "character2": "blonde hair, brown eyes, red jacket, hands behind back, smile",
+          "character2_uc": "",
+          "character2_x": 0.72,
+          "character2_y": 0.5,
+          "character3_enable": true,
+          "character3": "",
+          "character3_uc": "",
+          "character3_x": 0.5,
+          "character3_y": 0.5,
+          "character4_enable": true,
+          "character4": "",
+          "character4_uc": "",
+          "character4_x": 0.5,
+          "character4_y": 0.5,
+          "character5_enable": true,
+          "character5": "",
+          "character5_uc": "",
+          "character5_x": 0.5,
+          "character5_y": 0.5,
+          "character6_enable": true,
+          "character6": "",
+          "character6_uc": "",
+          "character6_x": 0.5,
+          "character6_y": 0.5,
+          "character7_enable": true,
+          "character7": "",
+          "character7_uc": "",
+          "character7_x": 0.5,
+          "character7_y": 0.5,
+          "character8_enable": true,
+          "character8": "",
+          "character8_uc": "",
+          "character8_x": 0.5,
+          "character8_y": 0.5,
+          "character9_enable": true,
+          "character9": "",
+          "character9_uc": "",
+          "character9_x": 0.5,
+          "character9_y": 0.5,
+          "character10_enable": true,
+          "character10": "",
+          "character10_uc": "",
+          "character10_x": 0.5,
+          "character10_y": 0.5
+        }
+      },
+      "5": {
+        "class_type": "LoraLoader",
+        "inputs": {
+          "model": [
+            "1",
+            0
+          ],
+          "clip": [
+            "2",
+            0
+          ],
+          "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+          "strength_model": 0.9,
+          "strength_clip": 1.0
+        }
+      },
+      "6": {
+        "class_type": "RSMultiCharacterSampler",
+        "inputs": {
+          "prompt": "masterpiece, best quality, adult women, 2girls, garden, back to back, standing",
+          "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+          "width": 1152,
+          "height": 896,
+          "seed": 891024073,
+          "steps": 30,
+          "cfg": 4.0,
+          "sampler_name": "euler_ancestral",
+          "scheduler": "sgm_uniform",
+          "autosave": false,
+          "save_format": "PNG",
+          "webp_quality": 90,
+          "model": [
+            "5",
+            0
+          ],
+          "clip": [
+            "5",
+            1
+          ],
+          "vae": [
+            "3",
+            0
+          ],
+          "character_pipe": [
+            "4",
+            0
+          ]
+        }
+      },
+      "7": {
+        "class_type": "SaveImage",
+        "inputs": {
+          "images": [
+            "6",
+            0
+          ],
+          "filename_prefix": "role-study/backs-focused"
+        }
+      }
+    }
+  }
+]

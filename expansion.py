@@ -5,6 +5,7 @@ from .control import controlled_prompt
 from .generation import complete
 from .grounding import guard_additions
 from .exclusion import parse_excluded, validate_sources
+from .additions import select_additions
 
 
 def append_completion(original, completion):
@@ -29,7 +30,10 @@ def finished_completion(completion, finish_reason):
 
 def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
                  character_weight=1.5, length="long", interaction="", interaction_weight=1.0,
-                 protect_source=True, peer_actions=(), **sampling):
+                 protect_source=True, peer_actions=(), max_added_tags=None,
+                 grounded_additions=False, **sampling):
+    if max_added_tags is not None and (type(max_added_tags) is not int or not 1 <= max_added_tags <= 32):
+        raise ValueError('TIPO max_added_tags must be between 1 and 32.')
     validate_sources(parse_excluded(sampling.get('excluded_tags', '')),
                      [('common_prompt', common), ('character', character or '')])
     prompt, attention = controlled_prompt(tokenizer, common, character, length=length,
@@ -42,11 +46,24 @@ def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
     # into the image prompt.
     completion = finished_completion(result.text, result.finish_reason)
     _, proposed = append_completion(original, completion)
+    # Budget only genuinely new candidates, even with protection disabled.
+    completion = proposed
     rejected = []
     if protect_source:
         kept, rejected = guard_additions(original, proposed.split(","), common=common,
             interaction=interaction, character=character is not None, peer_actions=peer_actions)
         completion = ", ".join(kept)
+    if max_added_tags is not None:
+        candidates = [t.strip() for t in completion.split(',') if t.strip()]
+        if grounded_additions and protect_source:
+            kept, limited = select_additions(original, candidates, common=common,
+                character=character is not None, limit=max_added_tags)
+        else:
+            kept = candidates[:max_added_tags]
+            limited = [{'tag': tag, 'reason': 'addition budget reached'}
+                       for tag in candidates[max_added_tags:]]
+        rejected.extend(limited)
+        completion = ', '.join(kept)
     expanded, added = append_completion(original, completion)
     return expanded, {**asdict(result), "input": prompt, "original": original,
                       "added_tags": added, "output": expanded,
@@ -54,6 +71,8 @@ def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
                       "interaction": interaction, "interaction_weight": interaction_weight,
                       "protect_source": protect_source, "proposed_tags": proposed,
                       "rejected_tags": rejected,
+                      "max_added_tags": max_added_tags,
+                      "grounded_additions": bool(grounded_additions and protect_source),
                       "owner_tokens": {str(o): attention.owners.count(o) for o in set(attention.owners)}}
 
 
