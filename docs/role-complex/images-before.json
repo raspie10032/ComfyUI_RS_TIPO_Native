@@ -1,0 +1,4137 @@
+[
+  {
+    "case": "tea-relay",
+    "mode": "original",
+    "prompt_id": "8459edb2-f5da-4db6-93e9-13bf7a8161b7",
+    "seed": 891024073,
+    "seconds_queue_to_file": 44.088,
+    "file": "validation/complex-images/tea-relay-891024073-original.png",
+    "pixel_sha256": "bb1a27f329bca6d747b77c3e68fd4f638dfe278d64fb3a3c0e1b46d426fefefd",
+    "history": {
+      "prompt": [
+        0,
+        "8459edb2-f5da-4db6-93e9-13bf7a8161b7",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 3,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white blouse, red skirt, on left, offering cup to person in center, holding cup by handle, extending arm",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue dress, in center, receiving cup from person on left, supporting cup from below with both hands",
+              "character2_uc": "",
+              "character2_x": 0.5,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "pink hair, brown eyes, green dress, on right, holding teapot, pouring tea into cup held by other people, looking at cup",
+              "character3_uc": "",
+              "character3_x": 0.72,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 3girls, garden tea party, round table, passing one teacup from left to center, person on right pouring tea from a teapot into the cup, coordinated hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/tea-relay-891024073-original"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793584778705
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "3 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "tea-relay-891024073-original_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "8459edb2-f5da-4db6-93e9-13bf7a8161b7",
+              "timestamp": 1793584778705
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [],
+              "prompt_id": "8459edb2-f5da-4db6-93e9-13bf7a8161b7",
+              "timestamp": 1793584778715
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "8459edb2-f5da-4db6-93e9-13bf7a8161b7",
+              "timestamp": 1793584822426
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "tea-relay",
+    "mode": "previous",
+    "prompt_id": "c84006f3-bce1-41a0-bedc-19f7bca55918",
+    "seed": 891024073,
+    "seconds_queue_to_file": 38.064,
+    "file": "validation/complex-images/tea-relay-891024073-previous.png",
+    "pixel_sha256": "687bbec479b1d3aa5ee35abf493d47e89cb8549b35fda8c47fbebe7f280e5394",
+    "history": {
+      "prompt": [
+        1,
+        "c84006f3-bce1-41a0-bedc-19f7bca55918",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 3,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white blouse, red skirt, on left, offering cup to person in center, holding cup by handle, extending arm, teapot, teacup, tea, saucer, holding saucer, tablecloth, table, pouring, tea set, black tea",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue dress, in center, receiving cup from person on left, supporting cup from below with both hands, holding saucer, holding, teacup, holding cup, teapot, saucer, pouring, tea, looking at viewer, smile, closed mouth, table",
+              "character2_uc": "",
+              "character2_x": 0.5,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "pink hair, brown eyes, green dress, on right, holding teapot, pouring tea into cup held by other people, looking at cup, teacup, holding saucer, saucer, failure, closed mouth, smile, table",
+              "character3_uc": "",
+              "character3_x": 0.72,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 3girls, garden tea party, round table, passing one teacup from left to center, person on right pouring tea from a teapot into the cup, coordinated hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/tea-relay-891024073-previous"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793584822795
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "3 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "tea-relay-891024073-previous_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "c84006f3-bce1-41a0-bedc-19f7bca55918",
+              "timestamp": 1793584822795
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "c84006f3-bce1-41a0-bedc-19f7bca55918",
+              "timestamp": 1793584822796
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "c84006f3-bce1-41a0-bedc-19f7bca55918",
+              "timestamp": 1793584860204
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "tea-relay",
+    "mode": "focused",
+    "prompt_id": "7c5f9f75-11c6-4870-91b0-749c940a4838",
+    "seed": 891024073,
+    "seconds_queue_to_file": 38.059,
+    "file": "validation/complex-images/tea-relay-891024073-focused.png",
+    "pixel_sha256": "22cb490cebf0c091ecd1da3b6e2f4537aa31ed61690d544ac0163da4d7d4761f",
+    "history": {
+      "prompt": [
+        2,
+        "7c5f9f75-11c6-4870-91b0-749c940a4838",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 3,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white blouse, red skirt, on left, offering cup to person in center, holding cup by handle, extending arm",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue dress, in center, receiving cup from person on left, supporting cup from below with both hands, holding cup, smile",
+              "character2_uc": "",
+              "character2_x": 0.5,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "pink hair, brown eyes, green dress, on right, holding teapot, pouring tea into cup held by other people, looking at cup, smile",
+              "character3_uc": "",
+              "character3_x": 0.72,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 3girls, garden tea party, round table, passing one teacup from left to center, person on right pouring tea from a teapot into the cup, coordinated hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/tea-relay-891024073-focused"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793584860858
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "3 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "tea-relay-891024073-focused_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "7c5f9f75-11c6-4870-91b0-749c940a4838",
+              "timestamp": 1793584860858
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "7c5f9f75-11c6-4870-91b0-749c940a4838",
+              "timestamp": 1793584860858
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "7c5f9f75-11c6-4870-91b0-749c940a4838",
+              "timestamp": 1793584898342
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "tea-relay",
+    "mode": "original",
+    "prompt_id": "b4ac7f09-1da1-4836-8dfe-03d31efce7c0",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.06,
+    "file": "validation/complex-images/tea-relay-6731892405173862-original.png",
+    "pixel_sha256": "37dd224acb3c7f307c99b1b30bc3d0751b5c2523773eba1ebacad4f5652994b5",
+    "history": {
+      "prompt": [
+        3,
+        "b4ac7f09-1da1-4836-8dfe-03d31efce7c0",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 3,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white blouse, red skirt, on left, offering cup to person in center, holding cup by handle, extending arm",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue dress, in center, receiving cup from person on left, supporting cup from below with both hands",
+              "character2_uc": "",
+              "character2_x": 0.5,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "pink hair, brown eyes, green dress, on right, holding teapot, pouring tea into cup held by other people, looking at cup",
+              "character3_uc": "",
+              "character3_x": 0.72,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 3girls, garden tea party, round table, passing one teacup from left to center, person on right pouring tea from a teapot into the cup, coordinated hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/tea-relay-6731892405173862-original"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793584898919
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "3 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "tea-relay-6731892405173862-original_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "b4ac7f09-1da1-4836-8dfe-03d31efce7c0",
+              "timestamp": 1793584898919
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "b4ac7f09-1da1-4836-8dfe-03d31efce7c0",
+              "timestamp": 1793584898920
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "b4ac7f09-1da1-4836-8dfe-03d31efce7c0",
+              "timestamp": 1793584936393
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "tea-relay",
+    "mode": "previous",
+    "prompt_id": "4a648fd6-66a6-4e7a-b044-cefad6454c19",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.071,
+    "file": "validation/complex-images/tea-relay-6731892405173862-previous.png",
+    "pixel_sha256": "55953e9572863dacfed47643840b636bc08b7f4dda48877ef835eb15f62b9049",
+    "history": {
+      "prompt": [
+        4,
+        "4a648fd6-66a6-4e7a-b044-cefad6454c19",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 3,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white blouse, red skirt, on left, offering cup to person in center, holding cup by handle, extending arm, teapot, teacup, tea, saucer, holding saucer, tablecloth, table, pouring, tea set, black tea",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue dress, in center, receiving cup from person on left, supporting cup from below with both hands, holding saucer, holding, teacup, holding cup, teapot, saucer, pouring, tea, looking at viewer, smile, closed mouth, table",
+              "character2_uc": "",
+              "character2_x": 0.5,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "pink hair, brown eyes, green dress, on right, holding teapot, pouring tea into cup held by other people, looking at cup, teacup, holding saucer, saucer, failure, closed mouth, smile, table",
+              "character3_uc": "",
+              "character3_x": 0.72,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 3girls, garden tea party, round table, passing one teacup from left to center, person on right pouring tea from a teapot into the cup, coordinated hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/tea-relay-6731892405173862-previous"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793584936984
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "3 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "tea-relay-6731892405173862-previous_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "4a648fd6-66a6-4e7a-b044-cefad6454c19",
+              "timestamp": 1793584936985
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "4a648fd6-66a6-4e7a-b044-cefad6454c19",
+              "timestamp": 1793584936986
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "4a648fd6-66a6-4e7a-b044-cefad6454c19",
+              "timestamp": 1793584974512
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "tea-relay",
+    "mode": "focused",
+    "prompt_id": "3c3d18f6-96cd-4528-a922-f0ee8c670699",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.063,
+    "file": "validation/complex-images/tea-relay-6731892405173862-focused.png",
+    "pixel_sha256": "c991413ceb04ede7cbbcb15418d195e17e36449ea3b2bcb6e21fd4472f339198",
+    "history": {
+      "prompt": [
+        5,
+        "3c3d18f6-96cd-4528-a922-f0ee8c670699",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 3,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white blouse, red skirt, on left, offering cup to person in center, holding cup by handle, extending arm",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue dress, in center, receiving cup from person on left, supporting cup from below with both hands, holding cup, smile",
+              "character2_uc": "",
+              "character2_x": 0.5,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "pink hair, brown eyes, green dress, on right, holding teapot, pouring tea into cup held by other people, looking at cup, smile",
+              "character3_uc": "",
+              "character3_x": 0.72,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 3girls, garden tea party, round table, passing one teacup from left to center, person on right pouring tea from a teapot into the cup, coordinated hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/tea-relay-6731892405173862-focused"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793584975051
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "3 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "tea-relay-6731892405173862-focused_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "3c3d18f6-96cd-4528-a922-f0ee8c670699",
+              "timestamp": 1793584975052
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "3c3d18f6-96cd-4528-a922-f0ee8c670699",
+              "timestamp": 1793584975052
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "3c3d18f6-96cd-4528-a922-f0ee8c670699",
+              "timestamp": 1793585012565
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "braiding-hair",
+    "mode": "original",
+    "prompt_id": "ad7160d0-56c0-4e97-ad2d-70d50abc5705",
+    "seed": 891024073,
+    "seconds_queue_to_file": 38.067,
+    "file": "validation/complex-images/braiding-hair-891024073-original.png",
+    "pixel_sha256": "45e080f6ee246f46fe85223d296c1fcc0f262b26ba7a25c4e5f1a3e50b5436a3",
+    "history": {
+      "prompt": [
+        6,
+        "ad7160d0-56c0-4e97-ad2d-70d50abc5705",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-891024073-original"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585013115
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-891024073-original_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "ad7160d0-56c0-4e97-ad2d-70d50abc5705",
+              "timestamp": 1793585013115
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "ad7160d0-56c0-4e97-ad2d-70d50abc5705",
+              "timestamp": 1793585013116
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "ad7160d0-56c0-4e97-ad2d-70d50abc5705",
+              "timestamp": 1793585050437
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "braiding-hair",
+    "mode": "previous",
+    "prompt_id": "3b163a3e-d252-4363-9b14-deafc0b5bae2",
+    "seed": 891024073,
+    "seconds_queue_to_file": 38.064,
+    "file": "validation/complex-images/braiding-hair-891024073-previous.png",
+    "pixel_sha256": "963326fb901c668594be8d7a826ea1537dc287426edc437a97b003333c969aaf",
+    "history": {
+      "prompt": [
+        7,
+        "3b163a3e-d252-4363-9b14-deafc0b5bae2",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, reflection, indoors, closed mouth, smile, blush",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile, looking away, reflection, closed mouth, outstretched arms, multiple views, hands up",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-891024073-previous"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585051183
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-891024073-previous_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "3b163a3e-d252-4363-9b14-deafc0b5bae2",
+              "timestamp": 1793585051183
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "3b163a3e-d252-4363-9b14-deafc0b5bae2",
+              "timestamp": 1793585051184
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "3b163a3e-d252-4363-9b14-deafc0b5bae2",
+              "timestamp": 1793585088373
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "braiding-hair",
+    "mode": "focused",
+    "prompt_id": "96cf221f-4809-4301-aed2-79e1f8d9f1f8",
+    "seed": 891024073,
+    "seconds_queue_to_file": 38.063,
+    "file": "validation/complex-images/braiding-hair-891024073-focused.png",
+    "pixel_sha256": "b8bd9eb7098438fe755f7c8f509e2ad05124bacf136b9a2ce0a130d9c470bd78",
+    "history": {
+      "prompt": [
+        8,
+        "96cf221f-4809-4301-aed2-79e1f8d9f1f8",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, smile",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, smile",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-891024073-focused"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585089249
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-891024073-focused_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "96cf221f-4809-4301-aed2-79e1f8d9f1f8",
+              "timestamp": 1793585089249
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "96cf221f-4809-4301-aed2-79e1f8d9f1f8",
+              "timestamp": 1793585089249
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "96cf221f-4809-4301-aed2-79e1f8d9f1f8",
+              "timestamp": 1793585126532
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "braiding-hair",
+    "mode": "original",
+    "prompt_id": "cb615e3f-30f3-48a2-a556-87049ae84f8b",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.06,
+    "file": "validation/complex-images/braiding-hair-6731892405173862-original.png",
+    "pixel_sha256": "149460e28e03cbbccea57d977b4dd6b5d4a4bbd1a95d4c69bd207b19a3ff89ec",
+    "history": {
+      "prompt": [
+        9,
+        "cb615e3f-30f3-48a2-a556-87049ae84f8b",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-6731892405173862-original"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585127312
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-6731892405173862-original_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "cb615e3f-30f3-48a2-a556-87049ae84f8b",
+              "timestamp": 1793585127312
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "cb615e3f-30f3-48a2-a556-87049ae84f8b",
+              "timestamp": 1793585127313
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "cb615e3f-30f3-48a2-a556-87049ae84f8b",
+              "timestamp": 1793585164538
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "braiding-hair",
+    "mode": "previous",
+    "prompt_id": "51fc85fd-f547-4f46-a916-95f65a0ba726",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.062,
+    "file": "validation/complex-images/braiding-hair-6731892405173862-previous.png",
+    "pixel_sha256": "9482a9fdf0e77631d00cb0c957281336aa80ef76f5101d00327b96a8663a5665",
+    "history": {
+      "prompt": [
+        10,
+        "51fc85fd-f547-4f46-a916-95f65a0ba726",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, reflection, indoors, closed mouth, smile, blush",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile, looking away, reflection, closed mouth, outstretched arms, multiple views, hands up",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-6731892405173862-previous"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585165374
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-6731892405173862-previous_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "51fc85fd-f547-4f46-a916-95f65a0ba726",
+              "timestamp": 1793585165374
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "51fc85fd-f547-4f46-a916-95f65a0ba726",
+              "timestamp": 1793585165375
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "51fc85fd-f547-4f46-a916-95f65a0ba726",
+              "timestamp": 1793585202633
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "braiding-hair",
+    "mode": "focused",
+    "prompt_id": "739c5a85-1e2d-476a-b671-f77dfc0efc9b",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.062,
+    "file": "validation/complex-images/braiding-hair-6731892405173862-focused.png",
+    "pixel_sha256": "3f63c62ef145b0b61c704c3dd1bcd1008b6be42cb2d76f70dac77b539c84420a",
+    "history": {
+      "prompt": [
+        11,
+        "739c5a85-1e2d-476a-b671-f77dfc0efc9b",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, smile",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, smile",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-6731892405173862-focused"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585203437
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-6731892405173862-focused_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "739c5a85-1e2d-476a-b671-f77dfc0efc9b",
+              "timestamp": 1793585203437
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "739c5a85-1e2d-476a-b671-f77dfc0efc9b",
+              "timestamp": 1793585203438
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "739c5a85-1e2d-476a-b671-f77dfc0efc9b",
+              "timestamp": 1793585240666
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "helping-up",
+    "mode": "original",
+    "prompt_id": "c14fcd02-f125-4f6a-b462-11677e9a8393",
+    "seed": 891024073,
+    "seconds_queue_to_file": 38.062,
+    "file": "validation/complex-images/helping-up-891024073-original.png",
+    "pixel_sha256": "ebafc5a2668c30217ed2a4c83dd0dd858373d90306902aa33626895117289471",
+    "history": {
+      "prompt": [
+        12,
+        "c14fcd02-f125-4f6a-b462-11677e9a8393",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white shirt, red trousers, standing on upper step, leaning forward, pulling other's hand to help her stand, bracing feet",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue shirt, black trousers, kneeling on lower step, reaching up to grasp other's hand, rising from ground, looking up at another",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, stone steps in a garden, one woman helping the other stand up, clasped hands, coordinated movement, full body",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/helping-up-891024073-original"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585241500
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "helping-up-891024073-original_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "c14fcd02-f125-4f6a-b462-11677e9a8393",
+              "timestamp": 1793585241501
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "c14fcd02-f125-4f6a-b462-11677e9a8393",
+              "timestamp": 1793585241501
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "c14fcd02-f125-4f6a-b462-11677e9a8393",
+              "timestamp": 1793585278855
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "helping-up",
+    "mode": "previous",
+    "prompt_id": "3313eafe-c26b-44fd-98ca-43783e5256a9",
+    "seed": 891024073,
+    "seconds_queue_to_file": 38.065,
+    "file": "validation/complex-images/helping-up-891024073-previous.png",
+    "pixel_sha256": "4f9378e98d6839ff1dcd619f513b6d87f586a4c274dc64993bd0f7a4e2ed74a7",
+    "history": {
+      "prompt": [
+        13,
+        "3313eafe-c26b-44fd-98ca-43783e5256a9",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white shirt, red trousers, standing on upper step, leaning forward, pulling other's hand to help her stand, bracing feet, black footwear, looking at viewer, looking up, holding hands, outstretched arms, stairs",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue shirt, black trousers, kneeling on lower step, reaching up to grasp other's hand, rising from ground, looking up at another, holding hands, open mouth, smile, black footwear, outstretched arms",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, stone steps in a garden, one woman helping the other stand up, clasped hands, coordinated movement, full body",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/helping-up-891024073-previous"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585279565
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "helping-up-891024073-previous_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "3313eafe-c26b-44fd-98ca-43783e5256a9",
+              "timestamp": 1793585279565
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "3313eafe-c26b-44fd-98ca-43783e5256a9",
+              "timestamp": 1793585279566
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "3313eafe-c26b-44fd-98ca-43783e5256a9",
+              "timestamp": 1793585316822
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "helping-up",
+    "mode": "focused",
+    "prompt_id": "3d110eec-3505-42ac-9c16-8a7621e931f4",
+    "seed": 891024073,
+    "seconds_queue_to_file": 38.062,
+    "file": "validation/complex-images/helping-up-891024073-focused.png",
+    "pixel_sha256": "22e38a6c9330b5389f1e5878eabcfe5e578cff7885dca4dd35b42a0a132e58f4",
+    "history": {
+      "prompt": [
+        14,
+        "3d110eec-3505-42ac-9c16-8a7621e931f4",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white shirt, red trousers, standing on upper step, leaning forward, pulling other's hand to help her stand, bracing feet",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue shirt, black trousers, kneeling on lower step, reaching up to grasp other's hand, rising from ground, looking up at another, smile, outstretched arms",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, stone steps in a garden, one woman helping the other stand up, clasped hands, coordinated movement, full body",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/helping-up-891024073-focused"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585317630
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "helping-up-891024073-focused_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "3d110eec-3505-42ac-9c16-8a7621e931f4",
+              "timestamp": 1793585317631
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "3d110eec-3505-42ac-9c16-8a7621e931f4",
+              "timestamp": 1793585317632
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "3d110eec-3505-42ac-9c16-8a7621e931f4",
+              "timestamp": 1793585354832
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "helping-up",
+    "mode": "original",
+    "prompt_id": "d3eee20d-e6db-4478-947f-37e8604a745e",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.062,
+    "file": "validation/complex-images/helping-up-6731892405173862-original.png",
+    "pixel_sha256": "6b0adb112f74c63d40210cfe3059e3f2d066b68229a61f21ed93806e87316bdb",
+    "history": {
+      "prompt": [
+        15,
+        "d3eee20d-e6db-4478-947f-37e8604a745e",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white shirt, red trousers, standing on upper step, leaning forward, pulling other's hand to help her stand, bracing feet",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue shirt, black trousers, kneeling on lower step, reaching up to grasp other's hand, rising from ground, looking up at another",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, stone steps in a garden, one woman helping the other stand up, clasped hands, coordinated movement, full body",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/helping-up-6731892405173862-original"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585355695
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "helping-up-6731892405173862-original_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "d3eee20d-e6db-4478-947f-37e8604a745e",
+              "timestamp": 1793585355696
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "d3eee20d-e6db-4478-947f-37e8604a745e",
+              "timestamp": 1793585355696
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "d3eee20d-e6db-4478-947f-37e8604a745e",
+              "timestamp": 1793585392761
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "helping-up",
+    "mode": "previous",
+    "prompt_id": "8ed461c4-9d80-489e-8632-ffeee98a7551",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.065,
+    "file": "validation/complex-images/helping-up-6731892405173862-previous.png",
+    "pixel_sha256": "d40cf7fd48552e6b2b2724d495951989245dc007554052d9ce797a0a340deb24",
+    "history": {
+      "prompt": [
+        16,
+        "8ed461c4-9d80-489e-8632-ffeee98a7551",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white shirt, red trousers, standing on upper step, leaning forward, pulling other's hand to help her stand, bracing feet, black footwear, looking at viewer, looking up, holding hands, outstretched arms, stairs",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue shirt, black trousers, kneeling on lower step, reaching up to grasp other's hand, rising from ground, looking up at another, holding hands, open mouth, smile, black footwear, outstretched arms",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, stone steps in a garden, one woman helping the other stand up, clasped hands, coordinated movement, full body",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/helping-up-6731892405173862-previous"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585393760
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "helping-up-6731892405173862-previous_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "8ed461c4-9d80-489e-8632-ffeee98a7551",
+              "timestamp": 1793585393760
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "8ed461c4-9d80-489e-8632-ffeee98a7551",
+              "timestamp": 1793585393761
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "8ed461c4-9d80-489e-8632-ffeee98a7551",
+              "timestamp": 1793585430914
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "helping-up",
+    "mode": "focused",
+    "prompt_id": "9cd7b05d-4368-4823-9540-e86063d48ffb",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.061,
+    "file": "validation/complex-images/helping-up-6731892405173862-focused.png",
+    "pixel_sha256": "d6f133dff02a626dacab694835b9a8fbd950ac5e16f0a8dbc80a541fbf16989e",
+    "history": {
+      "prompt": [
+        17,
+        "9cd7b05d-4368-4823-9540-e86063d48ffb",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "blonde hair, blue eyes, white shirt, red trousers, standing on upper step, leaning forward, pulling other's hand to help her stand, bracing feet",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "brown hair, green eyes, blue shirt, black trousers, kneeling on lower step, reaching up to grasp other's hand, rising from ground, looking up at another, smile, outstretched arms",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, stone steps in a garden, one woman helping the other stand up, clasped hands, coordinated movement, full body",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/helping-up-6731892405173862-focused"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585431826
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "helping-up-6731892405173862-focused_00001_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "9cd7b05d-4368-4823-9540-e86063d48ffb",
+              "timestamp": 1793585431826
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "9cd7b05d-4368-4823-9540-e86063d48ffb",
+              "timestamp": 1793585431827
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "9cd7b05d-4368-4823-9540-e86063d48ffb",
+              "timestamp": 1793585469063
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  }
+]

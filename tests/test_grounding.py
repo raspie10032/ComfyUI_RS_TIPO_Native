@@ -118,5 +118,21 @@ class GroundingTests(unittest.TestCase):
             result = RSTIPONativeExpand().expand('blue eyes', 'long', 10, 0, 0.)
         self.assertEqual(result[:2], ('blue eyes, garden', 'garden'))
 
+    def test_grooming_action_does_not_change_appearance_or_swap_owner(self):
+        from rs_tipo_native.additions import select_additions
+        actor = "short brown hair, braiding another's hair"
+        candidates = ["holding another's hair", "hand in another's hair", 'hairdressing',
+                      'long hair', 'single braid', 'brushing hair', 'braiding blue hair']
+        kept, _ = guard_additions(actor, candidates)
+        self.assertEqual(kept, candidates[:3])
+        self.assertEqual(select_additions(actor, kept)[0], candidates[:3])
+        recipient = 'long blonde hair, having hair braided by another'
+        kept, _ = guard_additions(recipient, candidates)
+        self.assertEqual(kept, ['hairdressing'])
+        self.assertEqual(select_additions(recipient, kept)[0], ['hairdressing'])
+        self.assertEqual(guard_additions('braiding own hair', ["holding another's hair"])[0], [])
+        self.assertEqual(guard_additions("braiding another's hair", ['braiding own hair'])[0], [])
+        self.assertEqual(guard_additions('brown hair', ["holding another's hair"])[0], [])
+
 if __name__ == '__main__':
     unittest.main()

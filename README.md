@@ -17,6 +17,7 @@ GitHub: https://github.com/raspie10032/ComfyUI_RS_TIPO_Native
 - [Tested legacy/current ComfyUI versions and limits](docs/compatibility.md)
 - [Automatic role context and socket repair verification](docs/automatic-context.md)
 - [Role-focused additions: paired image study and limitations](docs/role-additions.md)
+- [Complex interactions: three participants, hair braiding and helping up](docs/role-complex.md)
 
 ## STRING interface
 

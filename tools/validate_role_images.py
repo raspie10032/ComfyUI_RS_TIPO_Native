@@ -17,6 +17,9 @@ def main():
     parser.add_argument('prompts', type=Path)
     parser.add_argument('--url', required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--seeds', type=int, nargs='+', default=[891024073])
+    parser.add_argument('--modes', nargs='+', choices=('original', 'previous', 'focused'),
+                        default=('original', 'previous', 'focused'))
     args = parser.parse_args()
     from PIL import Image
     import io
@@ -49,23 +52,25 @@ def main():
     args.output.mkdir(parents=True, exist_ok=True)
     record_path = args.output / 'results.json'
     records = json.loads(record_path.read_text()) if record_path.exists() else []
-    done = {(r['case'], r['mode']) for r in records}
+    done = {(r['case'], r['mode'], r.get('seed', 891024073)) for r in records}
     prompts = json.loads(args.prompts.read_text())
-    for case in prompts['cases']:
-        for mode in ('original', 'previous', 'focused'):
-            if (case['name'], mode) in done:
+    jobs = [(case, seed) for case in prompts['cases'] for seed in args.seeds]
+    for case, seed in jobs:
+        for mode in args.modes:
+            if (case['name'], mode, seed) in done:
                 continue
             people = defaults('RSMultiCharacterPrompts')
-            people['character_count'] = 2
+            count = len(case[mode])
+            people['character_count'] = count
             for i, text in enumerate(case[mode], 1):
                 people.update({f'character{i}': text, f'character{i}_enable': True,
-                               f'character{i}_x': .28 if i == 1 else .72,
+                               f'character{i}_x': .5 if count == 1 else .28 + .44 * (i-1)/(count-1),
                                f'character{i}_y': .5})
             sampler = defaults('RSMultiCharacterSampler')
             sampler.update(model=['5', 0], clip=['5', 1], vae=['3', 0], character_pipe=['4', 0],
                 prompt='masterpiece, best quality, adult women, ' + case['common'],
                 negative_prompt='low quality, worst quality, bad anatomy, text, watermark, signature',
-                width=1152, height=896, seed=891024073, steps=30, cfg=4.,
+                width=1152, height=896, seed=seed, steps=30, cfg=4.,
                 sampler_name='euler_ancestral', scheduler='sgm_uniform', autosave=False)
             graph = {
                 '1': {'class_type': 'UNETLoader', 'inputs': {'unet_name': 'anima-base-v1.0.safetensors', 'weight_dtype': 'default'}},
@@ -77,9 +82,9 @@ def main():
                     'strength_model': .9, 'strength_clip': 1.}},
                 '6': {'class_type': 'RSMultiCharacterSampler', 'inputs': sampler},
                 '7': {'class_type': 'SaveImage', 'inputs': {'images': ['6', 0],
-                    'filename_prefix': f"role-study/{case['name']}-{mode}"}},
+                    'filename_prefix': f"role-study/{case['name']}-{seed}-{mode}"}},
             }
-            graph_path = args.output / f"{case['name']}-{mode}-api.json"
+            graph_path = args.output / f"{case['name']}-{seed}-{mode}-api.json"
             graph_path.write_text(json.dumps(graph, ensure_ascii=False, indent=2))
             started = time.monotonic()
             accepted = request('/prompt', {'prompt': graph, 'client_id': 'rs-tipo-role-images'})
@@ -87,7 +92,7 @@ def main():
             # Save the live handle immediately. A stopped observer must inspect
             # this ID before any resubmission.
             (args.output / 'live.json').write_text(json.dumps({'prompt_id': pid,
-                'url': args.url, 'case': case['name'], 'mode': mode}))
+                'url': args.url, 'case': case['name'], 'mode': mode, 'seed': seed}))
             print(f"submitted {case['name']}/{mode}: {pid}", flush=True)
             while True:
                 history = request('/history/' + pid).get(pid)
@@ -101,11 +106,12 @@ def main():
             from urllib.parse import urlencode
             with urllib.request.urlopen(args.url + '/view?' + urlencode(saved), timeout=30) as response:
                 raw = response.read()
-            target = args.output / f"{case['name']}-{mode}.png"
+            target = args.output / f"{case['name']}-{seed}-{mode}.png"
             target.write_bytes(raw)
             with Image.open(io.BytesIO(raw)) as image:
                 pixel_hash = hashlib.sha256(image.convert('RGB').tobytes()).hexdigest()
             row = {'case': case['name'], 'mode': mode, 'prompt_id': pid,
+                   'seed': seed,
                    'seconds_queue_to_file': round(time.monotonic() - started, 3),
                    'file': str(target), 'pixel_sha256': pixel_hash, 'history': history}
             records.append(row)

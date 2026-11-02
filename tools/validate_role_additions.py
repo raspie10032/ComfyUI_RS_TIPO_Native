@@ -34,6 +34,7 @@ def main():
     parser.add_argument('model', type=Path)
     parser.add_argument('--device', default='cuda')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--cases', type=Path, help='JSON list with name, common, original fields')
     args = parser.parse_args()
     import torch
     from rs_tipo_native.runtime import load_weights, MODEL_REVISION
@@ -46,7 +47,10 @@ def main():
     output = {'revision': MODEL_REVISION, 'device': args.device,
               'sampling': dict(seed=8910, temperature=0., max_new_tokens=96), 'cases': rows}
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    for name, common, characters in CASES:
+    cases = CASES if args.cases is None else [
+        (row['name'], row['common'], row['original'])
+        for row in json.loads(args.cases.read_text())]
+    for name, common, characters in cases:
         case = {'name': name, 'common': common, 'original': characters,
                 'previous': [], 'focused': [], 'reports': []}
         rows.append(case)

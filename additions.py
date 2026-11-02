@@ -5,7 +5,7 @@ deliberately not a relationship planner or a general semantic classifier.
 """
 import re
 
-from .grounding import key
+from .grounding import key, supported_hair_action
 from .scene_context import action_clauses
 
 
@@ -24,6 +24,8 @@ _ACTIONS = (
     ('lean', 'leaning'), ('rest', 'resting'), ('touch', 'touching'),
     ('cross', 'crossed'), ('clasp', 'clasped', 'clasping'),
     ('interlock', 'interlocked', 'interlocking'),
+    ('braid', 'braiding', 'braided'), ('brush', 'brushing', 'brushed'),
+    ('comb', 'combing', 'combed'),
 )
 _NOUNS = (
     ('arm', 'arms'), ('hand', 'hands'), ('leg', 'legs'), ('foot', 'feet'),
@@ -78,10 +80,11 @@ def select_additions(original, tags, *, common='', character=True, limit=6):
         details = words - _ACTION_WORDS
         partner_gaze = partner_action and key(tag) in {
             'looking at another', 'looking at partner', 'looking at each other'}
+        grooming_context = supported_hair_action(original, tag)
         if words and words <= known:
             # Equivalent phrasing does not make a sufficient prompt better.
             reason = 'already expressed by source or accepted additions'
-        elif character and not partner_gaze and (not verbs or not verbs <= supported_verbs | basic or not details <= support):
+        elif character and not partner_gaze and not grooming_context and (not verbs or not verbs <= supported_verbs | basic or not details <= support):
             reason = 'not grounded in this participant or shared action'
         elif character and any(words & group and support & group and
                                not words & group <= support & group for group in _OPPOSITES):

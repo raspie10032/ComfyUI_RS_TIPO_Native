@@ -6,7 +6,7 @@ This is a conservative projection, not a separate LLM or a role planner.
 """
 import re
 
-from .grounding import key, model_text
+from .grounding import hair_action, key, model_text
 
 _ACTION = re.compile(
     r'^(?:(?:on|at|to|from) (?:the )?(?:left|right|center|middle)\b|'
@@ -32,7 +32,7 @@ def action_clauses(prompt):
     for clause in re.split(r'[,;\n]+', model_text(prompt)):
         clause = clause.strip(' .')
         normalized = key(clause)
-        if _ACTION.search(normalized) and not _APPEARANCE.search(normalized):
+        if hair_action(normalized) or (_ACTION.search(normalized) and not _APPEARANCE.search(normalized)):
             if normalized not in {key(item) for item in result}:
                 result.append(clause)
     return tuple(result)

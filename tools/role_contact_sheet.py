@@ -11,7 +11,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     rows = json.loads(args.results.read_text())
-    cases = list(dict.fromkeys(row['case'] for row in rows))
+    cases = list(dict.fromkeys((row['case'], row.get('seed')) for row in rows))
     modes = ('original', 'previous', 'focused')
     cell_w, cell_h = 384, 332
     sheet = Image.new('RGB', (cell_w * 3, 44 + cell_h * len(cases)), '#20242b')
@@ -19,16 +19,18 @@ def main():
     font = ImageFont.load_default(size=18)
     for x, title in enumerate(('Source prompt', 'Previous expansion', 'Candidate expansion')):
         draw.text((x * cell_w + 12, 12), title, font=font, fill='white')
-    for y, case in enumerate(cases):
+    for y, (case, seed) in enumerate(cases):
         for x, mode in enumerate(modes):
-            row = next((r for r in rows if r['case'] == case and r['mode'] == mode), None)
+            row = next((r for r in rows if r['case'] == case and r['mode'] == mode
+                        and r.get('seed') == seed), None)
             if row is None:
                 continue
             tile = Image.open(row['file']).convert('RGB')
             tile.thumbnail((cell_w, cell_h - 32), Image.Resampling.LANCZOS)
             origin = (x * cell_w, 44 + y * cell_h)
             sheet.paste(tile, origin)
-            draw.text((origin[0] + 12, origin[1] + cell_h - 27), case, font=font, fill='white')
+            label = case if seed is None else f'{case} / {seed}'
+            draw.text((origin[0] + 12, origin[1] + cell_h - 27), label, font=font, fill='white')
     sheet.save(args.output)
 
 

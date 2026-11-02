@@ -22,6 +22,43 @@ def key(text):
     return model_text(text).strip().casefold().replace('_', ' ')
 
 
+_HAIR_ACTION = re.compile(
+    r"^(?:braiding|brushing|combing) (?:(?:another's|other's|partner's|own) )?hair$|"
+    r"^having hair (?:braided|brushed|combed)(?: by (?:another|other|partner))?$|"
+    r"^(?:holding|both hands holding) (?:strands of )?(?:another's|other's|partner's) hair$|"
+    r"^(?:hand|hands) in (?:another's|other's|partner's) hair$")
+
+
+def hair_action(text):
+    """Recognize narrow grooming/contact clauses, never a hair appearance tag."""
+    return bool(_HAIR_ACTION.fullmatch(key(text)))
+
+
+def supported_hair_action(original, value):
+    value = key(value)
+    clauses = [key(part).strip(' .') for part in re.split(r'[,;\n]+', model_text(original))]
+    actor = any(re.match(r'^(?:braiding|brushing|combing) ', part) and hair_action(part)
+                for part in clauses)
+    recipient = any(part.startswith('having hair ') and hair_action(part) for part in clauses)
+    # Generic hairdressing describes participation, but the active action and
+    # contact must not be transferred from the groomer to the seated recipient.
+    if value == 'hairdressing':
+        return actor or recipient
+    if not actor or not hair_action(value) or value.startswith('having hair '):
+        return False
+    if re.search(r"\b(?:another's|other's|partner's)\b", value) and not any(
+            hair_action(part) and re.search(r"\b(?:another's|other's|partner's)\b", part)
+            for part in clauses):
+        return False
+    if re.search(r'\bown\b', value) and not any(
+            hair_action(part) and re.search(r'\bown\b', part) for part in clauses):
+        return False
+    if value.startswith(('braiding ', 'brushing ', 'combing ')):
+        verb = value.split()[0]
+        return any(part.startswith(verb + ' ') for part in clauses if hair_action(part))
+    return True
+
+
 # These additions change identity, wardrobe, composition, era or rendering. In
 # protected mode TIPO can enrich actions/scene, but cannot invent these fields.
 _PROTECTED = re.compile(
@@ -97,7 +134,7 @@ def guard_additions(original, tags, *, common='', interaction='', character=True
         if re.search(r'(?<!\w)' + re.escape(value) + r'(?!\w)', own):
             continue
         reason = None
-        if _PROTECTED.search(value):
+        if _PROTECTED.search(value) and not (character and supported_hair_action(original, value)):
             reason = 'unrequested identity, wardrobe, style or composition'
         elif not character and _SCENE_PEOPLE.search(value):
             reason = 'participant-specific addition in shared scene'

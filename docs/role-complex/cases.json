@@ -1,0 +1,27 @@
+[
+  {
+    "name": "tea-relay",
+    "common": "3girls, garden tea party, round table, passing one teacup from left to center, person on right pouring tea from a teapot into the cup, coordinated hand movements",
+    "original": [
+      "blonde hair, blue eyes, white blouse, red skirt, on left, offering cup to person in center, holding cup by handle, extending arm",
+      "brown hair, green eyes, blue dress, in center, receiving cup from person on left, supporting cup from below with both hands",
+      "pink hair, brown eyes, green dress, on right, holding teapot, pouring tea into cup held by other people, looking at cup"
+    ]
+  },
+  {
+    "name": "braiding-hair",
+    "common": "2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+    "original": [
+      "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another",
+      "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands"
+    ]
+  },
+  {
+    "name": "helping-up",
+    "common": "2girls, stone steps in a garden, one woman helping the other stand up, clasped hands, coordinated movement, full body",
+    "original": [
+      "blonde hair, blue eyes, white shirt, red trousers, standing on upper step, leaning forward, pulling other's hand to help her stand, bracing feet",
+      "brown hair, green eyes, blue shirt, black trousers, kneeling on lower step, reaching up to grasp other's hand, rising from ground, looking up at another"
+    ]
+  }
+]

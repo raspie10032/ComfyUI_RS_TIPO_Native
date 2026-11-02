@@ -1,0 +1,917 @@
+[
+  {
+    "case": "braiding-hair",
+    "mode": "previous",
+    "prompt_id": "9c0c972c-ca4f-46f7-a511-070997a01ed4",
+    "seed": 891024073,
+    "seconds_queue_to_file": 39.068,
+    "file": "validation/complex-hair-after/braiding-hair-891024073-previous.png",
+    "pixel_sha256": "7061d3a35210a3657acef72030b5a091531cab0ef7c53c0dde6efd7b26deb883",
+    "history": {
+      "prompt": [
+        18,
+        "9c0c972c-ca4f-46f7-a511-070997a01ed4",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, reflection, indoors, closed mouth, smile",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile, looking away, holding another's hair, multiple views, outstretched arms, hand in another's hair, hands up, closed mouth",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-891024073-previous"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585553824
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-891024073-previous_00002_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "9c0c972c-ca4f-46f7-a511-070997a01ed4",
+              "timestamp": 1793585553824
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [],
+              "prompt_id": "9c0c972c-ca4f-46f7-a511-070997a01ed4",
+              "timestamp": 1793585553826
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "9c0c972c-ca4f-46f7-a511-070997a01ed4",
+              "timestamp": 1793585592061
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "braiding-hair",
+    "mode": "focused",
+    "prompt_id": "a5521658-7d8b-4ad3-a639-f06ffc687641",
+    "seed": 891024073,
+    "seconds_queue_to_file": 38.064,
+    "file": "validation/complex-hair-after/braiding-hair-891024073-focused.png",
+    "pixel_sha256": "605a350f2cf720b0190827211ae0ed6636ec7bbe7ac6b23e0e9391ae3f7a2852",
+    "history": {
+      "prompt": [
+        19,
+        "a5521658-7d8b-4ad3-a639-f06ffc687641",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, smile",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 891024073,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-891024073-focused"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585592894
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 891024073 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-891024073-focused_00002_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "a5521658-7d8b-4ad3-a639-f06ffc687641",
+              "timestamp": 1793585592894
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "a5521658-7d8b-4ad3-a639-f06ffc687641",
+              "timestamp": 1793585592895
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "a5521658-7d8b-4ad3-a639-f06ffc687641",
+              "timestamp": 1793585629943
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "braiding-hair",
+    "mode": "previous",
+    "prompt_id": "f534d12c-28a7-4d14-a59e-8457d3f39daa",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.066,
+    "file": "validation/complex-hair-after/braiding-hair-6731892405173862-previous.png",
+    "pixel_sha256": "401656dd3697d83c66bfe406a8a71515c506b11116130b87d4b98670ed314e76",
+    "history": {
+      "prompt": [
+        20,
+        "f534d12c-28a7-4d14-a59e-8457d3f39daa",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, reflection, indoors, closed mouth, smile",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile, looking away, holding another's hair, multiple views, outstretched arms, hand in another's hair, hands up, closed mouth",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-6731892405173862-previous"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585630957
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-6731892405173862-previous_00002_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "f534d12c-28a7-4d14-a59e-8457d3f39daa",
+              "timestamp": 1793585630958
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "f534d12c-28a7-4d14-a59e-8457d3f39daa",
+              "timestamp": 1793585630958
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "f534d12c-28a7-4d14-a59e-8457d3f39daa",
+              "timestamp": 1793585668189
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  },
+  {
+    "case": "braiding-hair",
+    "mode": "focused",
+    "prompt_id": "cbc8ade7-a8b0-4741-8aac-8c8b4ef63a38",
+    "seed": 6731892405173862,
+    "seconds_queue_to_file": 38.062,
+    "file": "validation/complex-hair-after/braiding-hair-6731892405173862-focused.png",
+    "pixel_sha256": "af822d615f2b09ce4aff7600627c7be76f50ec5dc81431ebdcd4b9366bff87e3",
+    "history": {
+      "prompt": [
+        21,
+        "cbc8ade7-a8b0-4741-8aac-8c8b4ef63a38",
+        {
+          "1": {
+            "class_type": "UNETLoader",
+            "inputs": {
+              "unet_name": "anima-base-v1.0.safetensors",
+              "weight_dtype": "default"
+            }
+          },
+          "2": {
+            "class_type": "CLIPLoader",
+            "inputs": {
+              "clip_name": "qwen_3_06b_base.safetensors",
+              "type": "stable_diffusion"
+            }
+          },
+          "3": {
+            "class_type": "VAELoader",
+            "inputs": {
+              "vae_name": "qwen_image_vae.safetensors"
+            }
+          },
+          "4": {
+            "class_type": "RSMultiCharacterPrompts",
+            "inputs": {
+              "character_count": 2,
+              "character1_enable": true,
+              "character1": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, smile",
+              "character1_uc": "",
+              "character1_x": 0.28,
+              "character1_y": 0.5,
+              "character2_enable": true,
+              "character2": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile",
+              "character2_uc": "",
+              "character2_x": 0.72,
+              "character2_y": 0.5,
+              "character3_enable": true,
+              "character3": "",
+              "character3_uc": "",
+              "character3_x": 0.5,
+              "character3_y": 0.5,
+              "character4_enable": true,
+              "character4": "",
+              "character4_uc": "",
+              "character4_x": 0.5,
+              "character4_y": 0.5,
+              "character5_enable": true,
+              "character5": "",
+              "character5_uc": "",
+              "character5_x": 0.5,
+              "character5_y": 0.5,
+              "character6_enable": true,
+              "character6": "",
+              "character6_uc": "",
+              "character6_x": 0.5,
+              "character6_y": 0.5,
+              "character7_enable": true,
+              "character7": "",
+              "character7_uc": "",
+              "character7_x": 0.5,
+              "character7_y": 0.5,
+              "character8_enable": true,
+              "character8": "",
+              "character8_uc": "",
+              "character8_x": 0.5,
+              "character8_y": 0.5,
+              "character9_enable": true,
+              "character9": "",
+              "character9_uc": "",
+              "character9_x": 0.5,
+              "character9_y": 0.5,
+              "character10_enable": true,
+              "character10": "",
+              "character10_uc": "",
+              "character10_x": 0.5,
+              "character10_y": 0.5
+            }
+          },
+          "5": {
+            "class_type": "LoraLoader",
+            "inputs": {
+              "model": [
+                "1",
+                0
+              ],
+              "clip": [
+                "2",
+                0
+              ],
+              "lora_name": "anima/RSCV5-intermediate/RSCV5_Anima-step00015000-comfy.safetensors",
+              "strength_model": 0.9,
+              "strength_clip": 1.0
+            }
+          },
+          "6": {
+            "class_type": "RSMultiCharacterSampler",
+            "inputs": {
+              "prompt": "masterpiece, best quality, adult women, 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+              "negative_prompt": "low quality, worst quality, bad anatomy, text, watermark, signature",
+              "width": 1152,
+              "height": 896,
+              "seed": 6731892405173862,
+              "steps": 30,
+              "cfg": 4.0,
+              "sampler_name": "euler_ancestral",
+              "scheduler": "sgm_uniform",
+              "autosave": false,
+              "save_format": "PNG",
+              "webp_quality": 90,
+              "model": [
+                "5",
+                0
+              ],
+              "clip": [
+                "5",
+                1
+              ],
+              "vae": [
+                "3",
+                0
+              ],
+              "character_pipe": [
+                "4",
+                0
+              ]
+            }
+          },
+          "7": {
+            "class_type": "SaveImage",
+            "inputs": {
+              "images": [
+                "6",
+                0
+              ],
+              "filename_prefix": "role-study/braiding-hair-6731892405173862-focused"
+            }
+          }
+        },
+        {
+          "client_id": "rs-tipo-role-images",
+          "create_time": 1793585669023
+        },
+        [
+          "6",
+          "7"
+        ]
+      ],
+      "outputs": {
+        "6": {
+          "text": [
+            "2 characters + 0 text regions · seed 6731892405173862 · Anima",
+            "Layout: auto → regional",
+            "Character LoRA: precision → none"
+          ]
+        },
+        "7": {
+          "images": [
+            {
+              "filename": "braiding-hair-6731892405173862-focused_00002_.png",
+              "subfolder": "role-study",
+              "type": "output",
+              "metadata": {
+                "kind": "image",
+                "width": 1152,
+                "height": 896
+              }
+            }
+          ]
+        }
+      },
+      "status": {
+        "status_str": "success",
+        "completed": true,
+        "messages": [
+          [
+            "execution_start",
+            {
+              "prompt_id": "cbc8ade7-a8b0-4741-8aac-8c8b4ef63a38",
+              "timestamp": 1793585669023
+            }
+          ],
+          [
+            "execution_cached",
+            {
+              "nodes": [
+                "1",
+                "2",
+                "3",
+                "5"
+              ],
+              "prompt_id": "cbc8ade7-a8b0-4741-8aac-8c8b4ef63a38",
+              "timestamp": 1793585669024
+            }
+          ],
+          [
+            "execution_success",
+            {
+              "prompt_id": "cbc8ade7-a8b0-4741-8aac-8c8b4ef63a38",
+              "timestamp": 1793585706241
+            }
+          ]
+        ]
+      },
+      "meta": {
+        "6": {
+          "node_id": "6",
+          "display_node": "6",
+          "parent_node": null,
+          "real_node_id": "6"
+        },
+        "7": {
+          "node_id": "7",
+          "display_node": "7",
+          "parent_node": null,
+          "real_node_id": "7"
+        }
+      }
+    }
+  }
+]

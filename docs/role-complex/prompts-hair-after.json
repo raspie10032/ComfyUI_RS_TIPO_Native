@@ -1,0 +1,615 @@
+{
+  "revision": "f5a318524a4ab30cdbbf51816cf406170f454e65",
+  "device": "cuda",
+  "sampling": {
+    "seed": 8910,
+    "temperature": 0.0,
+    "max_new_tokens": 96
+  },
+  "cases": [
+    {
+      "name": "braiding-hair",
+      "common": "2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements",
+      "original": [
+        "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another",
+        "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands"
+      ],
+      "previous": [
+        "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, reflection, indoors, closed mouth, smile",
+        "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile, looking away, holding another's hair, multiple views, outstretched arms, hand in another's hair, hands up, closed mouth"
+      ],
+      "focused": [
+        "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, smile",
+        "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile"
+      ],
+      "reports": [
+        {
+          "slot": 1,
+          "previous": {
+            "text": "3d, shirt, hairdressing, braid, reflection, single braid, braiding hair, brown hair, skirt, english text, indoors, long sleeves, long hair, closed mouth, smile, chair, sitting, on chair, braided ponytail, comic<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              30298,
+              14,
+              535,
+              2523,
+              21167,
+              14,
+              8625,
+              329,
+              14,
+              18654,
+              14,
+              4031,
+              8625,
+              329,
+              14,
+              8625,
+              6965,
+              8078,
+              14,
+              13769,
+              8078,
+              14,
+              57769,
+              14,
+              33010,
+              3051,
+              14,
+              54793,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              1606,
+              8078,
+              14,
+              9101,
+              10485,
+              14,
+              14088,
+              14,
+              12817,
+              14,
+              13507,
+              14,
+              377,
+              12817,
+              14,
+              8625,
+              5098,
+              25720,
+              3472,
+              879,
+              14,
+              37327,
+              64001
+            ],
+            "input_tokens": 191,
+            "finish_reason": "eos",
+            "seconds": 7.010958287981339,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements Person 1: sitting on chair, hands on own lap, looking at mirror, having hair braided by another. Person 2: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands. The person being described: sitting on chair, hands on own lap, looking at mirror, having hair braided by another.\ntag: 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements, long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, ",
+            "original": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another",
+            "added_tags": "hairdressing, reflection, indoors, closed mouth, smile",
+            "output": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, reflection, indoors, closed mouth, smile",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements Person 1: sitting on chair, hands on own lap, looking at mirror, having hair braided by another. Person 2: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands. The person being described: sitting on chair, hands on own lap, looking at mirror, having hair braided by another.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, shirt, hairdressing, braid, reflection, single braid, braiding hair, brown hair, skirt, english text, indoors, long sleeves, long hair, closed mouth, smile, chair, sitting, on chair, braided ponytail, comic",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "braid",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "single braid",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "braiding hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "brown hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "braided ponytail",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "comic",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              }
+            ],
+            "max_added_tags": null,
+            "grounded_additions": false,
+            "owner_tokens": {
+              "0": 141,
+              "1": 36,
+              "-1": 14
+            }
+          },
+          "focused": {
+            "text": "3d, shirt, hairdressing, braid, reflection, single braid, braiding hair, brown hair, skirt, english text, indoors, long sleeves, long hair, closed mouth, smile, chair, sitting, on chair, braided ponytail, comic<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              30298,
+              14,
+              535,
+              2523,
+              21167,
+              14,
+              8625,
+              329,
+              14,
+              18654,
+              14,
+              4031,
+              8625,
+              329,
+              14,
+              8625,
+              6965,
+              8078,
+              14,
+              13769,
+              8078,
+              14,
+              57769,
+              14,
+              33010,
+              3051,
+              14,
+              54793,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              1606,
+              8078,
+              14,
+              9101,
+              10485,
+              14,
+              14088,
+              14,
+              12817,
+              14,
+              13507,
+              14,
+              377,
+              12817,
+              14,
+              8625,
+              5098,
+              25720,
+              3472,
+              879,
+              14,
+              37327,
+              64001
+            ],
+            "input_tokens": 191,
+            "finish_reason": "eos",
+            "seconds": 0.990248435002286,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements Person 1: sitting on chair, hands on own lap, looking at mirror, having hair braided by another. Person 2: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands. The person being described: sitting on chair, hands on own lap, looking at mirror, having hair braided by another.\ntag: 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements, long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, ",
+            "original": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another",
+            "added_tags": "hairdressing, smile",
+            "output": "long blonde hair, blue eyes, white blouse, red skirt, sitting on chair, hands on own lap, looking at mirror, having hair braided by another, hairdressing, smile",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements Person 1: sitting on chair, hands on own lap, looking at mirror, having hair braided by another. Person 2: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands. The person being described: sitting on chair, hands on own lap, looking at mirror, having hair braided by another.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, shirt, hairdressing, braid, reflection, single braid, braiding hair, brown hair, skirt, english text, indoors, long sleeves, long hair, closed mouth, smile, chair, sitting, on chair, braided ponytail, comic",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "shirt",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "braid",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "single braid",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "braiding hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "brown hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "english text",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "braided ponytail",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "comic",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "reflection",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": "indoors",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": "closed mouth",
+                "reason": "not grounded in this participant or shared action"
+              }
+            ],
+            "max_added_tags": 6,
+            "grounded_additions": true,
+            "owner_tokens": {
+              "0": 141,
+              "1": 36,
+              "-1": 14
+            }
+          }
+        },
+        {
+          "slot": 2,
+          "previous": {
+            "text": "3d, hairdressing, long sleeves, looking down, smile, looking away, holding another's hair, holding, looking back, braid, multiple views, dress, outstretched arms, single braid, looking at viewer, hand in another's hair, holding another's hair, hands up, long hair, hand in own hair, closed mouth<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              535,
+              2523,
+              21167,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              4735,
+              1910,
+              14,
+              14088,
+              14,
+              4735,
+              3543,
+              14,
+              11630,
+              2658,
+              734,
+              8078,
+              14,
+              11630,
+              14,
+              4735,
+              1559,
+              14,
+              8625,
+              329,
+              14,
+              4990,
+              9003,
+              14,
+              13541,
+              14,
+              798,
+              318,
+              61106,
+              11304,
+              14,
+              4031,
+              8625,
+              329,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              1893,
+              295,
+              2658,
+              734,
+              8078,
+              14,
+              11630,
+              2658,
+              734,
+              8078,
+              14,
+              6099,
+              890,
+              14,
+              1606,
+              8078,
+              14,
+              1893,
+              295,
+              1956,
+              8078,
+              14,
+              9101,
+              10485,
+              64001
+            ],
+            "input_tokens": 192,
+            "finish_reason": "eos",
+            "seconds": 1.3339085229672492,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements Person 1: sitting on chair, hands on own lap, looking at mirror, having hair braided by another. Person 2: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands. The person being described: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands.\ntag: 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements, short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, ",
+            "original": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands",
+            "added_tags": "hairdressing, smile, looking away, holding another's hair, multiple views, outstretched arms, hand in another's hair, hands up, closed mouth",
+            "output": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile, looking away, holding another's hair, multiple views, outstretched arms, hand in another's hair, hands up, closed mouth",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements Person 1: sitting on chair, hands on own lap, looking at mirror, having hair braided by another. Person 2: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands. The person being described: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, hairdressing, long sleeves, looking down, smile, looking away, holding another's hair, holding, looking back, braid, multiple views, dress, outstretched arms, single braid, looking at viewer, hand in another's hair, hands up, long hair, hand in own hair, closed mouth",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking down",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "looking back",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "braid",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "single braid",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking at viewer",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": "long hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "hand in own hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              }
+            ],
+            "max_added_tags": null,
+            "grounded_additions": false,
+            "owner_tokens": {
+              "0": 144,
+              "1": 34,
+              "-1": 14
+            }
+          },
+          "focused": {
+            "text": "3d, hairdressing, long sleeves, looking down, smile, looking away, holding another's hair, holding, looking back, braid, multiple views, dress, outstretched arms, single braid, looking at viewer, hand in another's hair, holding another's hair, hands up, long hair, hand in own hair, closed mouth<|eos|>",
+            "token_ids": [
+              21,
+              70,
+              14,
+              535,
+              2523,
+              21167,
+              14,
+              1606,
+              32294,
+              2346,
+              14,
+              4735,
+              1910,
+              14,
+              14088,
+              14,
+              4735,
+              3543,
+              14,
+              11630,
+              2658,
+              734,
+              8078,
+              14,
+              11630,
+              14,
+              4735,
+              1559,
+              14,
+              8625,
+              329,
+              14,
+              4990,
+              9003,
+              14,
+              13541,
+              14,
+              798,
+              318,
+              61106,
+              11304,
+              14,
+              4031,
+              8625,
+              329,
+              14,
+              4735,
+              509,
+              46868,
+              14,
+              1893,
+              295,
+              2658,
+              734,
+              8078,
+              14,
+              11630,
+              2658,
+              734,
+              8078,
+              14,
+              6099,
+              890,
+              14,
+              1606,
+              8078,
+              14,
+              1893,
+              295,
+              1956,
+              8078,
+              14,
+              9101,
+              10485,
+              64001
+            ],
+            "input_tokens": 192,
+            "finish_reason": "eos",
+            "seconds": 1.32663229200989,
+            "exclusion": {},
+            "input": "target: <|long|> <|long_to_tag|>\nlong: 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements Person 1: sitting on chair, hands on own lap, looking at mirror, having hair braided by another. Person 2: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands. The person being described: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands.\ntag: 2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements, short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, ",
+            "original": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands",
+            "added_tags": "hairdressing, smile",
+            "output": "short brown hair, green eyes, blue dress, standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands, hairdressing, smile",
+            "common_weight": 0.5,
+            "character_weight": 1.5,
+            "interaction": "2girls, cozy room, mirror, one woman braiding the other woman's hair, one seated in front and one standing behind, careful hand movements Person 1: sitting on chair, hands on own lap, looking at mirror, having hair braided by another. Person 2: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands. The person being described: standing behind another, braiding another's hair, both hands holding strands of other's hair, looking at hands.",
+            "interaction_weight": 0.5,
+            "protect_source": true,
+            "proposed_tags": "3d, hairdressing, long sleeves, looking down, smile, looking away, holding another's hair, holding, looking back, braid, multiple views, dress, outstretched arms, single braid, looking at viewer, hand in another's hair, hands up, long hair, hand in own hair, closed mouth",
+            "rejected_tags": [
+              {
+                "tag": "3d",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "long sleeves",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking down",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "looking back",
+                "reason": "unrequested viewpoint or interaction orientation"
+              },
+              {
+                "tag": "braid",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "single braid",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking at viewer",
+                "reason": "conflicts with source or accepted action, position, expression or scene"
+              },
+              {
+                "tag": "long hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "hand in own hair",
+                "reason": "unrequested identity, wardrobe, style or composition"
+              },
+              {
+                "tag": "looking away",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": "holding another's hair",
+                "reason": "already expressed by source or accepted additions"
+              },
+              {
+                "tag": "multiple views",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": "outstretched arms",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": "hand in another's hair",
+                "reason": "already expressed by source or accepted additions"
+              },
+              {
+                "tag": "hands up",
+                "reason": "not grounded in this participant or shared action"
+              },
+              {
+                "tag": "closed mouth",
+                "reason": "not grounded in this participant or shared action"
+              }
+            ],
+            "max_added_tags": 6,
+            "grounded_additions": true,
+            "owner_tokens": {
+              "0": 144,
+              "1": 34,
+              "-1": 14
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

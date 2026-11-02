@@ -51,3 +51,13 @@ class SceneContextTests(unittest.TestCase):
 
     def test_scene_only_does_not_invent_participants(self):
         self.assertEqual(scene_context('night, garden', ()), ('night, garden', ()))
+
+    def test_grooming_actions_share_roles_without_hair_appearance(self):
+        text, roles = scene_context('room', (
+            'long blonde hair, having hair braided by another',
+            "short brown hair, braiding another's hair, both hands holding strands of other's hair"), 1)
+        self.assertEqual(roles[0], ('having hair braided by another',))
+        self.assertIn("braiding another's hair", roles[1])
+        for private in ('blonde', 'brown', 'long hair', 'short hair'):
+            self.assertNotIn(private, text)
+        self.assertEqual(action_clauses("braiding another's blonde hair, holding pink hair, brushing blue hair"), ())
