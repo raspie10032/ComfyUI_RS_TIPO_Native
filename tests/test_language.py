@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 import test_native
 from rs_tipo_native.nodes import RSTIPOPrompt
-from rs_tipo_native.gemma_prompt import instruction, parse_response, validate_prose
+from rs_tipo_native.gemma_prompt import instruction, parse_response
 
 class LanguageTests(unittest.TestCase):
     def test_one_adapted_model_for_both_languages_and_formats(self):
@@ -89,10 +89,15 @@ class LanguageTests(unittest.TestCase):
         self.assertEqual(parse_response('{"common":"changed","characters":{}}','keep',(),
             output_format='tags',expand_common=False),('keep',()))
 
-    def test_natural_format_must_be_actual_english_prose(self):
-        for text in ('blonde hair, blue eyes, on left','한국어 그대로',''):
-            with self.assertRaises(ValueError): validate_prose((),(text,))
-        validate_prose(('Two people are in a cafe.',),('The first character has blonde hair.',))
+    def test_nonempty_prompt_text_is_accepted_independent_of_wording(self):
+        for text in ('blonde hair, blue eyes, on left', '한국어 그대로', 'smiling'):
+            with self.subTest(text=text):
+                raw = json.dumps({'common': '', 'characters': {'1': text}})
+                self.assertEqual(parse_response(raw, '', ('adult character',),
+                    output_format='natural_language', expand_common=False), ('', (text,)))
+        with self.assertRaisesRegex(ValueError, 'slot count/type mismatch'):
+            parse_response('{"common":"","characters":{"1":""}}', '', ('adult character',),
+                output_format='natural_language', expand_common=False)
 
     def test_exclusion_space_and_underscore_equivalence(self):
         with self.assertRaisesRegex(ValueError,'excluded'):

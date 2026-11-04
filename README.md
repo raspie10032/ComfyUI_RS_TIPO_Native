@@ -21,7 +21,14 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.8:** recover broken common-string quotes and separators when the
+**Version 0.2.9:** remove intermediate-planning grammar and language rejection.
+Nonempty tag lists, labels and short fragments continue to tag rendering;
+natural-language output keeps the returned wording. Contract retries only repair
+the reported error without repeating expansion. JSON structure, character slots,
+source weights and user-specified exclusions remain checked.
+See [validation and limits](docs/gemma-planner-text-fix.ko.md).
+
+Version 0.2.8: recover broken common-string quotes and separators when the
 complete character object is independently valid. Keep the common description,
 including text after an early quote, and preserve every character slot. Other
 JSON syntax errors get one formatting-only retry without repeating the expansion
@@ -40,9 +47,8 @@ characters**, compared with about 3.60 GiB before these optimizations. These are
 process-local PyTorch measurements, not total GPU use; CPU RAM still holds PLE.
 See the [measurements, limits and reproduction guide](docs/gemma-inference-optimization.ko.md).
 
-Version 0.2.1 repairs malformed Gemma prose without replacing already valid
-characters or losing explicitly listed outfits. Failed responses retain field-level
-diagnostics. See the [repair and 2–10 character evaluation](docs/gemma-output-repair.ko.md).
+Version 0.2.1 introduced prose repair and field-level diagnostics;
+version 0.2.9 removes its remaining grammar rejection. See the [repair and 2–10 character evaluation](docs/gemma-output-repair.ko.md).
 
 Version 0.2.0 unified native TIPO 2.1 / Gemma TIPO, verified automatic
 downloads for `scale-20pct-001`, and an inspectable result panel.

@@ -65,12 +65,12 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Recover broken Gemma common-string quotes and separators only when
-            the complete character object is independently valid. Preserve
-            later common text and every participant. Other JSON syntax errors
-            receive one syntax-only retry without repeating expansion. Keep
-            raw diagnostics, source weights, explicit exclusions, addition
-            budgets and tag deduplication. Reject incomplete or ambiguous data.
+            Remove intermediate-planning grammar and language rejection.
+            Nonempty tag lists, labels and short fragments continue to tag
+            rendering or natural-language output. Contract retries repair
+            only the reported error without repeating expansion. Preserve
+            JSON and participant structure, source weights, explicit
+            exclusions, addition budgets and tag deduplication.
             No new runtime dependencies or model-weight changes.
             TIPO authors, KohakuBlueleaf, Gemma and City96 contributors retain credit and their licenses.
         run: |

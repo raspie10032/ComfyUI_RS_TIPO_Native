@@ -50,31 +50,6 @@ def caption_instruction(caption, prefix=''):
         '\nContinue the tag list below without repeating its prefix.\nTAGS:\n'+prefix)
 
 
-def prose_errors(common, characters):
-    """Identify malformed fields without pretending to judge scene semantics."""
-    errors = {}
-    fields = [(('common' if len(common) == 1 else f'common{i}'), text)
-              for i, text in enumerate(common, 1)]
-    fields += [(f'character{i}', text) for i, text in enumerate(characters, 1)]
-    for field, text in fields:
-        if re.search('[\uac00-\ud7af]', text):
-            errors[field] = 'Output must be English prose, not untranslated Korean.'
-            continue
-        # A format guard, not an English grammar/semantic judge. Requiring a
-        # hand-picked verb list rejected valid unseen actions such as "share".
-        # Check a subject-led clause and keep semantic quality in the evaluation.
-        clause = re.sub(r'^\s*(?:on|in|at|under|beside|behind)\b[^,]*,\s*', '', text, flags=re.I)
-        if not re.match(r'\s*(?:the\s+\w+|(?:one|two|three|four|five|six|seven|eight|nine|ten|both)\s+\w+|she|he|they|a\s+\w+|an\s+\w+)\b', clause, re.I) or len(text.split()) < 4:
-            errors[field] = 'Output is a tag list or fragment, not grammatical English prose.'
-    return errors
-
-
-def validate_prose(common, characters):
-    errors = prose_errors(common, characters)
-    if errors:
-        raise ValueError('; '.join(f'{field}: {reason}' for field, reason in errors.items()))
-
-
 def caption_anchors(caption):
     """Explicit English attributes that a tag rendering must not drop."""
     weighted = list(re.finditer(r'\([^()]+:\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+)\s*\)', caption))

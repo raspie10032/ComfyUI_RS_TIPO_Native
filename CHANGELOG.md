@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.9 — 2026-11-05
+
+- Remove the remaining intermediate-planning grammar and language rejection.
+  Nonempty tag lists, labels, short fragments and untranslated wording now
+  continue to tag rendering or natural-language output without a content retry.
+- Remove the obsolete prose validator and field-rewrite retry path. Contract
+  retries repair only JSON structure, source weights or explicit exclusions;
+  they no longer repeat prompt expansion or require a particular sentence form.
+- Retain slot routing, JSON syntax repair, source-weight preservation, explicit
+  exclusions, tag deduplication and the configured addition budget. Add
+  regression coverage for 0/1/2/10 slots and both output modes. No dependency,
+  model-weight or resource-management changes. Preserve upstream attribution
+  and licenses. See [validation and limits](docs/gemma-planner-text-fix.ko.md).
+
 ## 0.2.8 — 2026-11-05
 
 - Recover malformed common-string quotes, line breaks and separators only
