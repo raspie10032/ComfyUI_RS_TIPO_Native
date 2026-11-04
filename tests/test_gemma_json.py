@@ -8,6 +8,41 @@ from rs_tipo_native.gemma_runtime import run_scene, GemmaOutputError
 
 
 class GemmaJSONTests(unittest.TestCase):
+    def test_empty_fields_restore_only_their_source_across_character_counts(self):
+        for count in (0, 1, 2, 10):
+            for output_format in ('tags', 'natural_language'):
+                with self.subTest(count=count, output_format=output_format):
+                    common = '(colorful theme:1.3), cafe'
+                    sources = tuple(f'adult {i}, (blue jacket:1.2)' for i in range(1, count+1))
+                    outputs = {str(i): (' \n ' if i % 2 else source + ', waving')
+                               for i, source in enumerate(sources, 1)}
+                    restored = []
+                    scene, slots = parse_response(json.dumps({'common': '', 'characters': outputs}),
+                        common, sources, output_format=output_format, expand_common=True,
+                        restored_fields=restored)
+                    self.assertEqual(scene, common)
+                    self.assertEqual(slots, tuple(source if i % 2 else outputs[str(i)]
+                        for i, source in enumerate(sources, 1)))
+                    self.assertEqual(restored, ['common', *[f'character{i}' for i in range(1, count+1, 2)]])
+
+    def test_empty_korean_fields_preserve_sources_without_claiming_translation(self):
+        common, character = '오후 카페', '성인 여성, (파란 재킷:1.2)'
+        self.assertEqual(parse_response('{"common":"","characters":{"1":""}}', common, (character,),
+            output_format='natural_language', expand_common=True), (common, (character,)))
+
+    def test_blank_recovery_does_not_accept_missing_wrong_or_nonstring_slots(self):
+        for result in ({'common': '', 'characters': {}},
+                       {'common': '', 'characters': {'2': ''}},
+                       {'common': '', 'characters': {'1': None}},
+                       {'common': None, 'characters': {'1': ''}}):
+            with self.subTest(result=result), self.assertRaisesRegex(ValueError, 'slot count/type mismatch'):
+                self.parse(json.dumps(result))
+
+    def test_restored_source_still_honors_explicit_exclusions(self):
+        with self.assertRaisesRegex(ValueError, 'excluded content'):
+            parse_response('{"common":"","characters":{}}', 'cafe, blue eyes', (),
+                output_format='tags', expand_common=True, excluded=('blue eyes',))
+
     def parse(self, raw, count=1):
         return parse_response(raw, 'cafe', ('adult character',)*count,
             output_format='natural_language', expand_common=True)

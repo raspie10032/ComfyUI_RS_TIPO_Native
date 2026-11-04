@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.10 — 2026-11-05
+
+- Stop aborting when a structurally valid Gemma response leaves a common or
+  numbered character string blank. Restore only that field's own source and
+  continue to tag rendering or natural-language output. Keep other descriptions
+  unchanged; do not infer or move character assignments.
+- Record restored fields in the model call's `source_restored_fields` so source
+  recovery is inspectable. A restored field may remain unexpanded or untranslated.
+  Missing/wrong character keys, non-string values and malformed JSON still use
+  the bounded repair path. Preserve explicit exclusions, weights, deduplication
+  and addition budgets. No dependencies, weights or upstream credits changed.
+  See [validation and limits](docs/gemma-empty-fields-fix.ko.md).
+
 ## 0.2.9 — 2026-11-05
 
 - Remove the remaining intermediate-planning grammar and language rejection.

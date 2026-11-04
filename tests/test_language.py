@@ -95,9 +95,8 @@ class LanguageTests(unittest.TestCase):
                 raw = json.dumps({'common': '', 'characters': {'1': text}})
                 self.assertEqual(parse_response(raw, '', ('adult character',),
                     output_format='natural_language', expand_common=False), ('', (text,)))
-        with self.assertRaisesRegex(ValueError, 'slot count/type mismatch'):
-            parse_response('{"common":"","characters":{"1":""}}', '', ('adult character',),
-                output_format='natural_language', expand_common=False)
+        self.assertEqual(parse_response('{"common":"","characters":{"1":""}}', '', ('adult character',),
+            output_format='natural_language', expand_common=False), ('', ('adult character',)))
 
     def test_exclusion_space_and_underscore_equivalence(self):
         with self.assertRaisesRegex(ValueError,'excluded'):

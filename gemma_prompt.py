@@ -144,6 +144,7 @@ Short uses compact sentences; long gives fuller action descriptions; very_long m
 {"The rewritten common must start with the exact words 'The scene is' and form a full sentence." if expand_common and common.strip() and output_format == 'natural_language' else ""}
 {"For expanded common, use one sentence to retain the source facts, then a second sentence beginning 'The lighting' or 'The atmosphere' to describe a NEW compatible visual detail. Do not use the second sentence just to restate a source theme, expression or color." if expand_common and common.strip() and output_format == 'natural_language' and max_added_tags > 0 else ""}
 Empty common stays empty. Condition hints: {json.dumps(metadata or {}, ensure_ascii=False)}.
+If you cannot rewrite a nonempty field, copy that field's source instead of returning an empty string. Never move it into another field.
 Reply ONLY valid JSON using common (string) and characters (object with numbered string keys).
 {("Use ordinary parentheses in prose, without ComfyUI backslash escapes. Encode any literal backslash as two backslashes in JSON. Never append a backslash before a closing string quote." + chr(10)) if any(chr(92) in text for text in (common, *characters)) else ''}Keep exactly character keys {json.dumps(list(source['characters']))}. No omitted or merged slots.
 OUTPUT SHAPE (fill strings from ACTUAL SOURCE and compatible new details):
@@ -184,7 +185,7 @@ def scene_json(text):
         return {'common': json.loads('"'+body+'"', strict=False), 'characters': participants}
 
 
-def parse_response(raw, common, characters, *, output_format, expand_common, excluded=()):
+def parse_response(raw, common, characters, *, output_format, expand_common, excluded=(), restored_fields=None):
     text = raw.strip()
     if text.startswith('```'):
         text = re.sub(r'^```(?:json)?\s*\n', '', text)
@@ -196,18 +197,22 @@ def parse_response(raw, common, characters, *, output_format, expand_common, exc
     if (not isinstance(result, dict) or set(result) != {'common', 'characters'}
             or not isinstance(result['common'], str) or not isinstance(result['characters'], dict)
             or set(result['characters']) != {str(i) for i in range(1,len(characters)+1)}
-            or any(not isinstance(t, str) or not t.strip() for t in result['characters'].values())):
+            or any(not isinstance(t, str) for t in result['characters'].values())):
         raise ValueError('Gemma TIPO output slot count/type mismatch; refusing to route characters to wrong slots.')
     result['characters'] = [result['characters'][str(i)] for i in range(1,len(characters)+1)]
     if not expand_common:
         # The program owns this switch even if the model tries to expand it.
         result['common'] = common
-    elif common.strip() and not result['common'].strip():
-        raise ValueError('Gemma TIPO omitted the common prompt.')
     elif not common.strip():
         result['common'] = ''
     for i, (source, output) in enumerate(zip((common, *characters), (result['common'], *result['characters']))):
         field = 'common' if i == 0 else f'character{i}'
+        # An empty model field must not discard a supplied prompt or stop the
+        # workflow. Restore only its own source; never infer a different slot.
+        if source.strip() and not output.strip():
+            output = source
+            if restored_fields is not None:
+                restored_fields.append(field)
         for weight in re.findall(r'\([^()]+:\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+)\s*\)', source):
             # English weighted clauses must survive byte for byte; Korean
             # clauses can change language but their numeric weights cannot.

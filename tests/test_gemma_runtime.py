@@ -9,6 +9,54 @@ from rs_tipo_native.gemma_prompt import (caption_anchors, deduplicate_tag_render
     prose_source, labelled_character_fields)
 
 class GemmaRuntimeTests(unittest.TestCase):
+    def test_blank_common_reaches_public_node_with_original_weights_and_new_tags(self):
+        from rs_tipo_native.nodes import RSTIPOPrompt
+        raw = json.dumps({'common': '', 'characters': {'1': 'The adult wears a blue jacket.'}})
+        responses = iter((raw, 'colorful_theme, cafe, rim lighting', 'blue jacket, waving'))
+        info = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), info)), \
+             patch('rs_tipo_native.interface.pipe_adapter', return_value=None):
+            result = RSTIPOPrompt().expand(character_count=1, expand_common=True,
+                common_prompt='(colorful theme:1.3), cafe', character1='(blue jacket:1.2), adult')
+        self.assertEqual(result['result'][1], '(colorful theme:1.3), cafe, rim lighting')
+        self.assertEqual(result['result'][2], '(blue jacket:1.2), adult, waving')
+        report = json.loads(result['ui']['tipo_report'][0])
+        self.assertEqual(report['calls'][0]['source_restored_fields'], ['common'])
+        self.assertEqual(report['slots'][0]['added_tags'], ['rim lighting'])
+
+    def test_blank_common_keeps_valid_characters_and_continues_to_tags_without_retry(self):
+        raw = json.dumps({'common': '', 'characters': {
+            '1': 'The adult wears a red coat and waves.',
+            '2': 'The adult wears a blue jacket and holds a book.'}})
+        responses = iter((raw, 'cafe, soft lighting, soft_lighting',
+            'red coat, waving', 'blue jacket, holding book'))
+        info = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), info)) as generate:
+            scene, slots, report = run_scene('(colorful theme:1.3), cafe',
+                ('adult, red coat', 'adult, blue jacket'), output_format='tags', expand_common=True)
+        self.assertEqual(scene, 'cafe, soft lighting')
+        self.assertEqual(slots, ('red coat, waving', 'blue jacket, holding book'))
+        self.assertEqual(generate.call_count, 4)
+        self.assertIn('CAPTION:\ncolorful theme, cafe\nTAGS:', generate.call_args_list[1].args[1])
+        self.assertEqual(report['calls'][0]['source_restored_fields'], ['common'])
+        self.assertNotIn('validation_error', report['calls'][0])
+
+    def test_blank_character_restores_own_slot_without_retry_or_changing_other_outputs(self):
+        raw = json.dumps({'common': 'The scene is a cafe.',
+            'characters': {'2': 'The second adult waves.', '1': '   '}})
+        info = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', return_value=(raw, info)) as generate:
+            scene, slots, report = run_scene('cafe', ('first adult', 'second adult'),
+                output_format='natural_language', expand_common=True)
+        self.assertEqual((scene, slots), ('The scene is a cafe.', ('first adult', 'The second adult waves.')))
+        self.assertEqual(generate.call_count, 1)
+        self.assertEqual(report['calls'][0]['source_restored_fields'], ['character1'])
+
 
     def test_tag_list_planning_continues_to_tag_rendering_without_grammar_retry(self):
         for count in (0, 1, 2, 10):

@@ -141,8 +141,12 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
             temperature=temperature, seed=seed, excluded=excluded)
         calls.append({'stage': 'joint_prose', 'raw': raw, **report})
         try:
+            restored_fields = []
             scene, slots = parse_response(raw, joint_common, joint_characters,
-                output_format='natural_language', expand_common=expand_common, excluded=excluded)
+                output_format='natural_language', expand_common=expand_common, excluded=excluded,
+                restored_fields=restored_fields)
+            if restored_fields:
+                calls[-1]['source_restored_fields'] = restored_fields
             break
         except ValueError as exc:
             calls[-1]['validation_error'] = str(exc)

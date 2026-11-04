@@ -21,7 +21,14 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.9:** remove intermediate-planning grammar and language rejection.
+**Version 0.2.10:** blank common/character strings retain their own source and
+continue without a contract retry. Valid neighboring descriptions stay intact;
+restored fields are recorded in model details as `source_restored_fields`.
+This prevents an empty field from stopping the workflow; it does not guarantee
+new detail or translation for that field. Missing/wrong slot keys and non-string
+values still require bounded repair. See [behavior and limits](docs/gemma-empty-fields-fix.ko.md).
+
+Version 0.2.9: remove intermediate-planning grammar and language rejection.
 Nonempty tag lists, labels and short fragments continue to tag rendering;
 natural-language output keeps the returned wording. Contract retries only repair
 the reported error without repeating expansion. JSON structure, character slots,
@@ -137,9 +144,11 @@ the pinned assets.
   equivalence, and checked again before routing output. A source that explicitly
   contains a banned phrase is an error. This is literal phrase blocking, not a
   semantic guarantee against every synonym or grammatical variant.
-- Invalid/incomplete JSON, wrong character keys and lost weighted clauses fail
-  clearly. A bounded correction uses the same model. No silent fallback switches
-  to another model or returns the unprocessed source as a success.
+- Blank string fields retain their own source, with recovery recorded in model
+  details; this may leave the field unexpanded or untranslated. Invalid/incomplete
+  JSON, wrong character keys and lost weighted clauses use a bounded correction
+  with the same model, then fail clearly if still invalid. No fallback switches
+  to another model.
 - The adapters are experimental. They can omit details, add unwanted tags, or
   misunderstand an interaction. The result panel exposes source, final output,
   raw model calls, active base/adapter and applied LoRA target count.
