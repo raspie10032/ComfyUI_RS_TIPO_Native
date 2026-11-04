@@ -1,0 +1,74 @@
+name: Publish to Comfy Registry
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [pyproject.toml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: comfy-registry-publish
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install -r requirements-test.txt
+      - name: Check release metadata
+        run: |
+          python - <<'PY'
+          import ast
+          import pathlib
+          import tomllib
+          root = pathlib.Path('.')
+          config = tomllib.loads((root / 'pyproject.toml').read_text())
+          project = config['project']
+          assignments = ast.parse((root / '__init__.py').read_text()).body
+          version = next(ast.literal_eval(node.value) for node in assignments
+                         if isinstance(node, ast.Assign)
+                         and any(isinstance(target, ast.Name) and target.id == '__version__'
+                                 for target in node.targets))
+          assert project['version'] == version, 'Registry and node versions must match'
+          requirements = [line.strip() for line in (root / 'requirements.txt').read_text().splitlines()
+                          if line.strip() and not line.lstrip().startswith('#')]
+          assert project['dependencies'] == requirements, 'Registry dependencies must match requirements.txt'
+          assert (root / project['license']['file']).is_file()
+          PY
+      - run: python -m unittest discover -s tests -v
+      - run: node tests/test_interface.mjs
+      - run: node tests/test_sockets.mjs
+      - run: node tests/test_download_status.mjs
+      - run: node tests/test_report.mjs
+
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install comfy-cli==1.25.0
+      - name: Publish validated node archive
+        env:
+          REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
+          COMFY_NODE_CHANGELOG: >-
+            Initial Comfy Registry release. Unified native TIPO 2.1 and separate Gemma TIPO LoRA backend,
+            automatic pinned model downloads, and Gemma output repair that preserves valid fields and explicit outfits.
+            Text evaluation covers 2/4/6/8/10 characters; image fidelity is not guaranteed.
+            TIPO authors, KohakuBlueleaf and contributors retain credit; model weight licenses are separate.
+        run: |
+          test -n "$REGISTRY_ACCESS_TOKEN"
+          comfy --skip-prompt --no-enable-telemetry node publish --token "$REGISTRY_ACCESS_TOKEN"

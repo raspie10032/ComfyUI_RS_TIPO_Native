@@ -2,6 +2,10 @@
 
 ## 0.2.1 — 2026-11-04
 
+- Add Comfy Registry metadata for `rs-tipo-native` by `raspie10032`, with a
+  ComfyUI 0.41.0 support baseline and upstream attribution. Registry packaging
+  retains runtime files, examples, documentation and licenses, and excludes
+  development/training tools. Publishing runs only after validation succeeds.
 - Repair malformed Gemma prose using the previous response and the failed field
   names. Preserve accepted common/character fields instead of replacing them
   with shorter rewrites. Retry once using the same adapted model.

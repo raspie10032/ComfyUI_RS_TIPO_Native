@@ -1,0 +1,7 @@
+# Runtime, examples, documentation and every third-party license remain included.
+.github/
+tests/
+tools/*
+!tools/download_model.py
+training/
+requirements-test.txt

@@ -31,6 +31,15 @@ See the [release notes](CHANGELOG.md).
 
 ## Install and use
 
+Comfy Registry: **[RS TIPO Native](https://registry.comfy.org/publishers/raspie10032/nodes/rs-tipo-native)**
+(`rs-tipo-native`, publisher `raspie10032`). Search this name in a Registry-enabled
+ComfyUI Manager, or use `comfy node install rs-tipo-native`. Restart ComfyUI and
+refresh the browser after installation. The Registry compatibility baseline is
+**ComfyUI 0.41.0 or newer**; Gemma also requires its native Gemma 4 generation APIs.
+Runtime checks report missing APIs before downloading model weights.
+
+For a manual installation:
+
 Install this repository in `ComfyUI/custom_nodes`, install `requirements.txt`
 using ComfyUI's Python, and restart ComfyUI. Gemma TIPO requires a current
 ComfyUI with native Gemma 4 text generation; TIPO 2.1 uses this extension's

@@ -42,6 +42,15 @@ Gemma 쪽의 기반 모델은 [Google DeepMind의 Gemma](https://huggingface.co/
 
 저장소: [ComfyUI_RS_TIPO_Native](https://github.com/raspie10032/ComfyUI_RS_TIPO_Native)
 
+**Comfy Registry:** [RS TIPO Native](https://registry.comfy.org/publishers/raspie10032/nodes/rs-tipo-native)
+(`rs-tipo-native`, 게시자 `raspie10032`). Registry를 사용하는 ComfyUI Manager에서
+이 이름으로 검색하거나 `comfy node install rs-tipo-native`로 설치할 수 있습니다.
+Registry 배포의 지원 기준은 **ComfyUI 0.41.0 이상**이며, Gemma 경로에는 네이티브
+Gemma 4 생성 API도 필요합니다. 코드 라이선스는 GPL-3.0-only이고 모델 가중치의
+조건은 별도입니다. 특히 `scale-20pct-001` LoRA는 **CC BY-NC 4.0 비상업용**입니다.
+
+수동으로 설치하려면 아래 명령을 사용합니다.
+
 ComfyUI 폴더에서 다음을 실행합니다.
 
 ```bash

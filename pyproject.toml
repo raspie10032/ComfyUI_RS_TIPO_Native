@@ -1,0 +1,25 @@
+[project]
+name = "rs-tipo-native"
+version = "0.2.1"
+description = "Independent ComfyUI-native TIPO prompt expansion, based on the TIPO authors' and KohakuBlueleaf's work, with a separate Gemma TIPO LoRA backend and up to ten character prompts."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.5",
+    "safetensors>=0.4",
+    "tokenizers>=0.21",
+    "huggingface_hub>=0.27",
+    "gguf>=0.19.0,<0.20",
+]
+
+[project.urls]
+Repository = "https://github.com/raspie10032/ComfyUI_RS_TIPO_Native"
+Documentation = "https://github.com/raspie10032/ComfyUI_RS_TIPO_Native/blob/main/docs/usage.ko.md"
+"Bug Tracker" = "https://github.com/raspie10032/ComfyUI_RS_TIPO_Native/issues"
+
+[tool.comfy]
+PublisherId = "raspie10032"
+DisplayName = "RS TIPO Native"
+# Supported Registry baseline, verified with native Gemma 4 text generation.
+requires-comfyui = ">=0.41.0"
