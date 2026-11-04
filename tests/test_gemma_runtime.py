@@ -6,9 +6,66 @@ import torch
 import test_native
 from rs_tipo_native.gemma_runtime import token_constraints, run_scene, GemmaOutputError
 from rs_tipo_native.gemma_prompt import (caption_anchors, guarded_tag_rendering, scene_count_anchors,
+    common_expansion_error,
     prose_errors, prose_source, labelled_character_fields, labelled_outfit_errors)
 
 class GemmaRuntimeTests(unittest.TestCase):
+    def test_common_restating_source_or_importing_character_words_is_not_expansion(self):
+        source = '(colorful theme:1.3), cafe, (smile, blush:1.5)'
+        characters = ('adult woman, red hair', 'adult woman, blue eyes')
+        self.assertIsNotNone(common_expansion_error(source, characters,
+            'The scene is a cafe featuring a colorful theme, smiling and blushing.'))
+        self.assertIsNotNone(common_expansion_error(source, characters,
+            'The scene is a cafe with two adult women, red hair and blue eyes.'))
+        self.assertIsNotNone(common_expansion_error('1girl, colorful theme, open mouth', (),
+            'The scene is depicted as follows: 1girl, colorful theme, open mouth.'))
+        self.assertIsNone(common_expansion_error(source, characters,
+            'The scene is a colorful cafe. The lighting is soft with gentle shadows.'))
+        self.assertIsNone(common_expansion_error('오후 카페', characters,
+            'The scene is an afternoon cafe.'))
+
+    def test_common_expansion_retry_preserves_good_characters_and_adds_real_detail(self):
+        character = 'The character has red hair and looks down with her hands folded.'
+        first = json.dumps({'common': 'The scene is a cafe.', 'characters': {'1': character}})
+        repaired = 'The scene is a cafe. The lighting is soft with gentle shadows.'
+        responses = iter((first, repaired))
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), {'seconds': .1, 'output_tokens': 5,
+                     'exclusion': {'blocked_candidates': 0}})):
+            scene, slots, report = run_scene('cafe', ('red hair',),
+                output_format='natural_language', expand_common=True)
+        self.assertIn('gentle shadows', scene)
+        self.assertEqual(slots, (character,))
+        self.assertEqual(report['model_calls'], 2)
+        self.assertIn('no new visual detail', report['calls'][0]['validation_error'])
+        self.assertEqual(report['calls'][1]['preserved_fields'], ['character1'])
+
+    def test_unexpanded_common_after_retry_is_not_sent_downstream(self):
+        responses = iter((
+            json.dumps({'common': 'The scene is a cafe.',
+                'characters': {'1': 'The character has red hair and looks down.'}}),
+            'The scene is a cafe.'))
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), {'seconds': .1, 'output_tokens': 5})), \
+             self.assertRaises(GemmaOutputError) as caught:
+            run_scene('cafe', ('red hair',), output_format='natural_language', expand_common=True)
+        self.assertIn('no new visual detail', str(caught.exception))
+        self.assertEqual(len(caught.exception.calls), 2)
+
+    def test_zero_detail_budget_allows_a_faithful_common_rewrite(self):
+        raw = json.dumps({'common': 'The scene is a cafe.', 'characters': {}})
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', return_value=(raw,
+                 {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}})) as generate:
+            scene, slots, report = run_scene('cafe', (), output_format='natural_language',
+                expand_common=True, max_added_tags=0)
+        self.assertEqual(scene, 'The scene is a cafe.')
+        self.assertEqual(slots, ())
+        self.assertEqual(report['model_calls'], 1)
+        self.assertEqual(generate.call_count, 1)
+
     def test_empty_exclusions_skip_decode_vocab_scan_and_token_read(self):
         from unittest.mock import Mock
         token = object()  # Must be returned unchanged, without indexing/item().
@@ -127,6 +184,9 @@ class GemmaRuntimeTests(unittest.TestCase):
         self.assertIn('character2:', report['calls'][0]['validation_error'])
         self.assertEqual(report['calls'][1]['preserved_fields'], ['common', 'character3'])
         self.assertEqual(report['model_calls'], 2)
+        self.assertNotIn('add ZERO optional visual details', prompts[1])
+        self.assertIn('Keep compatible visual details already added', prompts[1])
+        self.assertIn('original expansion task and detail budget still apply', prompts[1])
 
     def test_failed_prose_retry_retains_raw_responses_and_identifies_fields(self):
         raw = json.dumps({'common': '', 'characters': {'1': 'Appearance: silver hair. Outfit: dress.'}})
@@ -237,6 +297,49 @@ class GemmaRuntimeTests(unittest.TestCase):
         self.assertEqual(slots, ('black hair',))
         self.assertIn('not prose sentences', report['calls'][1]['format_error'])
         self.assertEqual(report['model_calls'], 3)
+
+    def test_multisentence_caption_without_simple_finite_verbs_is_not_a_tag_line(self):
+        caption = 'A colorful cafe. The warm glow casts soft shadows across the tables.'
+        raw = json.dumps({'common': caption, 'characters': {}})
+        responses = iter((raw, caption, 'colorful cafe, warm glow, soft shadows'))
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), {'seconds': .1, 'output_tokens': 5,
+                    'exclusion': {'blocked_candidates': 0}})):
+            scene, _, report = run_scene('colorful cafe', (), output_format='tags', expand_common=True)
+        self.assertEqual(scene, 'colorful cafe, warm glow, soft shadows')
+        self.assertIn('format_error', report['calls'][1])
+        self.assertEqual(report['model_calls'], 3)
+
+    def test_common_tag_repair_only_requests_additions_and_preserves_characters(self):
+        character = 'The character has red hair and looks down.'
+        responses = iter((
+            json.dumps({'common': 'The scene is a cafe.', 'characters': {'1': character}}),
+            'The lighting is soft with gentle shadows.',
+            'soft lighting, gentle shadows', 'red hair, looking down'))
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), {'seconds': .1, 'output_tokens': 5,
+                    'exclusion': {'blocked_candidates': 0}})) as generate:
+            scene, slots, report = run_scene('cafe', ('red hair',),
+                output_format='tags', expand_common=True)
+        self.assertEqual(scene, 'soft lighting, gentle shadows')
+        self.assertEqual(slots, ('red hair, looking down',))
+        self.assertIn('only the NEW visual details', generate.call_args_list[1].args[1])
+        self.assertEqual(report['calls'][1]['preserved_fields'], ['character1'])
+
+    def test_korean_common_repair_keeps_translated_scene_and_not_only_additions(self):
+        responses = iter((json.dumps({'common': 'cafe', 'characters': {}}),
+            'The scene is a cafe with two women. The lighting is soft.',
+            '2girls, cafe, soft lighting'))
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), {'seconds': .1, 'output_tokens': 5,
+                    'exclusion': {'blocked_candidates': 0}})) as generate:
+            scene, _, _ = run_scene('여성 두 명, 카페', (), output_format='tags', expand_common=True)
+        self.assertEqual(scene, '2girls, cafe, soft lighting')
+        self.assertIn('Preserve all supplied facts', generate.call_args_list[1].args[1])
+        self.assertNotIn('only the NEW visual details', generate.call_args_list[1].args[1])
 
     def test_tag_planning_does_not_require_image_weight_syntax_in_english_prose(self):
         raw = json.dumps({'common': '', 'characters': {'1': 'The character has red hair and blue eyes.'}})

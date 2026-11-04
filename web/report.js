@@ -8,6 +8,7 @@ export function resultText(report, slot = 'all', view = 'output') {
             model_calls: report.model_calls, seconds: report.seconds,
             limitations: report.limitations, calls: report.calls,
             raw_output: report.raw_output,
+            slots: report.slots,
         }, null, 2);
     }
     const rows = (report.slots ?? []).filter(row => slot === 'all' || String(row.slot) === slot);
@@ -23,5 +24,9 @@ export function modelSummary(report) {
     const adapter = report.adapter ? ` · ${report.adapter}` : '';
     const rank = detail?.rank ? ` · rank ${detail.rank}` : '';
     const targets = report.lora_targets ? ` · ${report.lora_targets} targets` : '';
-    return `${report.model_family ?? 'Gemma TIPO'}${adapter}${rank}${targets}`;
+    const counts = (report.slots ?? []).filter(row => row.expansion_status)
+        .map(row => `${row.slot === 'common' ? 'common' : row.slot}: ${
+            row.expansion_status === 'expanded' ? '+' + row.added_tag_count + ' tags' : row.expansion_status}`);
+    const expansion = counts.length ? ` · ${counts.join(' / ')}` : '';
+    return `${report.model_family ?? 'Gemma TIPO'}${adapter}${rank}${targets}${expansion}`;
 }

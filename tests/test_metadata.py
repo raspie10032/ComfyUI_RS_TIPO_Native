@@ -111,6 +111,42 @@ class MetadataTests(unittest.TestCase):
                                            max_added_tags=1)
         self.assertEqual(result['result'][2], r'aria \(original\), (blue jacket, long sleeves:1.2)')
 
+    def test_slot_counts_describe_final_output_after_deduplication_and_budget(self):
+        with patch('rs_tipo_native.interface.pipe_adapter', return_value=None), \
+             patch('rs_tipo_native.gemma_runtime.run_scene', return_value=(
+                 'colorful theme, soft lighting, bokeh', ('blue eyes, head tilt, standing',), {})):
+            result = RSTIPOPrompt().expand(character_count=1,
+                common_prompt='(colorful theme:1.3)', character1='(blue eyes:1.2)',
+                expand_common=True, max_added_tags=1)
+        rows = json.loads(result['ui']['tipo_report'][0])['slots']
+        self.assertEqual([row['added_tags'] for row in rows], [['soft lighting'], ['head tilt']])
+        self.assertEqual([row['added_tag_count'] for row in rows], [1, 1])
+        self.assertEqual([row['expansion_status'] for row in rows], ['expanded', 'expanded'])
+
+    def test_unchanged_and_disabled_fields_are_not_reported_as_expanded(self):
+        for enabled in (False, True):
+            with self.subTest(expand_common=enabled), \
+                 patch('rs_tipo_native.interface.pipe_adapter', return_value=None), \
+                 patch('rs_tipo_native.gemma_runtime.run_scene', return_value=(
+                     'colorful theme', ('blue eyes',), {})):
+                result = RSTIPOPrompt().expand(character_count=1,
+                    common_prompt='(colorful theme:1.3)', character1='(blue eyes:1.2)',
+                    expand_common=enabled)
+            rows = json.loads(result['ui']['tipo_report'][0])['slots']
+            self.assertEqual([row['added_tag_count'] for row in rows], [0, 0])
+            self.assertEqual(rows[0]['expansion_status'], 'unchanged' if enabled else 'disabled')
+            self.assertEqual(rows[1]['expansion_status'], 'unchanged')
+
+    def test_korean_translation_does_not_claim_an_english_addition_count(self):
+        with patch('rs_tipo_native.interface.pipe_adapter', return_value=None), \
+             patch('rs_tipo_native.gemma_runtime.run_scene', return_value=(
+                 'cafe', ('blue eyes',), {})):
+            result = RSTIPOPrompt().expand(character_count=1, common_prompt='카페',
+                character1='파란 눈', expand_common=True)
+        for row in json.loads(result['ui']['tipo_report'][0])['slots']:
+            self.assertEqual(row['expansion_status'], 'translated')
+            self.assertNotIn('added_tag_count', row)
+
 
 if __name__ == "__main__":
     unittest.main()

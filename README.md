@@ -21,6 +21,11 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
+**Version 0.2.5:** restore compatible visual expansion before Gemma renders
+captions as tags, preserve the detail budget during repair, and report final
+added-tag counts. Retry an unexpanded common field without replacing accepted
+characters. See [text validation and limits](docs/gemma-expansion-fix.ko.md).
+
 **Version 0.2.2:** reduce native Gemma GGUF memory and repeated LoRA work.
 Keep the per-layer embedding (PLE) table in CPU RAM and transfer selected rows;
 use ComfyUI's native LoRA output calculation for supported Linear adapters;

@@ -18,4 +18,11 @@ assert(resultText(report, 'all', 'details').includes('RAW MODEL TEXT'));
 assert.equal(resultText({...report, slots: report.slots.slice(0, 2)}, '2'), '');
 assert.equal(resultText(null), '');
 assert(modelSummary(report).includes('local:scale-20pct-001 · rank 8 · 190 targets'));
+const expanded = {...report, slots: [
+    {slot: 'common', added_tags: [], added_tag_count: 0, expansion_status: 'unchanged'},
+    {slot: 1, added_tags: ['head tilt'], added_tag_count: 1, expansion_status: 'expanded'},
+    {slot: 2, expansion_status: 'translated'},
+]};
+assert(modelSummary(expanded).includes('common: unchanged / 1: +1 tags / 2: translated'));
+assert(resultText(expanded, 'all', 'details').includes('added_tag_count'));
 console.log('Separate source/output/model details, slot routing and trained-weight identity PASS');

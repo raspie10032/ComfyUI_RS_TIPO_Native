@@ -65,11 +65,12 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Fix plain model-output tags duplicating members of the source's weighted groups.
-            Compare tag members and literal-name escapes before applying the addition budget,
-            while preserving source prompts, weights and accepted output groups.
-            Add five regression tests. No new runtime dependencies or inference changes.
-            See CHANGELOG for the patch scope.
+            Restore Gemma visual expansion before caption-to-tag rendering, and
+            retain the positive detail budget during malformed-response repair.
+            Retry a restated common field independently while preserving accepted
+            characters; show final added-tag counts and unchanged/disabled status.
+            No new runtime dependencies or model-weight changes.
+            See CHANGELOG and the expansion-fix validation notes for scope and limits.
             TIPO authors, KohakuBlueleaf, Gemma and City96 contributors retain credit and their licenses.
         run: |
           test -n "$REGISTRY_ACCESS_TOKEN"

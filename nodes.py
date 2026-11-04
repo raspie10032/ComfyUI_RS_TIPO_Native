@@ -305,8 +305,21 @@ class RSTIPOPrompt:
             scene = preserve(common_prompt, scene) if expand_common else common_prompt
             expanded = tuple(preserve(source, output) for source, output in zip(characters, expanded))
         pipe = make_building_pipe(adapter, draft, scene, expanded) if adapter else None
-        reports = [{'slot': 'common', 'original': common_prompt, 'output': scene}]
-        reports += [{'slot': i, 'original': source, 'output': output}
+        def slot_report(slot, source, output, enabled=True):
+            row = {'slot': slot, 'original': source, 'output': output}
+            if output_format == 'tags':
+                from .language import has_korean
+                if has_korean(source):
+                    row['expansion_status'] = 'translated' if enabled else 'disabled'
+                else:
+                    _, added = append_completion(source, output)
+                    additions = split_tags(added)
+                    row.update(added_tags=additions, added_tag_count=len(additions),
+                        expansion_status=('disabled' if not enabled else
+                            'expanded' if additions else 'unchanged'))
+            return row
+        reports = [slot_report('common', common_prompt, scene, expand_common)]
+        reports += [slot_report(i, source, output)
                     for i, (source, output) in enumerate(zip(characters, expanded), 1)]
         info = {**model_info, 'model_family': 'Gemma TIPO' if model_family == 'gemma_tipo' else 'TIPO 2.1', 'output_format': output_format,
             'character_count': character_count, 'building_pipe_available': pipe is not None,

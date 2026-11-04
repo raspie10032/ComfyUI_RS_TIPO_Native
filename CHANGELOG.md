@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.2.5 — 2026-11-04
+
+- Restore visual expansion in Gemma's prose planning stage. Ask for new
+  compatible common lighting/atmosphere and character gaze/hands/posture
+  before the same model renders captions as tags. Keep the positive detail
+  budget during malformed-response repair instead of asking for zero details.
+- Detect a common-field restatement using a conservative English lexical
+  check. Retry that field alone as prose when all characters are accepted,
+  preserving their descriptions. Fail with recorded diagnostics if the common
+  restatement remains after the existing one-retry limit. This check is not a
+  semantic judge and deliberately does not assess Korean translation novelty.
+- Remove empty comma items from the unweighted English planning input,
+  including a trailing comma exposed by a weighted group. Preserve the
+  original prompt, escaped names and weight groups in the final tag output.
+- For Korean prose planning, ask for all supplied appearance and worn outfits
+  before optional action details. The checked Q4 case retained both outfits;
+  Korean common expansion and time-of-day omissions remain model limitations.
+- Show field-level final added-tag counts, `unchanged`, `disabled` or
+  `translated` status in the result panel. Count string additions after
+  deduplication and the addition budget, without claiming semantic novelty
+  or counting translation as new detail.
+- Add regression coverage for common-only repair, exhausted expansion repair,
+  zero detail budgets and final report counts. Keep model weights, runtime
+  dependencies, native resource management and upstream attribution unchanged.
+  See [text validation and limits](docs/gemma-expansion-fix.ko.md).
+
 ## 0.2.4 — 2026-11-04
 
 - Compare the individual tags inside explicit weighted groups when appending
