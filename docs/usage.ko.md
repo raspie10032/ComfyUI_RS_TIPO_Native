@@ -3,6 +3,12 @@
 **원본 TIPO 2.1과 Gemma 기반 TIPO LoRA를 같은 ComfyUI 노드에서 선택해 사용하는 방법**입니다.
 기준일: 2026-11-04. 노드 이름은 **RS TIPO Native (Experimental)**입니다.
 
+**v0.2.2**에는 Gemma Q4의 PLE 표를 RAM에 보관하는 처리와 LoRA·역양자화
+최적화가 포함됩니다. 기존 워크플로우와 모델 선택을 그대로 사용하며 추가
+의존성은 없습니다. 측정한 10인 자연어 생성의 최대 PyTorch 할당 VRAM은
+약 1.78 GiB입니다. 시스템 RAM에는 PLE 표가 남으며 BF16에는 같은 절감이
+적용되지 않습니다. [측정 조건과 한계](gemma-inference-optimization.ko.md)
+
 ## 먼저, 원저작자와 출처
 
 **TIPO 논문 저자분들과, 공식 TIPO 모델·Kohaku 아키텍처·KGen 구현을 공개한

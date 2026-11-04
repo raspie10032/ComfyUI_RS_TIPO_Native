@@ -9,6 +9,51 @@ from rs_tipo_native.gemma_prompt import (caption_anchors, guarded_tag_rendering,
     prose_errors, prose_source, labelled_character_fields, labelled_outfit_errors)
 
 class GemmaRuntimeTests(unittest.TestCase):
+    def test_empty_exclusions_skip_decode_vocab_scan_and_token_read(self):
+        from unittest.mock import Mock
+        token = object()  # Must be returned unchanged, without indexing/item().
+        sampler = Mock(return_value=token)
+        model = SimpleNamespace(sample_token=sampler)
+        logits, generator = object(), object()
+        decode, interrupt, progress = Mock(), Mock(), Mock()
+        with patch('torch.isfinite', side_effect=AssertionError('unnecessary vocab scan')):
+            with token_constraints(model, decode, (), interrupt, progress) as report:
+                self.assertIs(model.sample_token(logits, .3, generator=generator), token)
+                self.assertIs(model.sample_token(logits, .3, generator=generator), token)
+        self.assertIs(model.sample_token, sampler)
+        self.assertEqual(sampler.call_count, 2)
+        sampler.assert_called_with(logits, .3, generator=generator)
+        decode.assert_not_called()
+        self.assertEqual(interrupt.call_count, 2)
+        self.assertEqual([call.args for call in progress.call_args_list], [(1,), (2,)])
+        self.assertEqual(report['blocked_candidates'], 0)
+        self.assertEqual(report['hits'], {})
+
+    def test_empty_exclusions_preserve_sampled_tokens_and_generator_state(self):
+        class Transformer:
+            def sample_token(self, logits, generator):
+                return torch.multinomial(logits.softmax(-1), 1, generator=generator)
+        model = Transformer()
+        logits = torch.tensor([[1., .5, -.5]])
+        baseline = torch.Generator().manual_seed(91)
+        actual = torch.Generator().manual_seed(91)
+        expected = [model.sample_token(logits, baseline) for _ in range(12)]
+        with token_constraints(model, str, (), lambda: None, lambda n: None):
+            result = [model.sample_token(logits, actual) for _ in range(12)]
+        self.assertTrue(torch.equal(torch.cat(result), torch.cat(expected)))
+        self.assertTrue(torch.equal(actual.get_state(), baseline.get_state()))
+        self.assertNotIn('sample_token', model.__dict__)
+
+    def test_empty_exclusions_restore_sampler_after_progress_error(self):
+        original = lambda *args: object()
+        model = SimpleNamespace(sample_token=original)
+        def fail(n):
+            raise RuntimeError('progress failed')
+        with self.assertRaisesRegex(RuntimeError, 'progress failed'):
+            with token_constraints(model, str, (), lambda: None, fail):
+                model.sample_token(object())
+        self.assertIs(model.sample_token, original)
+
     def test_exclusion_rejects_next_token_and_restores_instance(self):
         class Transformer:
             def sample_token(self,logits,*args,**kwargs): return logits.argmax(-1)

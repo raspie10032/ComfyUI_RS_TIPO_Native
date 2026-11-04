@@ -65,10 +65,12 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Initial Comfy Registry release. Unified native TIPO 2.1 and separate Gemma TIPO LoRA backend,
-            automatic pinned model downloads, and Gemma output repair that preserves valid fields and explicit outfits.
-            Text evaluation covers 2/4/6/8/10 characters; image fidelity is not guaranteed.
-            TIPO authors, KohakuBlueleaf and contributors retain credit; model weight licenses are separate.
+            Native Gemma GGUF memory and compute improvements: CPU-resident PLE with row-only transfers,
+            ComfyUI native Linear LoRA output calculation, Q4_K/Q5_K dequantization buffer reuse,
+            and packed-weight reload fixes. No new runtime dependencies. In the measured Q4 setup,
+            ten-character peak PyTorch allocated VRAM fell from about 3.60 to 1.78 GiB;
+            PLE still uses CPU RAM. Results depend on model and hardware; see CHANGELOG and benchmark notes.
+            TIPO authors, KohakuBlueleaf, Gemma and City96 contributors retain credit and their licenses.
         run: |
           test -n "$REGISTRY_ACCESS_TOKEN"
           comfy --skip-prompt --no-enable-telemetry node publish --token "$REGISTRY_ACCESS_TOKEN"

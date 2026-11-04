@@ -25,9 +25,9 @@ def load_clip(text_path, tokenizer_path, vision_path=None):
     import comfy.ops
     from comfy.text_encoders import gemma4
     try:
-        from .tipo_gguf_ops import GGUFOps, PackedWeight, GGUFModelPatcher
+        from .tipo_gguf_ops import GGUFOps, PackedWeight, GGUFModelPatcher, set_ple_offload
     except ImportError:
-        from tipo_gguf_ops import GGUFOps, PackedWeight, GGUFModelPatcher
+        from tipo_gguf_ops import GGUFOps, PackedWeight, GGUFModelPatcher, set_ple_offload
 
     class SchemaOps(comfy.ops.manual_cast):
         # Recent ComfyUI lazily constructs Linear weights as None under aimdo,
@@ -103,4 +103,5 @@ def load_clip(text_path, tokenizer_path, vision_path=None):
     if absent or extra:
         raise ValueError(f"GGUF load incomplete: missing={absent}, extra={extra}")
     clip.patcher.__class__ = GGUFModelPatcher
+    set_ple_offload(clip.patcher)
     return clip

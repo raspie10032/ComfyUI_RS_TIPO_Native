@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.2.2 — 2026-11-04
+
+- Keep the Gemma GGUF per-layer embedding (PLE) table in CPU RAM and gather
+  packed token rows before transferring them to the inference device. Exclude
+  this table from ComfyUI GPU-load and partial-offload accounting. BF16 model
+  placement is unchanged; PLE weight patches remain unsupported.
+- Apply supported additive Linear LoRAs with ComfyUI's native `LoRAAdapter.h()`
+  instead of rebuilding a full delta weight for every token. Preserve the
+  original weight-merging path for special patches and older adapter APIs.
+  No persistent device-factor cache or additional dependency is introduced.
+- Avoid redundant vocabulary scans, token reads and cumulative decoding when
+  excluded tags are empty. Keep progress, cancellation and sampler restoration.
+- Decode sequential output-weight chunks through packed-storage slices and
+  reuse Q4_K/Q5_K floating buffers for minimum subtraction. Retain FP32
+  dequantization and the original packed weights.
+- Preserve persistent packed-weight version counters across inference-mode
+  loading, cloning and `to(copy=True)` so ComfyUI unload/reload works correctly.
+- Document real Q4/BF16 text comparisons, sampled-token checks and model
+  lifecycle checks. In the tested Q4 setup, PLE placement saved about 1.795 GiB
+  and buffer reuse saved another 33 MiB of peak allocated VRAM. The separate
+  Linear LoRA comparison reduced elapsed time by about 19–20%. These measured
+  effects have different baselines; performance and token equality are not
+  guaranteed for all inputs, models or devices. Image-model alternation was
+  not part of these measurements.
+- Retain TIPO/Gemma upstream attribution and City96's Apache-2.0 notices;
+  describe local GGUF decoder changes in the vendored notice.
+
 ## 0.2.1 — 2026-11-04
 
 - Add Comfy Registry metadata for `rs-tipo-native` by `raspie10032`, with a

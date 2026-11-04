@@ -21,7 +21,16 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.1:** repair malformed Gemma prose without replacing already valid
+**Version 0.2.2:** reduce native Gemma GGUF memory and repeated LoRA work.
+Keep the per-layer embedding (PLE) table in CPU RAM and transfer selected rows;
+use ComfyUI's native LoRA output calculation for supported Linear adapters;
+reuse Q4_K/Q5_K dequantization buffers. No new runtime dependencies or GPU cache.
+The measured Q4 setup used about **1.78 GiB peak allocated VRAM for ten
+characters**, compared with about 3.60 GiB before these optimizations. These are
+process-local PyTorch measurements, not total GPU use; CPU RAM still holds PLE.
+See the [measurements, limits and reproduction guide](docs/gemma-inference-optimization.ko.md).
+
+Version 0.2.1 repairs malformed Gemma prose without replacing already valid
 characters or losing explicitly listed outfits. Failed responses retain field-level
 diagnostics. See the [repair and 2–10 character evaluation](docs/gemma-output-repair.ko.md).
 

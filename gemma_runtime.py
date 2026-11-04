@@ -225,28 +225,43 @@ def token_constraints(transformer, decode, excluded, interrupt, progress):
     original = transformer.sample_token
     previous = transformer.__dict__.get('sample_token')
     had_local = 'sample_token' in transformer.__dict__
-    history, hits = [], {}
+    hits = {}
     patterns = [(tag, re.compile(r'(?<!\w)' + re.escape(tag) + r'(?!\w)')) for tag in excluded]
 
-    def sample(logits, *args, **kwargs):
-        interrupt()
-        scores = logits
-        for attempt in range(logits.shape[-1]):
-            if not torch.isfinite(scores).any():
-                raise RuntimeError('Gemma TIPO exclusions block all candidate tokens. Simplify excluded_tags.')
-            token = original(scores, *args, **kwargs)
-            candidate = int(token[0].item())
-            text = normalize(decode([*history, candidate]))
-            blocked = next((tag for tag, pat in patterns if pat.search(text)), None)
-            if blocked is None:
-                history.append(candidate)
-                progress(len(history))
-                return token
-            hits[blocked] = hits.get(blocked, 0) + 1
-            if attempt == 0:
-                scores = logits.clone()
-            scores[..., candidate] = -torch.inf
-        raise RuntimeError('Gemma TIPO could not select a token under the exclusions.')
+    if not patterns:
+        # The native generation loop already reads the accepted token. With no
+        # exclusions, avoid another GPU sync, vocab scan and growing decode.
+        count = 0
+
+        def sample(logits, *args, **kwargs):
+            nonlocal count
+            interrupt()
+            token = original(logits, *args, **kwargs)
+            count += 1
+            progress(count)
+            return token
+    else:
+        history = []
+
+        def sample(logits, *args, **kwargs):
+            interrupt()
+            scores = logits
+            for attempt in range(logits.shape[-1]):
+                if not torch.isfinite(scores).any():
+                    raise RuntimeError('Gemma TIPO exclusions block all candidate tokens. Simplify excluded_tags.')
+                token = original(scores, *args, **kwargs)
+                candidate = int(token[0].item())
+                text = normalize(decode([*history, candidate]))
+                blocked = next((tag for tag, pat in patterns if pat.search(text)), None)
+                if blocked is None:
+                    history.append(candidate)
+                    progress(len(history))
+                    return token
+                hits[blocked] = hits.get(blocked, 0) + 1
+                if attempt == 0:
+                    scores = logits.clone()
+                scores[..., candidate] = -torch.inf
+            raise RuntimeError('Gemma TIPO could not select a token under the exclusions.')
 
     transformer.sample_token = sample
     report = {'method': 'decoded-phrase-next-token-block', 'tags': list(excluded), 'hits': hits}

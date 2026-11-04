@@ -1,5 +1,6 @@
 # Vendored from RS-Seasonal-Prompt-Generator 354cc9b (Apache-2.0).
 # (c) City96 || Apache-2.0 (apache.org/licenses/LICENSE-2.0)
+# Local change: reuse fresh Q4_K/Q5_K product buffers for minimum subtraction.
 import gguf
 import torch
 from tqdm import tqdm
@@ -176,7 +177,10 @@ def dequantize_blocks_Q5_K(blocks, block_size, type_size, dtype=None):
     qh = (qh & 0x01).reshape((n_blocks, -1, 32))
     q = (ql | (qh << 4))
 
-    return (d * q - dm).reshape((n_blocks, QK_K))
+    # The product is fresh floating storage, never a view of the packed model.
+    # Reuse it for subtraction instead of another full FP32 weight tensor.
+    result = d * q
+    return result.sub_(dm).reshape((n_blocks, QK_K))
 
 def dequantize_blocks_Q4_K(blocks, block_size, type_size, dtype=None):
     n_blocks = blocks.shape[0]
@@ -193,7 +197,8 @@ def dequantize_blocks_Q4_K(blocks, block_size, type_size, dtype=None):
     qs = qs.reshape((n_blocks, -1, 1, 32)) >> torch.tensor([0, 4], device=d.device, dtype=torch.uint8).reshape((1, 1, 2, 1))
     qs = (qs & 0x0F).reshape((n_blocks, -1, 32))
 
-    return (d * qs - dm).reshape((n_blocks, QK_K))
+    result = d * qs
+    return result.sub_(dm).reshape((n_blocks, QK_K))
 
 def dequantize_blocks_Q3_K(blocks, block_size, type_size, dtype=None):
     n_blocks = blocks.shape[0]

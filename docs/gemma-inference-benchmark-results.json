@@ -1,0 +1,1223 @@
+{
+  "description": "Summaries of archived real-model stage-by-stage experiments, not a single end-to-end benchmark. Source hashes refer to the original local JSON records. Token/output hashes allow equality checks within each experiment. Measurements are process-local PyTorch CUDA memory, not total GPU memory.",
+  "experiments": [
+    {
+      "model": "gemma4-e2b-native-bf16.safetensors",
+      "adapter": "scale-20pct-001",
+      "temperature": 0,
+      "torch": "2.14.0+cu130",
+      "gpu": "NVIDIA GeForce RTX 5060 Ti",
+      "per_count_warmup_tokens": 4,
+      "after_comfy_unload": {
+        "allocated_mib": 32.0,
+        "reserved_mib": 36.0,
+        "rss_mib": 21870.41015625
+      },
+      "comfy_loaded_models_after_unload": 0,
+      "after_lifecycle_unload": {
+        "allocated_mib": 32.0,
+        "reserved_mib": 36.0,
+        "rss_mib": 21942.796875
+      },
+      "comfy_loaded_models_after_lifecycle_unload": 0,
+      "lifecycle": {
+        "reload_tokens_match_warmup": true,
+        "cancellation_raised": true,
+        "sampler_restored": true,
+        "recovery_tokens_match_warmup": true,
+        "exclusion_ok": true
+      },
+      "experiment": "gemma-lora-bypass-20261104",
+      "source_file": "bf16-control-5060ti.json",
+      "source_sha256": "37d7a64d949f1bd8bfd8aba18c9dbccdf28ea2d963f4b489ab1410500bc2e644",
+      "rows": [
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 2.2026881579949986,
+          "peak_rss_mib": 15624.203125,
+          "peak_allocated_mib": 9953.63818359375,
+          "peak_reserved_mib": 10006.0,
+          "generated_tokens": 138,
+          "token_ids_sha256": "e77f5185dfc49b36769f64b0e560c15b7b8fa8a66cbd6dee58734ef782ad1440",
+          "final_output_sha256": "82e23b9c69fff9e7c335adec62883a7ca21a70436b027e48d882ffd09c470ed3"
+        },
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 2.2085485860006884,
+          "peak_rss_mib": 15624.34765625,
+          "peak_allocated_mib": 9953.63818359375,
+          "peak_reserved_mib": 10006.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 138,
+          "token_ids_sha256": "e77f5185dfc49b36769f64b0e560c15b7b8fa8a66cbd6dee58734ef782ad1440",
+          "final_output_sha256": "82e23b9c69fff9e7c335adec62883a7ca21a70436b027e48d882ffd09c470ed3"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 4.951498344991705,
+          "peak_rss_mib": 15647.8203125,
+          "peak_allocated_mib": 10003.25048828125,
+          "peak_reserved_mib": 10084.0,
+          "generated_tokens": 320,
+          "token_ids_sha256": "105210fb7eebc1804d49bf42d6a4eb3443b14341f2d1909a84f4669685dcce3d",
+          "final_output_sha256": "910ab7114f7e1859526839d49e078c368c4bc101868c054c73651ec0d4cb2f09"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 5.006826402997831,
+          "peak_rss_mib": 15647.85546875,
+          "peak_allocated_mib": 10003.25048828125,
+          "peak_reserved_mib": 10084.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 320,
+          "token_ids_sha256": "105210fb7eebc1804d49bf42d6a4eb3443b14341f2d1909a84f4669685dcce3d",
+          "final_output_sha256": "910ab7114f7e1859526839d49e078c368c4bc101868c054c73651ec0d4cb2f09"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 7.8587108030042145,
+          "peak_rss_mib": 15647.96875,
+          "peak_allocated_mib": 10054.2744140625,
+          "peak_reserved_mib": 10210.0,
+          "generated_tokens": 503,
+          "token_ids_sha256": "b0b9aae49ab5607a0eae0b9d2fc98630c56c786e965c385cfbf182f883fdbd49",
+          "final_output_sha256": "2f0828039ca2db93c54ba509b4a8ba450e010c28aa11a6e48fe76ef0a87c321d"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 7.769370952999452,
+          "peak_rss_mib": 15648.0,
+          "peak_allocated_mib": 10054.2744140625,
+          "peak_reserved_mib": 10210.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 503,
+          "token_ids_sha256": "b0b9aae49ab5607a0eae0b9d2fc98630c56c786e965c385cfbf182f883fdbd49",
+          "final_output_sha256": "2f0828039ca2db93c54ba509b4a8ba450e010c28aa11a6e48fe76ef0a87c321d"
+        }
+      ]
+    },
+    {
+      "model": "heretic_ara_q4",
+      "adapter": "scale-20pct-001",
+      "temperature": 0,
+      "torch": "2.14.0+cu130",
+      "gpu": "NVIDIA GeForce RTX 5060 Ti",
+      "per_count_warmup_tokens": 4,
+      "numerical_probe": {
+        "calls": 760,
+        "all_finite": true,
+        "max_abs": 4.0,
+        "max_relative_rms": 0.004886550363153219
+      },
+      "experiment": "gemma-lora-bypass-20261104",
+      "source_file": "q4-greedy-5060ti.json",
+      "source_sha256": "89c67a6caf357fda59b5e4cb14765037cdd7114a5be32062c69d6111fefe8331",
+      "rows": [
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 33.20000101400365,
+          "peak_rss_mib": 2974.4921875,
+          "peak_allocated_mib": 3599.90283203125,
+          "peak_reserved_mib": 3680.0,
+          "generated_tokens": 138,
+          "token_ids_sha256": "dbe12fcb4dff14d072321f1c78415cccc7cec3fa3fd6334f8a8ad76e6a58776c",
+          "final_output_sha256": "261389a0bcdaf90594c136b8f8bc177ddcec9684a4a7e3ab65f4b4a7b0feefab"
+        },
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 27.000873306998983,
+          "peak_rss_mib": 2974.6171875,
+          "peak_allocated_mib": 3599.90283203125,
+          "peak_reserved_mib": 3680.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 138,
+          "token_ids_sha256": "dbe12fcb4dff14d072321f1c78415cccc7cec3fa3fd6334f8a8ad76e6a58776c",
+          "final_output_sha256": "261389a0bcdaf90594c136b8f8bc177ddcec9684a4a7e3ab65f4b4a7b0feefab"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 77.11759606101259,
+          "peak_rss_mib": 3020.34375,
+          "peak_allocated_mib": 3644.17041015625,
+          "peak_reserved_mib": 3752.0,
+          "generated_tokens": 318,
+          "token_ids_sha256": "7fefe7252ca4daf36936cc204b0756ef861ada0ab040b770eb28836ea1543186",
+          "final_output_sha256": "6912a17630db7083db28578b33caee2f60a04b0c2224f26592de4be5c19f6e34"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 61.38196158800565,
+          "peak_rss_mib": 3020.34375,
+          "peak_allocated_mib": 3644.17041015625,
+          "peak_reserved_mib": 3752.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 318,
+          "token_ids_sha256": "7fefe7252ca4daf36936cc204b0756ef861ada0ab040b770eb28836ea1543186",
+          "final_output_sha256": "6912a17630db7083db28578b33caee2f60a04b0c2224f26592de4be5c19f6e34"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 119.79441857000347,
+          "peak_rss_mib": 3020.34765625,
+          "peak_allocated_mib": 3691.2861328125,
+          "peak_reserved_mib": 3824.0,
+          "generated_tokens": 502,
+          "token_ids_sha256": "73e5786625ac4371b3adf121cfc1da6b307f327f77d6325596bae137387968bf",
+          "final_output_sha256": "330154e570ade1d7b19e1c5724ae707385c58fb8fff589a3d491e8acdcc43be5"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 96.71590461599408,
+          "peak_rss_mib": 3020.34765625,
+          "peak_allocated_mib": 3691.2861328125,
+          "peak_reserved_mib": 3824.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 502,
+          "token_ids_sha256": "73e5786625ac4371b3adf121cfc1da6b307f327f77d6325596bae137387968bf",
+          "final_output_sha256": "330154e570ade1d7b19e1c5724ae707385c58fb8fff589a3d491e8acdcc43be5"
+        }
+      ]
+    },
+    {
+      "model": "heretic_ara_q4",
+      "adapter": "scale-20pct-001",
+      "temperature": 0.7,
+      "torch": "2.14.0+cu130",
+      "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+      "per_count_warmup_tokens": 4,
+      "after_comfy_unload": {
+        "allocated_mib": 8.125,
+        "reserved_mib": 54.0,
+        "rss_mib": 5984.609375
+      },
+      "comfy_loaded_models_after_unload": 0,
+      "experiment": "gemma-lora-bypass-20261104",
+      "source_file": "q4-sampled-4070tis.json",
+      "source_sha256": "16c09315f82bda087ddc8d44bcbf9ee4ae48c2398cb77906738cec08ef5a1804",
+      "rows": [
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 20.27115552801115,
+          "peak_rss_mib": 2730.99609375,
+          "peak_allocated_mib": 3576.37939453125,
+          "peak_reserved_mib": 3680.0,
+          "generated_tokens": 138,
+          "token_ids_sha256": "8cefc643066233c59f219383913424ac36c77b1ba109db845ff300f460a2c54c",
+          "final_output_sha256": "b8754a19dbb078806658f4dbc612964fd94760653c8e351e5bf5abb8f7e6c323"
+        },
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 16.66104916500626,
+          "peak_rss_mib": 2731.453125,
+          "peak_allocated_mib": 3576.37939453125,
+          "peak_reserved_mib": 3680.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 138,
+          "token_ids_sha256": "8cefc643066233c59f219383913424ac36c77b1ba109db845ff300f460a2c54c",
+          "final_output_sha256": "b8754a19dbb078806658f4dbc612964fd94760653c8e351e5bf5abb8f7e6c323"
+        },
+        {
+          "count": 2,
+          "repeat": 1,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 16.635722236998845,
+          "peak_rss_mib": 2731.4765625,
+          "peak_allocated_mib": 3576.37939453125,
+          "peak_reserved_mib": 3680.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 138,
+          "token_ids_sha256": "8cefc643066233c59f219383913424ac36c77b1ba109db845ff300f460a2c54c",
+          "final_output_sha256": "b8754a19dbb078806658f4dbc612964fd94760653c8e351e5bf5abb8f7e6c323"
+        },
+        {
+          "count": 2,
+          "repeat": 1,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 20.085895463009365,
+          "peak_rss_mib": 2731.4765625,
+          "peak_allocated_mib": 3576.37939453125,
+          "peak_reserved_mib": 3680.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 138,
+          "token_ids_sha256": "8cefc643066233c59f219383913424ac36c77b1ba109db845ff300f460a2c54c",
+          "final_output_sha256": "b8754a19dbb078806658f4dbc612964fd94760653c8e351e5bf5abb8f7e6c323"
+        }
+      ]
+    },
+    {
+      "model": "heretic_ara_q4",
+      "adapter": "scale-20pct-001",
+      "temperature": 0,
+      "torch": "2.14.0+cu130",
+      "gpu": "NVIDIA GeForce RTX 5060 Ti",
+      "per_count_warmup_tokens": 4,
+      "after_comfy_unload": {
+        "allocated_mib": 32.0,
+        "reserved_mib": 54.0,
+        "rss_mib": 5965.21484375
+      },
+      "comfy_loaded_models_after_unload": 0,
+      "experiment": "gemma-lora-bypass-20261104",
+      "source_file": "q4-smoke-5060ti.json",
+      "source_sha256": "76fe4b60f67b8822ed18facf33d3c85c2f0266a34a6617811ad8a4b2d4bfe11f",
+      "rows": [
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 33.807507995996275,
+          "peak_rss_mib": 2714.078125,
+          "peak_allocated_mib": 3599.90283203125,
+          "peak_reserved_mib": 3680.0,
+          "generated_tokens": 138,
+          "token_ids_sha256": "dbe12fcb4dff14d072321f1c78415cccc7cec3fa3fd6334f8a8ad76e6a58776c",
+          "final_output_sha256": "261389a0bcdaf90594c136b8f8bc177ddcec9684a4a7e3ab65f4b4a7b0feefab"
+        },
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 26.849171583991847,
+          "peak_rss_mib": 2714.14453125,
+          "peak_allocated_mib": 3599.90283203125,
+          "peak_reserved_mib": 3752.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 138,
+          "token_ids_sha256": "dbe12fcb4dff14d072321f1c78415cccc7cec3fa3fd6334f8a8ad76e6a58776c",
+          "final_output_sha256": "261389a0bcdaf90594c136b8f8bc177ddcec9684a4a7e3ab65f4b4a7b0feefab"
+        }
+      ]
+    },
+    {
+      "model": "gemma4-e2b-native-bf16.safetensors",
+      "adapter": "scale-20pct-001",
+      "temperature": 0,
+      "torch": "2.14.0+cu130",
+      "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+      "compare_ple_placement": false,
+      "per_count_warmup_tokens": 4,
+      "after_comfy_unload": {
+        "allocated_mib": 8.125,
+        "reserved_mib": 36.0,
+        "rss_mib": 21663.28125
+      },
+      "comfy_loaded_models_after_unload": 0,
+      "experiment": "gemma-ple-offload-20261104",
+      "source_file": "bf16-control.json",
+      "source_sha256": "8708486b6e33498f398756d8bc22248e647d1ebf0d021caf30f11c527da949c6",
+      "rows": [
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 1.770722057990497,
+          "peak_rss_mib": 15389.796875,
+          "peak_allocated_mib": 9930.765625,
+          "peak_reserved_mib": 10002.0,
+          "generated_tokens": 138,
+          "token_ids_sha256": "e77f5185dfc49b36769f64b0e560c15b7b8fa8a66cbd6dee58734ef782ad1440",
+          "final_output_sha256": "82e23b9c69fff9e7c335adec62883a7ca21a70436b027e48d882ffd09c470ed3"
+        },
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 1.7767897570010973,
+          "peak_rss_mib": 15389.9375,
+          "peak_allocated_mib": 9930.765625,
+          "peak_reserved_mib": 10002.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 138,
+          "token_ids_sha256": "e77f5185dfc49b36769f64b0e560c15b7b8fa8a66cbd6dee58734ef782ad1440",
+          "final_output_sha256": "82e23b9c69fff9e7c335adec62883a7ca21a70436b027e48d882ffd09c470ed3"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 4.101775425006053,
+          "peak_rss_mib": 15390.10546875,
+          "peak_allocated_mib": 9980.75048828125,
+          "peak_reserved_mib": 10080.0,
+          "generated_tokens": 320,
+          "token_ids_sha256": "105210fb7eebc1804d49bf42d6a4eb3443b14341f2d1909a84f4669685dcce3d",
+          "final_output_sha256": "910ab7114f7e1859526839d49e078c368c4bc101868c054c73651ec0d4cb2f09"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 3.837623337007244,
+          "peak_rss_mib": 15390.140625,
+          "peak_allocated_mib": 9980.75048828125,
+          "peak_reserved_mib": 10080.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 320,
+          "token_ids_sha256": "105210fb7eebc1804d49bf42d6a4eb3443b14341f2d1909a84f4669685dcce3d",
+          "final_output_sha256": "910ab7114f7e1859526839d49e078c368c4bc101868c054c73651ec0d4cb2f09"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 6.186757649003994,
+          "peak_rss_mib": 15390.30859375,
+          "peak_allocated_mib": 10032.6201171875,
+          "peak_reserved_mib": 10206.0,
+          "generated_tokens": 503,
+          "token_ids_sha256": "b0b9aae49ab5607a0eae0b9d2fc98630c56c786e965c385cfbf182f883fdbd49",
+          "final_output_sha256": "2f0828039ca2db93c54ba509b4a8ba450e010c28aa11a6e48fe76ef0a87c321d"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 6.320610810988001,
+          "peak_rss_mib": 15390.34765625,
+          "peak_allocated_mib": 10032.6201171875,
+          "peak_reserved_mib": 10206.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 503,
+          "token_ids_sha256": "b0b9aae49ab5607a0eae0b9d2fc98630c56c786e965c385cfbf182f883fdbd49",
+          "final_output_sha256": "2f0828039ca2db93c54ba509b4a8ba450e010c28aa11a6e48fe76ef0a87c321d"
+        }
+      ]
+    },
+    {
+      "model": "heretic_ara_q4",
+      "adapter": "scale-20pct-001",
+      "temperature": 0.3,
+      "torch": "2.14.0+cu130",
+      "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+      "compare_ple_placement": true,
+      "per_count_warmup_tokens": 4,
+      "after_comfy_unload": {
+        "allocated_mib": 8.125,
+        "reserved_mib": 54.0,
+        "rss_mib": 6142.375
+      },
+      "comfy_loaded_models_after_unload": 0,
+      "experiment": "gemma-ple-offload-20261104",
+      "source_file": "q4-4070ti-sampled.json",
+      "source_sha256": "d7036105d72750eb51b06ca346a8a15341994c7d7130ec87cf8624374eb2f66b",
+      "rows": [
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 16.401173572987318,
+          "peak_rss_mib": 3639.49609375,
+          "peak_allocated_mib": 3576.46923828125,
+          "peak_reserved_mib": 3674.0,
+          "generated_tokens": 137,
+          "token_ids_sha256": "e5d695d073a8126bd2e841bf2f15467b807db7da385642962578007353911a1e",
+          "final_output_sha256": "c4dd8e39b5deb18a8546ea5f8b2009b2179710734b57b544f35af007b4181f5d"
+        },
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 16.382568262997665,
+          "peak_rss_mib": 5621.52734375,
+          "peak_allocated_mib": 1738.46923828125,
+          "peak_reserved_mib": 1836.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 137,
+          "token_ids_sha256": "e5d695d073a8126bd2e841bf2f15467b807db7da385642962578007353911a1e",
+          "final_output_sha256": "c4dd8e39b5deb18a8546ea5f8b2009b2179710734b57b544f35af007b4181f5d"
+        },
+        {
+          "count": 2,
+          "repeat": 1,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 16.246095424998202,
+          "peak_rss_mib": 5701.6875,
+          "peak_allocated_mib": 1738.46923828125,
+          "peak_reserved_mib": 1836.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 137,
+          "token_ids_sha256": "e5d695d073a8126bd2e841bf2f15467b807db7da385642962578007353911a1e",
+          "final_output_sha256": "c4dd8e39b5deb18a8546ea5f8b2009b2179710734b57b544f35af007b4181f5d"
+        },
+        {
+          "count": 2,
+          "repeat": 1,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 16.26535743199929,
+          "peak_rss_mib": 3989.87109375,
+          "peak_allocated_mib": 3576.46923828125,
+          "peak_reserved_mib": 3674.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 137,
+          "token_ids_sha256": "e5d695d073a8126bd2e841bf2f15467b807db7da385642962578007353911a1e",
+          "final_output_sha256": "c4dd8e39b5deb18a8546ea5f8b2009b2179710734b57b544f35af007b4181f5d"
+        }
+      ]
+    },
+    {
+      "model": "heretic_ara_q4",
+      "adapter": "scale-20pct-001",
+      "temperature": 0,
+      "torch": "2.14.0+cu130",
+      "gpu": "NVIDIA GeForce RTX 5060 Ti",
+      "compare_ple_placement": true,
+      "per_count_warmup_tokens": 4,
+      "after_comfy_unload": {
+        "allocated_mib": 32.0,
+        "reserved_mib": 54.0,
+        "rss_mib": 6128.515625
+      },
+      "comfy_loaded_models_after_unload": 0,
+      "after_lifecycle_unload": {
+        "allocated_mib": 32.0,
+        "reserved_mib": 54.0,
+        "rss_mib": 6176.69140625
+      },
+      "comfy_loaded_models_after_lifecycle_unload": 0,
+      "lifecycle": {
+        "reload_tokens_match_warmup": true,
+        "cancellation_raised": true,
+        "sampler_restored": true,
+        "recovery_tokens_match_warmup": true,
+        "exclusion_ok": true
+      },
+      "experiment": "gemma-ple-offload-20261104",
+      "source_file": "q4-5060ti.json",
+      "source_sha256": "e912aecbe4645eff94794399e4e95efc7b79a4745a08e5764145eaf045500078",
+      "rows": [
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 27.110473478998756,
+          "peak_rss_mib": 3806.046875,
+          "peak_allocated_mib": 3600.59033203125,
+          "peak_reserved_mib": 3702.0,
+          "generated_tokens": 138,
+          "token_ids_sha256": "dbe12fcb4dff14d072321f1c78415cccc7cec3fa3fd6334f8a8ad76e6a58776c",
+          "final_output_sha256": "261389a0bcdaf90594c136b8f8bc177ddcec9684a4a7e3ab65f4b4a7b0feefab"
+        },
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 27.48641088498698,
+          "peak_rss_mib": 5747.15234375,
+          "peak_allocated_mib": 1762.59033203125,
+          "peak_reserved_mib": 1864.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 138,
+          "token_ids_sha256": "dbe12fcb4dff14d072321f1c78415cccc7cec3fa3fd6334f8a8ad76e6a58776c",
+          "final_output_sha256": "261389a0bcdaf90594c136b8f8bc177ddcec9684a4a7e3ab65f4b4a7b0feefab"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 61.95243855800072,
+          "peak_rss_mib": 3798.30859375,
+          "peak_allocated_mib": 3644.31787109375,
+          "peak_reserved_mib": 3770.0,
+          "generated_tokens": 318,
+          "token_ids_sha256": "7fefe7252ca4daf36936cc204b0756ef861ada0ab040b770eb28836ea1543186",
+          "final_output_sha256": "6912a17630db7083db28578b33caee2f60a04b0c2224f26592de4be5c19f6e34"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 61.449258765002014,
+          "peak_rss_mib": 5747.609375,
+          "peak_allocated_mib": 1806.31787109375,
+          "peak_reserved_mib": 1932.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 318,
+          "token_ids_sha256": "7fefe7252ca4daf36936cc204b0756ef861ada0ab040b770eb28836ea1543186",
+          "final_output_sha256": "6912a17630db7083db28578b33caee2f60a04b0c2224f26592de4be5c19f6e34"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 97.91597045199887,
+          "peak_rss_mib": 3951.12109375,
+          "peak_allocated_mib": 3691.3681640625,
+          "peak_reserved_mib": 3860.0,
+          "generated_tokens": 502,
+          "token_ids_sha256": "73e5786625ac4371b3adf121cfc1da6b307f327f77d6325596bae137387968bf",
+          "final_output_sha256": "330154e570ade1d7b19e1c5724ae707385c58fb8fff589a3d491e8acdcc43be5"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 97.78144734399393,
+          "peak_rss_mib": 5813.515625,
+          "peak_allocated_mib": 1853.3681640625,
+          "peak_reserved_mib": 2022.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 502,
+          "token_ids_sha256": "73e5786625ac4371b3adf121cfc1da6b307f327f77d6325596bae137387968bf",
+          "final_output_sha256": "330154e570ade1d7b19e1c5724ae707385c58fb8fff589a3d491e8acdcc43be5"
+        }
+      ]
+    },
+    {
+      "gpu": "NVIDIA GeForce RTX 5060 Ti",
+      "experiment": "gemma-dequant-buffer-20261104",
+      "source_file": "dequant-micro.json",
+      "source_sha256": "0f6e5fcdde205854e9bd4dd95454a5c9d0eaab814fdeb2266ea6c950d78d14db",
+      "rows": [
+        {
+          "repeat": 0,
+          "mode": "before",
+          "generated_tokens": 0,
+          "token_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "final_output_sha256": "95cb9b4f84ceff132cc7a875d8c192bf4997016a939ee64141c1fd628c0e8738"
+        },
+        {
+          "repeat": 0,
+          "mode": "after",
+          "generated_tokens": 0,
+          "token_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "final_output_sha256": "95cb9b4f84ceff132cc7a875d8c192bf4997016a939ee64141c1fd628c0e8738"
+        },
+        {
+          "repeat": 1,
+          "mode": "after",
+          "generated_tokens": 0,
+          "token_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "final_output_sha256": "95cb9b4f84ceff132cc7a875d8c192bf4997016a939ee64141c1fd628c0e8738"
+        },
+        {
+          "repeat": 1,
+          "mode": "before",
+          "generated_tokens": 0,
+          "token_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "final_output_sha256": "95cb9b4f84ceff132cc7a875d8c192bf4997016a939ee64141c1fd628c0e8738"
+        },
+        {
+          "repeat": 2,
+          "mode": "before",
+          "generated_tokens": 0,
+          "token_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "final_output_sha256": "95cb9b4f84ceff132cc7a875d8c192bf4997016a939ee64141c1fd628c0e8738"
+        },
+        {
+          "repeat": 2,
+          "mode": "after",
+          "generated_tokens": 0,
+          "token_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "final_output_sha256": "95cb9b4f84ceff132cc7a875d8c192bf4997016a939ee64141c1fd628c0e8738"
+        },
+        {
+          "repeat": 3,
+          "mode": "after",
+          "generated_tokens": 0,
+          "token_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "final_output_sha256": "95cb9b4f84ceff132cc7a875d8c192bf4997016a939ee64141c1fd628c0e8738"
+        },
+        {
+          "repeat": 3,
+          "mode": "before",
+          "generated_tokens": 0,
+          "token_ids_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "final_output_sha256": "95cb9b4f84ceff132cc7a875d8c192bf4997016a939ee64141c1fd628c0e8738"
+        }
+      ]
+    },
+    {
+      "model": "heretic_ara_q4",
+      "adapter": "scale-20pct-001",
+      "temperature": 0.3,
+      "torch": "2.14.0+cu130",
+      "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+      "compare_ple_placement": false,
+      "per_count_warmup_tokens": 4,
+      "after_comfy_unload": {
+        "allocated_mib": 8.125,
+        "reserved_mib": 54.0,
+        "rss_mib": 5983.21484375
+      },
+      "comfy_loaded_models_after_unload": 0,
+      "experiment": "gemma-dequant-buffer-20261104",
+      "source_file": "q4-4070ti-sampled.json",
+      "source_sha256": "96c42e9c01f07b2fe4767ca9fd44e7fa0ede86fb2fac13481fdbfd0b988ab62d",
+      "rows": [
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 16.28782109799795,
+          "peak_rss_mib": 4567.203125,
+          "peak_allocated_mib": 1738.37939453125,
+          "peak_reserved_mib": 1842.0,
+          "generated_tokens": 137,
+          "token_ids_sha256": "e5d695d073a8126bd2e841bf2f15467b807db7da385642962578007353911a1e",
+          "final_output_sha256": "c4dd8e39b5deb18a8546ea5f8b2009b2179710734b57b544f35af007b4181f5d"
+        },
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 16.002126911000232,
+          "peak_rss_mib": 4572.7421875,
+          "peak_allocated_mib": 1705.47314453125,
+          "peak_reserved_mib": 1842.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 137,
+          "token_ids_sha256": "e5d695d073a8126bd2e841bf2f15467b807db7da385642962578007353911a1e",
+          "final_output_sha256": "c4dd8e39b5deb18a8546ea5f8b2009b2179710734b57b544f35af007b4181f5d"
+        },
+        {
+          "count": 2,
+          "repeat": 1,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 16.77376233000541,
+          "peak_rss_mib": 4572.75390625,
+          "peak_allocated_mib": 1705.47314453125,
+          "peak_reserved_mib": 1842.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 137,
+          "token_ids_sha256": "e5d695d073a8126bd2e841bf2f15467b807db7da385642962578007353911a1e",
+          "final_output_sha256": "c4dd8e39b5deb18a8546ea5f8b2009b2179710734b57b544f35af007b4181f5d"
+        },
+        {
+          "count": 2,
+          "repeat": 1,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 17.309641178013408,
+          "peak_rss_mib": 4572.75390625,
+          "peak_allocated_mib": 1738.37939453125,
+          "peak_reserved_mib": 1842.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 137,
+          "token_ids_sha256": "e5d695d073a8126bd2e841bf2f15467b807db7da385642962578007353911a1e",
+          "final_output_sha256": "c4dd8e39b5deb18a8546ea5f8b2009b2179710734b57b544f35af007b4181f5d"
+        }
+      ]
+    },
+    {
+      "model": "heretic_ara_q4",
+      "adapter": "scale-20pct-001",
+      "temperature": 0,
+      "torch": "2.14.0+cu130",
+      "gpu": "NVIDIA GeForce RTX 5060 Ti",
+      "compare_ple_placement": false,
+      "per_count_warmup_tokens": 4,
+      "after_comfy_unload": {
+        "allocated_mib": 32.0,
+        "reserved_mib": 54.0,
+        "rss_mib": 5999.97265625
+      },
+      "comfy_loaded_models_after_unload": 0,
+      "after_lifecycle_unload": {
+        "allocated_mib": 32.0,
+        "reserved_mib": 54.0,
+        "rss_mib": 6146.8203125
+      },
+      "comfy_loaded_models_after_lifecycle_unload": 0,
+      "lifecycle": {
+        "reload_tokens_match_warmup": true,
+        "cancellation_raised": true,
+        "sampler_restored": true,
+        "recovery_tokens_match_warmup": true,
+        "exclusion_ok": true
+      },
+      "experiment": "gemma-dequant-buffer-20261104",
+      "source_file": "q4-5060ti.json",
+      "source_sha256": "eaec29918272be2347af0f2365f8862394e596e0f2d5647f19988313a862660c",
+      "rows": [
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 26.35459925798932,
+          "peak_rss_mib": 4548.15234375,
+          "peak_allocated_mib": 1761.90283203125,
+          "peak_reserved_mib": 1842.0,
+          "generated_tokens": 138,
+          "token_ids_sha256": "dbe12fcb4dff14d072321f1c78415cccc7cec3fa3fd6334f8a8ad76e6a58776c",
+          "final_output_sha256": "261389a0bcdaf90594c136b8f8bc177ddcec9684a4a7e3ab65f4b4a7b0feefab"
+        },
+        {
+          "count": 2,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 2,
+            "actual_slots": 2,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 26.18231105299492,
+          "peak_rss_mib": 4548.27734375,
+          "peak_allocated_mib": 1728.99658203125,
+          "peak_reserved_mib": 1842.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 138,
+          "token_ids_sha256": "dbe12fcb4dff14d072321f1c78415cccc7cec3fa3fd6334f8a8ad76e6a58776c",
+          "final_output_sha256": "261389a0bcdaf90594c136b8f8bc177ddcec9684a4a7e3ab65f4b4a7b0feefab"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 62.26740881399019,
+          "peak_rss_mib": 4596.1171875,
+          "peak_allocated_mib": 1806.17041015625,
+          "peak_reserved_mib": 1914.0,
+          "generated_tokens": 318,
+          "token_ids_sha256": "7fefe7252ca4daf36936cc204b0756ef861ada0ab040b770eb28836ea1543186",
+          "final_output_sha256": "6912a17630db7083db28578b33caee2f60a04b0c2224f26592de4be5c19f6e34"
+        },
+        {
+          "count": 6,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 6,
+            "actual_slots": 6,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 59.78050282600452,
+          "peak_rss_mib": 4596.08984375,
+          "peak_allocated_mib": 1773.26416015625,
+          "peak_reserved_mib": 1914.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 318,
+          "token_ids_sha256": "7fefe7252ca4daf36936cc204b0756ef861ada0ab040b770eb28836ea1543186",
+          "final_output_sha256": "6912a17630db7083db28578b33caee2f60a04b0c2224f26592de4be5c19f6e34"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "before",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 94.99838661801186,
+          "peak_rss_mib": 4598.4765625,
+          "peak_allocated_mib": 1853.2861328125,
+          "peak_reserved_mib": 1986.0,
+          "generated_tokens": 502,
+          "token_ids_sha256": "73e5786625ac4371b3adf121cfc1da6b307f327f77d6325596bae137387968bf",
+          "final_output_sha256": "330154e570ade1d7b19e1c5724ae707385c58fb8fff589a3d491e8acdcc43be5"
+        },
+        {
+          "count": 10,
+          "repeat": 0,
+          "mode": "after",
+          "status": "success",
+          "audit": {
+            "expected_slots": 10,
+            "actual_slots": 10,
+            "missing_literals": [],
+            "foreign_hair": []
+          },
+          "wall_seconds": 96.7250804189971,
+          "peak_rss_mib": 4598.4765625,
+          "peak_allocated_mib": 1820.29931640625,
+          "peak_reserved_mib": 1986.0,
+          "matches_first_baseline_tokens": true,
+          "matches_first_baseline_output": true,
+          "generated_tokens": 502,
+          "token_ids_sha256": "73e5786625ac4371b3adf121cfc1da6b307f327f77d6325596bae137387968bf",
+          "final_output_sha256": "330154e570ade1d7b19e1c5724ae707385c58fb8fff589a3d491e8acdcc43be5"
+        }
+      ]
+    }
+  ],
+  "release_v0_2_2_smoke": {
+    "gpu": "NVIDIA GeForce RTX 5060 Ti",
+    "model": "heretic_ara_q4",
+    "adapter": "scale-20pct-001",
+    "scope": "Two-character real-model release-checkout smoke test; before/after isolates Q4_K/Q5_K decoder buffer reuse; PLE CPU placement and LoRA output path active in both. Not a fresh full 0.2.1-vs-0.2.2 benchmark.",
+    "rows": [
+      {
+        "count": 2,
+        "repeat": 0,
+        "mode": "before",
+        "status": "success",
+        "wall_seconds": 26.294368343995302,
+        "peak_allocated_mib": 1761.90283203125,
+        "peak_reserved_mib": 1842.0,
+        "audit": {
+          "expected_slots": 2,
+          "actual_slots": 2,
+          "missing_literals": [],
+          "foreign_hair": []
+        }
+      },
+      {
+        "count": 2,
+        "repeat": 0,
+        "mode": "after",
+        "status": "success",
+        "wall_seconds": 25.978632943995763,
+        "peak_allocated_mib": 1728.99658203125,
+        "peak_reserved_mib": 1842.0,
+        "audit": {
+          "expected_slots": 2,
+          "actual_slots": 2,
+          "missing_literals": [],
+          "foreign_hair": []
+        },
+        "matches_first_baseline_tokens": true,
+        "matches_first_baseline_output": true
+      }
+    ],
+    "lifecycle": {
+      "reload_tokens_match_warmup": true,
+      "cancellation_raised": true,
+      "sampler_restored": true,
+      "recovery_tokens_match_warmup": true,
+      "exclusion_ok": true
+    },
+    "after_lifecycle_unload": {
+      "allocated_mib": 32.0,
+      "reserved_mib": 54.0,
+      "rss_mib": 6095.7109375
+    },
+    "loaded_models_after_lifecycle_unload": 0
+  }
+}
