@@ -2,7 +2,7 @@ from .nodes import (RSTIPONativeCompletion, RSTIPONativeExpand,
                     RSTIPONativeControlledExpand, RSTIPONativePipeExpand, RSTIPOPrompt)
 
 WEB_DIRECTORY = "./web"
-__version__ = "0.2.3"
+__version__ = "0.2.4"
 
 # Only RSTIPOPrompt is offered for new workflows. Deprecated classes remain
 # registered so existing graphs and research fixtures keep their original behavior.

@@ -3,7 +3,7 @@ from dataclasses import asdict, is_dataclass, replace
 
 from .control import controlled_prompt
 from .generation import complete
-from .grounding import guard_additions
+from .grounding import guard_additions, model_text
 from .exclusion import parse_excluded, validate_sources
 from .additions import select_additions
 from .metadata import metadata_fields, UNSPECIFIED
@@ -28,12 +28,18 @@ def split_tags(text):
 
 def append_completion(original, completion):
     first = completion.split("<|eos|>", 1)[0].split("\n", 1)[0].strip(" ,")
-    seen = {t.casefold() for t in split_tags(original)}
+    def keys(text):
+        # Compare group members without changing the source or splitting an
+        # accepted weighted group in the output. Literal-name commas stay inside.
+        return {' '.join(t.casefold().replace('_', ' ').replace('\\(', '(')
+                         .replace('\\)', ')').split()) for t in split_tags(model_text(text))}
+    seen = keys(original)
     added = []
     for tag in split_tags(first):
         tag = tag.strip()
-        if tag and tag.casefold() not in seen:
-            seen.add(tag.casefold())
+        members = keys(tag)
+        if members - seen:
+            seen.update(members)
             added.append(tag)
     suffix = ", ".join(added)
     separator = " " if original.rstrip().endswith(",") else ", "

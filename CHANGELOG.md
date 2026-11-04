@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.4 — 2026-11-04
+
+- Compare the individual tags inside explicit weighted groups when appending
+  model output. Plain echoes such as `open mouth` no longer duplicate the
+  source `(open mouth, determined:1.3)` or consume the addition budget.
+- Compare case, whitespace, underscores and literal-parenthesis escapes
+  without changing the original prompt, weight values or character names.
+  Preserve accepted weighted groups as whole output units.
+- Add five regression tests covering the reported trailing-comma group,
+  nested weights, NAI numeric weights, literal names, generated-group echoes
+  and the public node's common/character outputs and addition budget.
+- Keep inference, model placement, upstream credits and licenses unchanged.
+
 ## 0.2.3 — 2026-11-04
 
 - Remove ComfyUI literal-parenthesis escapes from intermediate Gemma prose

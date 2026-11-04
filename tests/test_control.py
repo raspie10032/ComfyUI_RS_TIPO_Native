@@ -104,6 +104,33 @@ class ControlTests(unittest.TestCase):
         self.assertEqual(combined, source + ', (blue jacket, long sleeves:1.2)')
         self.assertEqual(added, '(blue jacket, long sleeves:1.2)')
 
+    def test_weighted_source_members_are_not_appended_as_plain_tags(self):
+        source = '(colorful theme:1.3), (open mouth, determined, one eye closed, :1.3)'
+        result, added = append_completion(source,
+            'colorful theme, open mouth, determined, one eye closed, garden')
+        self.assertEqual(result, source + ', garden')
+        self.assertEqual(added, 'garden')
+
+    def test_nested_weights_and_tag_spelling_compare_without_rewriting_source(self):
+        source = '(Blue_Eyes, (open mouth:1.2):1.3), 1.4::colorful theme::'
+        result, added = append_completion(source,
+            '(blue eyes:0.8), OPEN MOUTH, colorful_theme, garden')
+        self.assertEqual(result, source + ', garden')
+        self.assertEqual(added, 'garden')
+
+    def test_new_weighted_group_remains_whole_and_prevents_plain_echoes(self):
+        result, added = append_completion('garden',
+            '(smile, blush:1.5), smile, blush, blue sky')
+        self.assertEqual(result, 'garden, (smile, blush:1.5), blue sky')
+        self.assertEqual(added, '(smile, blush:1.5), blue sky')
+
+    def test_literal_name_escapes_and_artist_colons_keep_original_spelling(self):
+        source = r'aria \(original, alternate\), artist:example'
+        result, added = append_completion(source,
+            'aria (original, alternate), artist:example, alternate, garden')
+        self.assertEqual(result, source + ', alternate, garden')
+        self.assertEqual(added, 'alternate, garden')
+
     def test_pipe_keeps_objects_and_never_passes_other_characters_to_run(self):
         @dataclass(frozen=True)
         class Character:

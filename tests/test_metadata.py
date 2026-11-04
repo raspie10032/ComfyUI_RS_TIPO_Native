@@ -91,6 +91,18 @@ class MetadataTests(unittest.TestCase):
                          ["max_added_tags", "rating", "quality", "quality_era"])
         self.assertEqual(optional[-7:], ['input_language', 'language_model', 'translation_max_tokens', 'tipo_lora', 'output_format', 'generation_max_tokens', 'model_family'])
 
+    def test_node_skips_weighted_source_echoes_before_the_addition_budget(self):
+        common = '(colorful theme:1.3), (open mouth, determined, one eye closed, :1.3)'
+        character = r'aria \(original\), (blue jacket, long sleeves:1.2)'
+        with patch('rs_tipo_native.interface.pipe_adapter', return_value=None), \
+             patch('rs_tipo_native.gemma_runtime.run_scene', return_value=(
+                 'colorful theme, open mouth, determined, one eye closed, garden',
+                 ('aria (original), blue jacket, long sleeves, seated',), {})):
+            result = RSTIPOPrompt().expand(character_count=1, common_prompt=common,
+                character1=character, expand_common=True, max_added_tags=1)
+        self.assertEqual(result['result'][1], common + ', garden')
+        self.assertEqual(result['result'][2], character + ', seated')
+
     def test_addition_budget_keeps_a_complete_weighted_group(self):
         with patch('rs_tipo_native.interface.pipe_adapter', return_value=None), \
              patch('rs_tipo_native.gemma_runtime.run_scene', return_value=(
