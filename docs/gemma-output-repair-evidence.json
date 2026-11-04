@@ -1,0 +1,485 @@
+{
+  "date": "2026-11-04",
+  "scope": "Real-model prose evaluation, not an image or general semantic accuracy score",
+  "model": "heretic_ara_q4",
+  "adapter": "scale-20pct-001",
+  "settings": {
+    "seed": 42,
+    "temperature": 0,
+    "max_added_tags": 0,
+    "max_tokens": 3072,
+    "output_format": "natural_language"
+  },
+  "cases": [
+    {
+      "case": "stress-02p",
+      "common_input": "성인 여성 2명이 넓은 정원에서 단체 기념사진을 찍고 있다. 각자 자기 소품을 들고 카메라를 바라본다. 전신 단체 사진, 낮, 맑은 날씨.",
+      "character_inputs": [
+        "외형: (silver hair:1.15), blue eyes. 의상: red dress, white sandals. 빨간 책을 들고 카메라를 바라본다.",
+        "외형: (brown hair:1.15), green eyes. 의상: blue blouse, black skirt. 파란 머그잔을 들고 카메라를 바라본다."
+      ],
+      "common_output": "The scene is a large group photo being taken by two adult women in a spacious garden. Each is holding their own props and looking at the camera. full group photo, daytime, clear weather.",
+      "character_outputs": [
+        "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. She is holding a red book and looking at the camera.",
+        "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. She is holding a blue mug and looking at the camera."
+      ],
+      "model_calls": 1,
+      "seconds": 36.81,
+      "audit": {
+        "slot_count": 2,
+        "expected_count": 2,
+        "all_surface_checks_pass": true,
+        "rows": [
+          {
+            "slot": 1,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. She is holding a red book and looking at the camera."
+          },
+          {
+            "slot": 2,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. She is holding a blue mug and looking at the camera."
+          }
+        ]
+      }
+    },
+    {
+      "case": "stress-04p",
+      "common_input": "성인 여성 4명이 넓은 정원에서 단체 기념사진을 찍고 있다. 각자 자기 소품을 들고 카메라를 바라본다. 전신 단체 사진, 낮, 맑은 날씨.",
+      "character_inputs": [
+        "외형: (silver hair:1.15), blue eyes. 의상: red dress, white sandals. 빨간 책을 들고 카메라를 바라본다.",
+        "외형: (brown hair:1.15), green eyes. 의상: blue blouse, black skirt. 파란 머그잔을 들고 카메라를 바라본다.",
+        "외형: (blonde hair:1.15), purple eyes. 의상: green jacket, beige trousers. 초록 우산을 들고 카메라를 바라본다.",
+        "외형: (black hair:1.15), brown eyes. 의상: yellow sundress, straw hat. 노란 부채을 들고 카메라를 바라본다."
+      ],
+      "common_output": "The scene is a large group photo of four adult women in a spacious garden. Each is holding their own props and looking at the camera. Full group photo, daytime, clear weather.",
+      "character_outputs": [
+        "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. She is holding a red book and looking at the camera.",
+        "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. She is holding a blue mug and looking at the camera.",
+        "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. She is holding a green umbrella and looking at the camera.",
+        "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. She is holding a yellow fan and looking at the camera."
+      ],
+      "model_calls": 1,
+      "seconds": 34.15,
+      "audit": {
+        "slot_count": 4,
+        "expected_count": 4,
+        "all_surface_checks_pass": true,
+        "rows": [
+          {
+            "slot": 1,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. She is holding a red book and looking at the camera."
+          },
+          {
+            "slot": 2,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. She is holding a blue mug and looking at the camera."
+          },
+          {
+            "slot": 3,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. She is holding a green umbrella and looking at the camera."
+          },
+          {
+            "slot": 4,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. She is holding a yellow fan and looking at the camera."
+          }
+        ]
+      }
+    },
+    {
+      "case": "stress-06p",
+      "common_input": "성인 여성 6명이 넓은 정원에서 단체 기념사진을 찍고 있다. 각자 자기 소품을 들고 카메라를 바라본다. 전신 단체 사진, 낮, 맑은 날씨.",
+      "character_inputs": [
+        "외형: (silver hair:1.15), blue eyes. 의상: red dress, white sandals. 빨간 책을 들고 카메라를 바라본다.",
+        "외형: (brown hair:1.15), green eyes. 의상: blue blouse, black skirt. 파란 머그잔을 들고 카메라를 바라본다.",
+        "외형: (blonde hair:1.15), purple eyes. 의상: green jacket, beige trousers. 초록 우산을 들고 카메라를 바라본다.",
+        "외형: (black hair:1.15), brown eyes. 의상: yellow sundress, straw hat. 노란 부채을 들고 카메라를 바라본다.",
+        "외형: (pink hair:1.15), grey eyes. 의상: white kimono, red obi. 하얀 양산을 들고 카메라를 바라본다.",
+        "외형: (blue hair:1.15), amber eyes. 의상: orange hoodie, denim shorts. 주황 가방을 들고 카메라를 바라본다."
+      ],
+      "common_output": "The scene is a large group of six adult women taking a group photo in a spacious garden. Each is holding their own props and looking at the camera. full group photo, daytime, clear weather.",
+      "character_outputs": [
+        "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. holding a red book and looking at the camera.",
+        "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. holding a blue mug and looking at the camera.",
+        "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. holding a green umbrella and looking at the camera.",
+        "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. holding a yellow fan and looking at the camera.",
+        "The character is identified by the appearance traits (pink hair:1.15), grey eyes. The character is wearing a white kimono, red obi. holding a white parasol and looking at the camera.",
+        "The character is identified by the appearance traits (blue hair:1.15), amber eyes. The character is wearing an orange hoodie, denim shorts. holding an orange bag and looking at the camera."
+      ],
+      "model_calls": 1,
+      "seconds": 46.41,
+      "audit": {
+        "slot_count": 6,
+        "expected_count": 6,
+        "all_surface_checks_pass": true,
+        "rows": [
+          {
+            "slot": 1,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. holding a red book and looking at the camera."
+          },
+          {
+            "slot": 2,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. holding a blue mug and looking at the camera."
+          },
+          {
+            "slot": 3,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. holding a green umbrella and looking at the camera."
+          },
+          {
+            "slot": 4,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. holding a yellow fan and looking at the camera."
+          },
+          {
+            "slot": 5,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (pink hair:1.15), grey eyes. The character is wearing a white kimono, red obi. holding a white parasol and looking at the camera."
+          },
+          {
+            "slot": 6,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (blue hair:1.15), amber eyes. The character is wearing an orange hoodie, denim shorts. holding an orange bag and looking at the camera."
+          }
+        ]
+      }
+    },
+    {
+      "case": "stress-08p",
+      "common_input": "성인 여성 8명이 넓은 정원에서 단체 기념사진을 찍고 있다. 각자 자기 소품을 들고 카메라를 바라본다. 전신 단체 사진, 낮, 맑은 날씨.",
+      "character_inputs": [
+        "외형: (silver hair:1.15), blue eyes. 의상: red dress, white sandals. 빨간 책을 들고 카메라를 바라본다.",
+        "외형: (brown hair:1.15), green eyes. 의상: blue blouse, black skirt. 파란 머그잔을 들고 카메라를 바라본다.",
+        "외형: (blonde hair:1.15), purple eyes. 의상: green jacket, beige trousers. 초록 우산을 들고 카메라를 바라본다.",
+        "외형: (black hair:1.15), brown eyes. 의상: yellow sundress, straw hat. 노란 부채을 들고 카메라를 바라본다.",
+        "외형: (pink hair:1.15), grey eyes. 의상: white kimono, red obi. 하얀 양산을 들고 카메라를 바라본다.",
+        "외형: (blue hair:1.15), amber eyes. 의상: orange hoodie, denim shorts. 주황 가방을 들고 카메라를 바라본다.",
+        "외형: (purple hair:1.15), red eyes. 의상: pink cardigan, pleated skirt. 분홍 꽃다발을 들고 카메라를 바라본다.",
+        "외형: (green hair:1.15), golden eyes. 의상: purple evening gown, pearl necklace. 보라 폴더을 들고 카메라를 바라본다."
+      ],
+      "common_output": "The scene is a large group of eight adult women taking a group photo in a spacious garden. Each is holding their own props and looking at the camera. Full group photo, daytime, clear weather.",
+      "character_outputs": [
+        "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. She is holding a red book and looking at the camera.",
+        "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. She is holding a blue mug and looking at the camera.",
+        "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. She is holding a green umbrella and looking at the camera.",
+        "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. She is holding a yellow fan and looking at the camera.",
+        "The character is identified by the appearance traits (pink hair:1.15), grey eyes. The character is wearing a white kimono, red obi. She is holding a white parasol and looking at the camera.",
+        "The character is identified by the appearance traits (blue hair:1.15), amber eyes. The character is wearing an orange hoodie, denim shorts. She is holding an orange bag and looking at the camera.",
+        "The character is identified by the appearance traits (purple hair:1.15), red eyes. The character is wearing a pink cardigan, pleated skirt. She is holding a bouquet of pink flowers and looking at the camera.",
+        "The character is identified by the appearance traits (green hair:1.15), golden eyes. The character is wearing a purple evening gown, pearl necklace. She is holding a purple folder and looking at the camera."
+      ],
+      "model_calls": 1,
+      "seconds": 61.89,
+      "audit": {
+        "slot_count": 8,
+        "expected_count": 8,
+        "all_surface_checks_pass": true,
+        "rows": [
+          {
+            "slot": 1,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. She is holding a red book and looking at the camera."
+          },
+          {
+            "slot": 2,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. She is holding a blue mug and looking at the camera."
+          },
+          {
+            "slot": 3,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. She is holding a green umbrella and looking at the camera."
+          },
+          {
+            "slot": 4,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. She is holding a yellow fan and looking at the camera."
+          },
+          {
+            "slot": 5,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (pink hair:1.15), grey eyes. The character is wearing a white kimono, red obi. She is holding a white parasol and looking at the camera."
+          },
+          {
+            "slot": 6,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (blue hair:1.15), amber eyes. The character is wearing an orange hoodie, denim shorts. She is holding an orange bag and looking at the camera."
+          },
+          {
+            "slot": 7,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (purple hair:1.15), red eyes. The character is wearing a pink cardigan, pleated skirt. She is holding a bouquet of pink flowers and looking at the camera."
+          },
+          {
+            "slot": 8,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (green hair:1.15), golden eyes. The character is wearing a purple evening gown, pearl necklace. She is holding a purple folder and looking at the camera."
+          }
+        ]
+      }
+    },
+    {
+      "case": "stress-10p",
+      "common_input": "성인 여성 10명이 넓은 정원에서 단체 기념사진을 찍고 있다. 각자 자기 소품을 들고 카메라를 바라본다. 전신 단체 사진, 낮, 맑은 날씨.",
+      "character_inputs": [
+        "외형: (silver hair:1.15), blue eyes. 의상: red dress, white sandals. 빨간 책을 들고 카메라를 바라본다.",
+        "외형: (brown hair:1.15), green eyes. 의상: blue blouse, black skirt. 파란 머그잔을 들고 카메라를 바라본다.",
+        "외형: (blonde hair:1.15), purple eyes. 의상: green jacket, beige trousers. 초록 우산을 들고 카메라를 바라본다.",
+        "외형: (black hair:1.15), brown eyes. 의상: yellow sundress, straw hat. 노란 부채을 들고 카메라를 바라본다.",
+        "외형: (pink hair:1.15), grey eyes. 의상: white kimono, red obi. 하얀 양산을 들고 카메라를 바라본다.",
+        "외형: (blue hair:1.15), amber eyes. 의상: orange hoodie, denim shorts. 주황 가방을 들고 카메라를 바라본다.",
+        "외형: (purple hair:1.15), red eyes. 의상: pink cardigan, pleated skirt. 분홍 꽃다발을 들고 카메라를 바라본다.",
+        "외형: (green hair:1.15), golden eyes. 의상: purple evening gown, pearl necklace. 보라 폴더을 들고 카메라를 바라본다.",
+        "외형: (red hair:1.15), hazel eyes. 의상: black suit, striped tie. 검은 카메라을 들고 카메라를 바라본다.",
+        "외형: (white hair:1.15), teal eyes. 의상: brown coat, leather boots. 갈색 바구니을 들고 카메라를 바라본다."
+      ],
+      "common_output": "The scene is a large group photo of 10 adult women in a spacious garden. Each is holding their own props and looking at the camera. Full group photo, daytime, clear weather.",
+      "character_outputs": [
+        "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. Holding a red book and looking at the camera.",
+        "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. Holding a blue mug and looking at the camera.",
+        "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. Holding a green umbrella and looking at the camera.",
+        "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. Holding a yellow fan and looking at the camera.",
+        "The character is identified by the appearance traits (pink hair:1.15), grey eyes. The character is wearing a white kimono, red obi. Holding a white parasol and looking at the camera.",
+        "The character is identified by the appearance traits (blue hair:1.15), amber eyes. The character is wearing an orange hoodie, denim shorts. Holding an orange bag and looking at the camera.",
+        "The character is identified by the appearance traits (purple hair:1.15), red eyes. The character is wearing a pink cardigan, pleated skirt. Holding a bouquet of pink flowers and looking at the camera.",
+        "The character is identified by the appearance traits (green hair:1.15), golden eyes. The character is wearing a purple evening gown, pearl necklace. Holding a purple folder and looking at the camera.",
+        "The character is identified by the appearance traits (red hair:1.15), hazel eyes. The character is wearing a black suit, striped tie. Holding a black camera and looking at the camera.",
+        "The character is identified by the appearance traits (white hair:1.15), teal eyes. The character is wearing a brown coat, leather boots. Holding a brown basket and looking at the camera."
+      ],
+      "model_calls": 1,
+      "seconds": 73.37,
+      "audit": {
+        "slot_count": 10,
+        "expected_count": 10,
+        "all_surface_checks_pass": true,
+        "rows": [
+          {
+            "slot": 1,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. Holding a red book and looking at the camera."
+          },
+          {
+            "slot": 2,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. Holding a blue mug and looking at the camera."
+          },
+          {
+            "slot": 3,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. Holding a green umbrella and looking at the camera."
+          },
+          {
+            "slot": 4,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. Holding a yellow fan and looking at the camera."
+          },
+          {
+            "slot": 5,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (pink hair:1.15), grey eyes. The character is wearing a white kimono, red obi. Holding a white parasol and looking at the camera."
+          },
+          {
+            "slot": 6,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (blue hair:1.15), amber eyes. The character is wearing an orange hoodie, denim shorts. Holding an orange bag and looking at the camera."
+          },
+          {
+            "slot": 7,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (purple hair:1.15), red eyes. The character is wearing a pink cardigan, pleated skirt. Holding a bouquet of pink flowers and looking at the camera."
+          },
+          {
+            "slot": 8,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (green hair:1.15), golden eyes. The character is wearing a purple evening gown, pearl necklace. Holding a purple folder and looking at the camera."
+          },
+          {
+            "slot": 9,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (red hair:1.15), hazel eyes. The character is wearing a black suit, striped tie. Holding a black camera and looking at the camera."
+          },
+          {
+            "slot": 10,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (white hair:1.15), teal eyes. The character is wearing a brown coat, leather boots. Holding a brown basket and looking at the camera."
+          }
+        ]
+      }
+    },
+    {
+      "case": "stress-10p-reversed",
+      "common_input": "성인 여성 10명이 넓은 정원에서 단체 기념사진을 찍고 있다. 각자 자기 소품을 들고 카메라를 바라본다. 전신 단체 사진, 낮, 맑은 날씨.",
+      "character_inputs": [
+        "외형: (white hair:1.15), teal eyes. 의상: brown coat, leather boots. 갈색 바구니을 들고 카메라를 바라본다.",
+        "외형: (red hair:1.15), hazel eyes. 의상: black suit, striped tie. 검은 카메라을 들고 카메라를 바라본다.",
+        "외형: (green hair:1.15), golden eyes. 의상: purple evening gown, pearl necklace. 보라 폴더을 들고 카메라를 바라본다.",
+        "외형: (purple hair:1.15), red eyes. 의상: pink cardigan, pleated skirt. 분홍 꽃다발을 들고 카메라를 바라본다.",
+        "외형: (blue hair:1.15), amber eyes. 의상: orange hoodie, denim shorts. 주황 가방을 들고 카메라를 바라본다.",
+        "외형: (pink hair:1.15), grey eyes. 의상: white kimono, red obi. 하얀 양산을 들고 카메라를 바라본다.",
+        "외형: (black hair:1.15), brown eyes. 의상: yellow sundress, straw hat. 노란 부채을 들고 카메라를 바라본다.",
+        "외형: (blonde hair:1.15), purple eyes. 의상: green jacket, beige trousers. 초록 우산을 들고 카메라를 바라본다.",
+        "외형: (brown hair:1.15), green eyes. 의상: blue blouse, black skirt. 파란 머그잔을 들고 카메라를 바라본다.",
+        "외형: (silver hair:1.15), blue eyes. 의상: red dress, white sandals. 빨간 책을 들고 카메라를 바라본다."
+      ],
+      "common_output": "The scene is a large group of 10 adult women taking a group photo in a spacious garden. Each is holding their own props and looking at the camera. Full group photo, daytime, clear weather.",
+      "character_outputs": [
+        "The character is identified by the appearance traits (white hair:1.15), teal eyes. The character is wearing a brown coat, leather boots. Holding a brown basket and looking at the camera.",
+        "The character is identified by the appearance traits (red hair:1.15), hazel eyes. The character is wearing a black suit, striped tie. Holding a black camera and looking at the camera.",
+        "The character is identified by the appearance traits (green hair:1.15), golden eyes. The character is wearing a purple evening gown, pearl necklace. Holding a purple folder and looking at the camera.",
+        "The character is identified by the appearance traits (purple hair:1.15), red eyes. The character is wearing a pink cardigan, pleated skirt. Holding a bouquet of pink flowers and looking at the camera.",
+        "The character is identified by the appearance traits (blue hair:1.15), amber eyes. The character is wearing an orange hoodie, denim shorts. Holding an orange bag and looking at the camera.",
+        "The character is identified by the appearance traits (pink hair:1.15), grey eyes. The character is wearing a white kimono, red obi. Holding a white umbrella and looking at the camera.",
+        "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. Holding a yellow fan and looking at the camera.",
+        "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. Holding a green umbrella and looking at the camera.",
+        "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. Holding a blue mug and looking at the camera.",
+        "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. Holding a red book and looking at the camera."
+      ],
+      "model_calls": 1,
+      "seconds": 73.09,
+      "audit": {
+        "slot_count": 10,
+        "expected_count": 10,
+        "all_surface_checks_pass": false,
+        "rows": [
+          {
+            "slot": 1,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (white hair:1.15), teal eyes. The character is wearing a brown coat, leather boots. Holding a brown basket and looking at the camera."
+          },
+          {
+            "slot": 2,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (red hair:1.15), hazel eyes. The character is wearing a black suit, striped tie. Holding a black camera and looking at the camera."
+          },
+          {
+            "slot": 3,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (green hair:1.15), golden eyes. The character is wearing a purple evening gown, pearl necklace. Holding a purple folder and looking at the camera."
+          },
+          {
+            "slot": 4,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (purple hair:1.15), red eyes. The character is wearing a pink cardigan, pleated skirt. Holding a bouquet of pink flowers and looking at the camera."
+          },
+          {
+            "slot": 5,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (blue hair:1.15), amber eyes. The character is wearing an orange hoodie, denim shorts. Holding an orange bag and looking at the camera."
+          },
+          {
+            "slot": 6,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [
+              "parasol"
+            ],
+            "output": "The character is identified by the appearance traits (pink hair:1.15), grey eyes. The character is wearing a white kimono, red obi. Holding a white umbrella and looking at the camera."
+          },
+          {
+            "slot": 7,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (black hair:1.15), brown eyes. The character is wearing a yellow sundress, straw hat. Holding a yellow fan and looking at the camera."
+          },
+          {
+            "slot": 8,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (blonde hair:1.15), purple eyes. The character is wearing a green jacket, beige trousers. Holding a green umbrella and looking at the camera."
+          },
+          {
+            "slot": 9,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (brown hair:1.15), green eyes. The character is wearing a blue blouse, black skirt. Holding a blue mug and looking at the camera."
+          },
+          {
+            "slot": 10,
+            "missing_literals": [],
+            "foreign_hair": [],
+            "missing_prop_words": [],
+            "output": "The character is identified by the appearance traits (silver hair:1.15), blue eyes. The character is wearing a red dress, white sandals. Holding a red book and looking at the camera."
+          }
+        ]
+      }
+    }
+  ]
+}

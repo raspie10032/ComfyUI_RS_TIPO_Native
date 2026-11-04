@@ -8,6 +8,53 @@ FORMATS = ('tags', 'natural_language')
 CONTRACT = 'rs-gemma-tipo-scene/2'
 
 
+def labelled_character_fields(text):
+    """Recognize the explicit appearance/outfit schema, not arbitrary prose."""
+    match = re.fullmatch(
+        r'\s*(?:외형|appearance)\s*:\s*(.+?)\.\s+(?:의상|outfit)\s*:\s*'
+        r'(.+?)(?:\.(?:\s+(.*)|$))?\s*', text, re.I | re.S)
+    return match.groups(default='') if match else None
+
+
+def outfit_parts(outfit):
+    items = [item.strip() for item in outfit.split(',') if item.strip()]
+    carried = [item for item in items if re.search(r'\b(?:carried|carrying|holds?|holding|held)\b', item, re.I)]
+    return [item for item in items if item not in carried], carried
+
+
+def prose_source(text):
+    fields = labelled_character_fields(text)
+    if fields is None:
+        return text
+    appearance, outfit, action = fields
+    # This is input disambiguation. Generated text is never patched into prose.
+    worn, carried = outfit_parts(outfit)
+    wardrobe = ('The character is wearing '+', '.join(worn)+'. ') if worn else ''
+    accessories = ('The character also has '+', '.join(carried)+'. ') if carried else ''
+    return (f'The character is identified by the appearance traits {appearance}. '
+            + wardrobe + accessories + action).strip()
+
+
+def labelled_outfit_errors(sources, outputs):
+    """For explicit outfit lists, require English item literals in a wearing clause."""
+    errors = {}
+    def words(text):
+        return ' '.join(re.findall(r'\w+', normalize(text)))
+    for i, (source, text) in enumerate(zip(sources, outputs), 1):
+        fields = labelled_character_fields(source)
+        if fields is None:
+            continue
+        wearing = [words(sentence) for sentence in re.split(r'(?<=[.!?])\s+', text)
+                   if re.search(r'\b(?:wears?|wearing|dressed|clad|donning)\b', sentence, re.I)]
+        missing = [item.strip() for item in outfit_parts(fields[1])[0]
+                   if not re.search('[\uac00-\ud7af]', item) and words(item)
+                   and not any(' '+words(item)+' ' in ' '+sentence+' ' for sentence in wearing)]
+        if missing:
+            errors[f'character{i}'] = ('Explicit outfit items must be retained as worn clothing/accessories: '
+                                         + ', '.join(missing))
+    return errors
+
+
 def caption_instruction(caption, prefix=''):
     """Shared by inference and LoRA supervision; keep both tasks identical."""
     return ('You are a Danbooru tag expert. Convert the supplied image caption into '
@@ -20,16 +67,29 @@ def caption_instruction(caption, prefix=''):
         '\nContinue the tag list below without repeating its prefix.\nTAGS:\n'+prefix)
 
 
-def validate_prose(common, characters):
-    for text in (*common, *characters):
+def prose_errors(common, characters):
+    """Identify malformed fields without pretending to judge scene semantics."""
+    errors = {}
+    fields = [(('common' if len(common) == 1 else f'common{i}'), text)
+              for i, text in enumerate(common, 1)]
+    fields += [(f'character{i}', text) for i, text in enumerate(characters, 1)]
+    for field, text in fields:
         if re.search('[\uac00-\ud7af]', text):
-            raise ValueError('Output must be English prose, not untranslated Korean.')
+            errors[field] = 'Output must be English prose, not untranslated Korean.'
+            continue
         # A format guard, not an English grammar/semantic judge. Requiring a
         # hand-picked verb list rejected valid unseen actions such as "share".
         # Check a subject-led clause and keep semantic quality in the evaluation.
         clause = re.sub(r'^\s*(?:on|in|at|under|beside|behind)\b[^,]*,\s*', '', text, flags=re.I)
         if not re.match(r'\s*(?:the\s+\w+|(?:one|two|three|four|five|six|seven|eight|nine|ten|both)\s+\w+|she|he|they|a\s+\w+|an\s+\w+)\b', clause, re.I) or len(text.split()) < 4:
-            raise ValueError('Output is a tag list or fragment, not grammatical English prose.')
+            errors[field] = 'Output is a tag list or fragment, not grammatical English prose.'
+    return errors
+
+
+def validate_prose(common, characters):
+    errors = prose_errors(common, characters)
+    if errors:
+        raise ValueError('; '.join(f'{field}: {reason}' for field, reason in errors.items()))
 
 
 def caption_anchors(caption):
@@ -107,7 +167,9 @@ def instruction(common, characters, *, output_format='tags', length='long',
         raise ValueError('Unknown Gemma TIPO length.')
     if sum(map(len, (common, *characters))) > 24000:
         raise ValueError('Gemma TIPO accepts at most 24000 source characters; split this request.')
-    source = {'common': common, 'characters': {str(i): t for i,t in enumerate(characters,1)}}
+    source = {'common': common, 'characters': {str(i):
+        (prose_source(t) if output_format == 'natural_language' else t)
+        for i,t in enumerate(characters,1)}}
     if output_format == 'tags':
         task = "Expand the input into concise comma-separated English image tags, not sentences. Translate Korean to English tags. Retain every supplied fact and add up to " + str(max_added_tags) + " useful compatible details per field. An unchanged input is allowed only if already complete."
         example = '{"common":"2people, rooftop, rain, sharing umbrella, puddles, overcast sky", "characters":{"1":"green hair, grey coat, on left, holding umbrella, hand raised", "2":"red hair, blue coat, on right, standing under umbrella, looking at partner"}}'

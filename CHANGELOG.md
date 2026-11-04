@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.1 — 2026-11-04
+
+- Repair malformed Gemma prose using the previous response and the failed field
+  names. Preserve accepted common/character fields instead of replacing them
+  with shorter rewrites. Retry once using the same adapted model.
+- Disambiguate explicit `외형: … . 의상: … .` / `Appearance: … . Outfit: … .`
+  inputs as appearance, worn clothing/accessories and action. Explicitly held or
+  carried items remain props; ordinary unlabelled inputs keep their old path.
+- Check literal English outfit items in wearing clauses. Failed repair raises
+  an error with per-call raw responses and validation errors; it does not send
+  invalid prose downstream or silently fall back to another model.
+- Add regression coverage and a real-model 2/4/6/8/10-character text evaluation,
+  including reversed 10-character slots. This verifies selected text attributes,
+  not image fidelity or general semantic accuracy. See the evaluation document
+  for the observed parasol/umbrella substitution.
+
 ## 0.2.0 — 2026-11-04
 
 - Integrate official TIPO 2.1 and Gemma with a TIPO LoRA into the same

@@ -21,7 +21,11 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.0:** unified native TIPO 2.1 / Gemma TIPO, verified automatic
+**Version 0.2.1:** repair malformed Gemma prose without replacing already valid
+characters or losing explicitly listed outfits. Failed responses retain field-level
+diagnostics. See the [repair and 2–10 character evaluation](docs/gemma-output-repair.ko.md).
+
+Version 0.2.0 unified native TIPO 2.1 / Gemma TIPO, verified automatic
 downloads for `scale-20pct-001`, and an inspectable result panel.
 See the [release notes](CHANGELOG.md).
 
