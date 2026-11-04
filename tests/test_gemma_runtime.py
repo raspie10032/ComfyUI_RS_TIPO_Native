@@ -5,54 +5,10 @@ from unittest.mock import patch
 import torch
 import test_native
 from rs_tipo_native.gemma_runtime import token_constraints, run_scene, GemmaOutputError
-from rs_tipo_native.gemma_prompt import (caption_anchors, guarded_tag_rendering, scene_count_anchors,
-    common_expansion_error,
-    prose_errors, prose_source, labelled_character_fields, labelled_outfit_errors)
+from rs_tipo_native.gemma_prompt import (caption_anchors, deduplicate_tag_rendering, scene_count_anchors,
+    prose_errors, prose_source, labelled_character_fields)
 
 class GemmaRuntimeTests(unittest.TestCase):
-    def test_common_restating_source_or_importing_character_words_is_not_expansion(self):
-        source = '(colorful theme:1.3), cafe, (smile, blush:1.5)'
-        characters = ('adult woman, red hair', 'adult woman, blue eyes')
-        self.assertIsNotNone(common_expansion_error(source, characters,
-            'The scene is a cafe featuring a colorful theme, smiling and blushing.'))
-        self.assertIsNotNone(common_expansion_error(source, characters,
-            'The scene is a cafe with two adult women, red hair and blue eyes.'))
-        self.assertIsNotNone(common_expansion_error('1girl, colorful theme, open mouth', (),
-            'The scene is depicted as follows: 1girl, colorful theme, open mouth.'))
-        self.assertIsNone(common_expansion_error(source, characters,
-            'The scene is a colorful cafe. The lighting is soft with gentle shadows.'))
-        self.assertIsNone(common_expansion_error('오후 카페', characters,
-            'The scene is an afternoon cafe.'))
-
-    def test_common_expansion_retry_preserves_good_characters_and_adds_real_detail(self):
-        character = 'The character has red hair and looks down with her hands folded.'
-        first = json.dumps({'common': 'The scene is a cafe.', 'characters': {'1': character}})
-        repaired = 'The scene is a cafe. The lighting is soft with gentle shadows.'
-        responses = iter((first, repaired))
-        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
-             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
-                 (next(responses), {'seconds': .1, 'output_tokens': 5,
-                     'exclusion': {'blocked_candidates': 0}})):
-            scene, slots, report = run_scene('cafe', ('red hair',),
-                output_format='natural_language', expand_common=True)
-        self.assertIn('gentle shadows', scene)
-        self.assertEqual(slots, (character,))
-        self.assertEqual(report['model_calls'], 2)
-        self.assertIn('no new visual detail', report['calls'][0]['validation_error'])
-        self.assertEqual(report['calls'][1]['preserved_fields'], ['character1'])
-
-    def test_unexpanded_common_after_retry_is_not_sent_downstream(self):
-        responses = iter((
-            json.dumps({'common': 'The scene is a cafe.',
-                'characters': {'1': 'The character has red hair and looks down.'}}),
-            'The scene is a cafe.'))
-        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
-             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
-                 (next(responses), {'seconds': .1, 'output_tokens': 5})), \
-             self.assertRaises(GemmaOutputError) as caught:
-            run_scene('cafe', ('red hair',), output_format='natural_language', expand_common=True)
-        self.assertIn('no new visual detail', str(caught.exception))
-        self.assertEqual(len(caught.exception.calls), 2)
 
     def test_zero_detail_budget_allows_a_faithful_common_rewrite(self):
         raw = json.dumps({'common': 'The scene is a cafe.', 'characters': {}})
@@ -217,31 +173,6 @@ class GemmaRuntimeTests(unittest.TestCase):
         carried = '외형: silver hair. 의상: retro astronaut suit, helmet carried under arm. 카메라를 든다.'
         self.assertIn('wearing retro astronaut suit.', prose_source(carried))
         self.assertIn('also has helmet carried under arm.', prose_source(carried))
-        self.assertEqual(labelled_outfit_errors((carried,), (
-            'The character wears a retro astronaut suit and carries a helmet under her arm.',)), {})
-
-    def test_labelled_outfits_cannot_be_lost_or_held_as_props(self):
-        source = ('외형: silver hair. 의상: satin ball gown, pearl necklace. 상자를 연다.',)
-        for bad in ('The character has silver hair and opens a box.',
-                    'The character is holding a satin ball gown and pearl necklace.',
-                    'The character wears a satin ball gown. She is holding a pearl necklace.'):
-            with self.subTest(bad=bad):
-                self.assertIn('character1', labelled_outfit_errors(source, (bad,)))
-        self.assertEqual(labelled_outfit_errors(source, (
-            'The character wears a satin ball gown and a pearl necklace. She opens a box.',)), {})
-        self.assertEqual(labelled_outfit_errors(('holding a dress',), ('The character holds a dress.',)), {})
-
-    def test_retry_retains_outfit_items_as_worn_clothing(self):
-        responses = iter([
-            json.dumps({'common': '', 'characters': {'1': 'The character is holding a satin ball gown.'}}),
-            json.dumps({'common': '', 'characters': {'1': 'The character wears a satin ball gown and opens a box.'}})])
-        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
-             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k: (
-                 next(responses), {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}})):
-            _, slots, report = run_scene('', ('외형: silver hair. 의상: satin ball gown. 상자를 연다.',),
-                                         output_format='natural_language')
-        self.assertIn('wears a satin ball gown', slots[0])
-        self.assertIn('Explicit outfit items', report['calls'][0]['validation_error'])
 
     def test_repair_still_rejects_lost_weights_and_excluded_tags(self):
         for source, excluded, repaired in (
@@ -311,26 +242,9 @@ class GemmaRuntimeTests(unittest.TestCase):
         self.assertIn('format_error', report['calls'][1])
         self.assertEqual(report['model_calls'], 3)
 
-    def test_common_tag_repair_only_requests_additions_and_preserves_characters(self):
-        character = 'The character has red hair and looks down.'
-        responses = iter((
-            json.dumps({'common': 'The scene is a cafe.', 'characters': {'1': character}}),
-            'The lighting is soft with gentle shadows.',
-            'soft lighting, gentle shadows', 'red hair, looking down'))
-        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
-             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
-                 (next(responses), {'seconds': .1, 'output_tokens': 5,
-                    'exclusion': {'blocked_candidates': 0}})) as generate:
-            scene, slots, report = run_scene('cafe', ('red hair',),
-                output_format='tags', expand_common=True)
-        self.assertEqual(scene, 'soft lighting, gentle shadows')
-        self.assertEqual(slots, ('red hair, looking down',))
-        self.assertIn('only the NEW visual details', generate.call_args_list[1].args[1])
-        self.assertEqual(report['calls'][1]['preserved_fields'], ['character1'])
-
     def test_korean_common_repair_keeps_translated_scene_and_not_only_additions(self):
         responses = iter((json.dumps({'common': 'cafe', 'characters': {}}),
-            'The scene is a cafe with two women. The lighting is soft.',
+            json.dumps({'common': 'The scene is a cafe with two women. The lighting is soft.', 'characters': {}}),
             '2girls, cafe, soft lighting'))
         with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
              patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
@@ -350,28 +264,6 @@ class GemmaRuntimeTests(unittest.TestCase):
             _, slots, _ = run_scene('', ('(red hair, blue eyes:1.2)',), output_format='tags')
         self.assertEqual(slots, ('red hair, blue eyes',))
 
-    def test_caption_tags_keep_weights_and_exclude_recipient_position(self):
-        caption='The woman on the left has (blonde hair:1.2) and blue eyes, and is handing a cup to the woman on the right.'
-        anchors=caption_anchors(caption)
-        self.assertIn('(blonde hair:1.2)',anchors)
-        self.assertNotIn('blonde hair',anchors)
-        self.assertIn('left',anchors);self.assertNotIn('right',anchors)
-        tags,rejected=guarded_tag_rendering(caption,anchors,'blonde hair, right, handing cup')
-        self.assertIn('(blonde hair:1.2)',tags);self.assertNotIn(', right',tags)
-        self.assertIn('right',{r['tag'] for r in rejected})
-
-    def test_tag_rendering_rejects_peer_role_and_invented_clothing(self):
-        caption='The woman on the left has blonde hair and is handing over a cup.'
-        tags,rejected=guarded_tag_rendering(caption,caption_anchors(caption),
-            'offering cup, receiving cup, right, black dress, sofa')
-        self.assertIn('offering cup',tags)
-        self.assertNotIn('receiving',tags);self.assertNotIn('right',tags)
-        self.assertEqual({r['tag'] for r in rejected},{'receiving cup','right','black dress','sofa'})
-
-    def test_tag_rendering_accepts_explicit_finite_verbs(self):
-        tags,_=guarded_tag_rendering('The character offers a cup.',(), 'offering cup')
-        self.assertEqual(tags,'offering cup')
-
     def test_scene_count_comes_from_explicit_caption(self):
         self.assertEqual(scene_count_anchors('Two adult women are in a cafe.'),('2girls',))
         self.assertEqual(scene_count_anchors('The scene is a garden.'),())
@@ -384,3 +276,63 @@ class GemmaRuntimeTests(unittest.TestCase):
              patch('rs_tipo_native.gemma_runtime.generate',side_effect=lambda *a,**kw:(next(responses),info)):
             with self.assertRaisesRegex(ValueError,'derived tag prefix'):
                 run_scene('two women',('black hair',),expand_common=True,excluded=('2girls',))
+
+    def test_common_restatement_does_not_trigger_content_retry(self):
+        raw = json.dumps({'common': 'The scene is a cafe.',
+            'characters': {'1': 'The character has red hair and looks down.'}})
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', return_value=(raw,
+                 {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}})) as generate:
+            scene, slots, report = run_scene('cafe', ('red hair',),
+                output_format='natural_language', expand_common=True)
+        self.assertEqual(scene, 'The scene is a cafe.')
+        self.assertEqual(slots, ('The character has red hair and looks down.',))
+        self.assertEqual(generate.call_count, 1)
+        self.assertNotIn('validation_error', report['calls'][0])
+
+    def test_valid_outfit_wording_is_not_rejected_by_source_vocabulary(self):
+        caption = 'The character wears an elegant satin gown and a pearl choker.'
+        raw = json.dumps({'common': '', 'characters': {'1': caption}})
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', return_value=(raw,
+                 {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}})) as generate:
+            _, slots, report = run_scene('',
+                ('외형: silver hair. 의상: satin ball gown, pearl necklace.',),
+                output_format='natural_language')
+        self.assertEqual(slots, (caption,))
+        self.assertEqual(generate.call_count, 1)
+        self.assertNotIn('validation_error', report['calls'][0])
+
+    def test_new_tag_vocabulary_survives_without_grounding_retry(self):
+        responses = iter((json.dumps({'common': 'The lighting is soft with gentle shadows.',
+            'characters': {}}), 'softly lit, bloom, rim lighting, hair ornament, bloom'))
+        info = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), info)) as generate:
+            scene, _, report = run_scene('colorful theme', (), output_format='tags', expand_common=True)
+        self.assertEqual(scene, 'softly lit, bloom, rim lighting, hair ornament')
+        self.assertEqual(generate.call_count, 2)
+        self.assertNotIn('grounding_error', report['calls'][1])
+        self.assertNotIn('rejected_tags', report['calls'][1])
+
+    def test_only_tag_duplicates_are_removed_including_weighted_members(self):
+        anchors = ('(colorful theme:1.3)', '(open mouth, determined, one eye closed, :1.3)')
+        tags = deduplicate_tag_rendering(anchors,
+            'colorful_theme, OPEN MOUTH, determined, one_eye_closed, softly lit, soft lighting, softly_lit, umbrella')
+        self.assertEqual(tags, ', '.join((*anchors, 'softly lit', 'soft lighting', 'umbrella')))
+
+    def test_new_roles_positions_clothes_and_props_are_not_filtered(self):
+        caption = 'The woman on the left has blonde hair and is handing over a cup.'
+        tags = deduplicate_tag_rendering(caption_anchors(caption),
+            'offering cup, receiving cup, right, black dress, sofa, offering_cup')
+        self.assertEqual(tags,
+            'blonde hair, left, offering cup, receiving cup, right, black dress, sofa')
+
+    def test_source_weight_survives_while_generated_position_is_kept(self):
+        caption = 'The woman on the left has (blonde hair:1.2) and blue eyes, and is handing a cup to the woman on the right.'
+        anchors = caption_anchors(caption)
+        self.assertIn('(blonde hair:1.2)', anchors)
+        self.assertNotIn('right', anchors)
+        self.assertEqual(deduplicate_tag_rendering(anchors, 'blonde hair, right, handing cup'),
+            '(blonde hair:1.2), blue eyes, left, right, handing cup')

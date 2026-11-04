@@ -65,12 +65,13 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Restore Gemma visual expansion before caption-to-tag rendering, and
-            retain the positive detail budget during malformed-response repair.
-            Retry a restated common field independently while preserving accepted
-            characters; show final added-tag counts and unchanged/disabled status.
+            Remove Gemma's lexical tag filters, common novelty check and literal
+            outfit-wording validation. Keep generated tag content and remove
+            duplicates, including weighted-group members. Remove unrelated
+            concrete examples from prompts. Preserve structural and format
+            validation, source weights, explicit exclusions, addition budgets
+            and bounded format repair with raw diagnostics.
             No new runtime dependencies or model-weight changes.
-            See CHANGELOG and the expansion-fix validation notes for scope and limits.
             TIPO authors, KohakuBlueleaf, Gemma and City96 contributors retain credit and their licenses.
         run: |
           test -n "$REGISTRY_ACCESS_TOKEN"

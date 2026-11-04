@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.6 — 2026-11-04
+
+- Remove Gemma's lexical caption-to-tag content guard. Preserve generated
+  tags without judging their vocabulary, roles, clothes, props or positions.
+  Remove only duplicate tags, including duplicates of individual tags inside
+  weighted source groups; keep original weights and escaped character names.
+- Remove the common-expansion novelty check and literal outfit-wording
+  validation. Valid output is no longer rejected or regenerated because its
+  content fails those hand-written word comparisons.
+- Remove unrelated concrete scene, hair, clothing and prop examples from
+  joint planning and tag-format repair. The example output shape uses empty
+  strings and the actual participant keys, with source data kept separate.
+- Retain structural JSON, output-format, participant-count, source-weight and
+  explicitly requested exclusion validation. Keep a bounded format-repair
+  retry using the same adapted model, with raw responses in diagnostics.
+- Keep the configured addition budget and final string-based added-tag counts.
+  Neither deduplication nor the result panel attempts to judge semantic quality.
+  No new runtime dependencies or model-weight changes. Preserve upstream
+  attribution and licenses. See [validation and limits](docs/gemma-expansion-retry-fix.ko.md).
+
 ## 0.2.5 — 2026-11-04
 
 - Restore visual expansion in Gemma's prose planning stage. Ask for new

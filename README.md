@@ -21,10 +21,12 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.5:** restore compatible visual expansion before Gemma renders
-captions as tags, preserve the detail budget during repair, and report final
-added-tag counts. Retry an unexpanded common field without replacing accepted
-characters. See [text validation and limits](docs/gemma-expansion-fix.ko.md).
+**Version 0.2.6:** remove Gemma's lexical content filters. Keep generated tag
+content and remove only duplicate tags, including members of weighted groups.
+Remove the common novelty and literal outfit-wording checks, and unrelated
+concrete examples from planning and tag-format repair. JSON, output format,
+participant-count, explicit exclusions and source weights remain validated.
+See [deduplication behavior and text validation](docs/gemma-expansion-retry-fix.ko.md).
 
 **Version 0.2.2:** reduce native Gemma GGUF memory and repeated LoRA work.
 Keep the per-layer embedding (PLE) table in CPU RAM and transfer selected rows;
@@ -118,7 +120,8 @@ the pinned assets.
   internal routing format; the user receives STRINGs.
 - Tag mode uses the **same patched instance** to render each resulting caption
   as tags. Explicit color/appearance/side phrases from that caption seed the tag
-  prefix. A lexical caption guard rejects unsupported additions and reports them. Original English tag inputs remain unchanged at the beginning; new
+  prefix. Generated tags are deduplicated without a caption-vocabulary allowlist
+  or semantic content filter. Original English tag inputs remain unchanged at the beginning; new
   additions are limited by `max_added_tags`. Korean is translated rather than
   copied to the final tag output.
 - Excluded phrases are blocked during token sampling, with underscore and space

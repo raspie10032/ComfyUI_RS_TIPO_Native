@@ -26,6 +26,18 @@ class LanguageTests(unittest.TestCase):
         self.assertIn('offering/receiving',prompt)
         self.assertIn('["1", "2", "3"]',prompt)
 
+    def test_prompt_shape_contains_no_unrelated_example_facts(self):
+        for count in (0, 1, 2, 10):
+            for form in ('tags', 'natural_language'):
+                with self.subTest(count=count, form=form):
+                    prompt = instruction('cafe', ('adult woman, black hair',)*count,
+                        output_format=form, expand_common=True)
+                    shape = json.loads(prompt.split('OUTPUT SHAPE (fill strings from ACTUAL SOURCE and compatible new details):\n')[1].split('\n')[0])
+                    self.assertEqual(shape, {'common': '', 'characters': {
+                        str(i): '' for i in range(1, count+1)}})
+                    for unrelated in ('umbrella', 'rooftop', 'green hair', 'grey coat', 'bus stop'):
+                        self.assertNotIn(unrelated, prompt)
+
     def test_comfy_parenthesis_escapes_are_only_removed_from_model_prose_input(self):
         common = r'cafe \(indoor\), (colorful theme:1.3)'
         character = r'aria \(original character\), (blue jacket:1.1)'
