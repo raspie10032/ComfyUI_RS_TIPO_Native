@@ -7,6 +7,8 @@ assert.equal(formatDownloadStatus(data), 'Downloading model.safetensors · 50.0%
 assert.match(formatDownloadStatus({...data,phase:'verifying'}), /Checking SHA-256/);
 assert.match(formatDownloadStatus({...data,phase:'ready'}), /verified/);
 assert.match(formatDownloadStatus({...data,phase:'stopped'}), /resume/);
+assert.match(formatDownloadStatus({...data,phase:'gemma-loading'}), /Gemma base/);
+assert.match(formatDownloadStatus({...data,phase:'gemma-generating'}), /Gemma TIPO/);
 const listeners = {}, node = {}, panel = {}, panels = new WeakMap([[node,panel]]);
 bindDownloadStatus({addEventListener(name, fn){listeners[name]=fn;}}, {graph:{getNodeById(id){return id==='7'?node:null;}}}, panels);
 listeners.rs_tipo_download({detail:data});

@@ -17,3 +17,9 @@ integration. The learned caption-to-tag format was consulted in KGen
 The model card for the pinned TIPO-v2.1 checkpoint identifies weight terms as
 Kohaku License 1.0. Architecture attribution does not license the model weights.
 See docs/references.md for exact sources, revisions and adaptation boundaries.
+
+Gemma TIPO runtime and adapter/quantized loading:
+RS-Seasonal-Prompt-Generator by raspie10032, revision 354cc9b.
+Apache-2.0, see Seasonal-APACHE-LICENSE. Native inference and joint prompt
+routing are modified for this extension. Packed GGUF decoding retains its
+separate attribution in vendor/gguf_torch/NOTICE.md.

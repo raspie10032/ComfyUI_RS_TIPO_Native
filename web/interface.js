@@ -2,6 +2,7 @@ import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 import { updateSockets } from "./sockets.js";
 import { bindDownloadStatus } from "./download-status.js";
+import { resultText, modelSummary } from "./report.js";
 
 const panels = new WeakMap();
 const downloadPanels = new WeakMap();
@@ -9,7 +10,8 @@ bindDownloadStatus(api, app, downloadPanels);
 const configuredInputs = new WeakSet();
 const scheduled = new WeakSet();
 const restoring = new WeakSet();
-const advancedNames = new Set(["max_new_tokens", "max_added_tags", "seed", "control_after_generate", "temperature", "common_weight", "character_weight"]);
+const advancedNames = new Set(["max_new_tokens", "max_added_tags", "seed", "control_after_generate", "temperature", "common_weight", "character_weight", "quality_era", "language_model", "translation_max_tokens", "generation_max_tokens"]);
+const retiredNames = new Set(["common_weight", "character_weight", "max_new_tokens", "input_language", "translation_max_tokens", "protect_source"]);
 const value = (node, name, fallback) => node.widgets?.find(w => w.name === name)?.value ?? fallback;
 const promptSocket = name => /^(?:common_prompt|character\d+)$/.test(name);
 
@@ -106,9 +108,12 @@ function refresh(node, sockets = true) {
         layoutPromptSockets(node);
     }
     for (const widget of node.widgets ?? []) {
-        if (!advancedNames.has(widget.name)) continue;
+        if (!advancedNames.has(widget.name) && !retiredNames.has(widget.name) && widget.name !== 'tipo_lora') continue;
         const linked = node.inputs?.find(input => input.name === widget.name)?.link != null;
-        const hide = !value(node, "advanced", false) && !linked;
+        const standalone = value(node, 'model_family', 'gemma_tipo') === 'tipo_2_1';
+        const hide = (retiredNames.has(widget.name) && !(standalone && widget.name === 'protect_source'))
+            || (standalone && ['language_model', 'tipo_lora'].includes(widget.name))
+            || (advancedNames.has(widget.name) && !value(node, "advanced", false) && !linked);
         if (hide && !widget.tipoSaved && !widget.type?.startsWith("converted-widget")) {
             widget.tipoSaved = { type: widget.type, computeSize: widget.computeSize, hidden: widget.hidden };
             widget.type = "rs-tipo-hidden"; widget.hidden = true; widget.computeSize = () => [0, -4];
@@ -126,23 +131,46 @@ function addReport(node) {
     root.style.cssText = "display:flex;flex-direction:column;gap:6px;padding:8px;box-sizing:border-box;height:100%;background:#18212b;color:#e0e8f3;font:12px sans-serif;";
     root.style.width = "100%";
     const help = document.createElement("div");
-    help.textContent = "Shared scene + participant roles · Source protection limits added attributes and known role conflicts. Review results before generation.";
+    help.textContent = "Choose Gemma TIPO for Korean/English, or TIPO 2.1 for English. Missing files download on first use. Review meaning and roles.";
     const status = document.createElement("div");
     status.textContent = "Connect common / character STRINGs, then run. Results appear here.";
     const select = document.createElement("select");
     select.setAttribute("aria-label", "TIPO result slot");
+    const view = document.createElement("select");
+    view.setAttribute("aria-label", "TIPO result view");
+    for (const [value, label] of [['output', 'Output'], ['source', 'Source'], ['details', 'Model details / raw output']]) {
+        const option = document.createElement("option");
+        option.value = value; option.textContent = label; view.append(option);
+    }
+    const copy = document.createElement("button");
+    copy.type = "button"; copy.textContent = "Copy";
+    copy.setAttribute("aria-label", "Copy TIPO displayed result");
+    const controls = document.createElement("div");
+    controls.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;";
+    select.style.flex = "1"; view.style.flex = "1";
+    controls.append(select, view, copy);
     const text = document.createElement("textarea");
     text.readOnly = true; text.setAttribute("aria-label", "TIPO expansion result");
     text.style.cssText = "flex:1;min-height:100px;resize:none;background:#0f1720;color:#e0e8f3;border:1px solid #40536a;padding:8px;white-space:pre-wrap;";
-    let rows = [];
+    let modelReport = null;
     const render = () => {
-        const row = rows[Number(select.value)];
-        const rejected = row?.rejected_tags?.map(item => `${item.tag} — ${item.reason}`).join("\n");
-        const blocked = Object.entries(row?.exclusion?.hits ?? {}).map(([tag, n]) => `${tag}: ${n}`).join("\n");
-        text.value = row ? `Original\n${row.original}\n\nAdded\n${row.added_tags || '(none)'}\n\nBlocked during generation (candidate attempts)\n${blocked || '(none)'}\n\nSource protection after generation\n${rejected || '(none)'}\n\nExpanded\n${row.output}` : "";
+        text.value = resultText(modelReport, select.value || 'all', view.value || 'output');
+        select.disabled = view.value === 'details';
+        copy.disabled = !text.value;
     };
-    select.onchange = render;
-    root.append(help, status, select, text);
+    select.onchange = view.onchange = render;
+    copy.disabled = true;
+    copy.onclick = async () => {
+        try {
+            await navigator.clipboard.writeText(text.value);
+            copy.textContent = 'Copied';
+            setTimeout(() => { copy.textContent = 'Copy'; }, 1200);
+        } catch {
+            text.focus(); text.select();
+            copy.textContent = 'Press Ctrl+C';
+        }
+    };
+    root.append(help, status, controls, text);
     // Legacy ComfyUI resets display on the outer DOM widget each frame.
     // Preserve the report's flex layout inside an independent inner element.
     const container = document.createElement("div");
@@ -151,14 +179,21 @@ function addReport(node) {
         serialize: false, hideOnZoom: false, getMinHeight: () => 245, getMaxHeight: () => 245,
     });
     panels.set(node, report => {
-        rows = report.slots ?? [];
-        select.replaceChildren(...rows.map((row, i) => {
+        modelReport = report;
+        const previous = select.value;
+        const all = document.createElement("option");
+        all.value = 'all'; all.textContent = 'All prompts';
+        select.replaceChildren(all, ...(report.slots ?? []).map(row => {
             const option = document.createElement("option");
-            option.value = String(i); option.textContent = row.slot === "common" ? "Common prompt" : `Character ${row.slot}`;
+            option.value = String(row.slot); option.textContent = row.slot === "common" ? "Common prompt" : `Character ${row.slot}`;
             return option;
         }));
-        help.textContent = report.shared_context ? "Context from common + character inputs: " + report.shared_context : "Write the scene in common_prompt and each participant’s appearance/action in its character input. Shared action context is gathered automatically.";
-        status.textContent = `${report.character_count} characters · ${report.seconds}s · Source protection ${report.protect_source === false ? 'OFF' : 'ON'} · Added tags ≤ ${report.max_added_tags ?? 'unlimited'}/output · ${report.building_pipe_available ? 'RS pipe + STRINGs' : 'STRINGs (RS pack not installed)'}`;
+        select.value = [...select.options].some(option => option.value === previous) ? previous : 'all';
+        help.textContent = report.model_family === 'TIPO 2.1'
+            ? 'Standalone TIPO 2.1 · English only. Tags share action context; captions use individual inputs and may invent details. Prefer Gemma TIPO for character prose.'
+            : 'One Gemma base + selected TIPO LoRA. Reads all participants jointly; no second model. Korean meaning and tag accuracy remain experimental.';
+        status.textContent = `${modelSummary(report)}\n${report.character_count} characters · ${report.seconds}s · ${report.output_format} · ${report.building_pipe_available ? 'RS pipe + STRINGs' : 'STRINGs'}`;
+        status.style.whiteSpace = 'pre-wrap';
         render();
     });
 }
@@ -172,7 +207,7 @@ app.registerExtension({
             const result = originalCreated?.apply(this, arguments);
             const status = document.createElement("div");
             status.style.cssText = "padding:6px;box-sizing:border-box;font:12px sans-serif;white-space:normal;overflow-wrap:anywhere;color:#b9dcec;";
-            status.textContent = "Model: auto-download if missing (~1.85 GiB).";
+            status.textContent = "Selected model downloads on first use. Gemma Q4 + adapter ~3.27 GiB; TIPO 2.1 ~1.85 GiB. Cached files are reused.";
             this.addDOMWidget("tipo_download", "rs-tipo-download", status, {
                 serialize: false, hideOnZoom: false, getMinHeight: () => 42, getMaxHeight: () => 42,
             });
@@ -185,7 +220,7 @@ app.registerExtension({
             const result = created?.apply(this, arguments);
             addReport(this);
             for (const widget of this.widgets ?? []) {
-                if (!["character_count", "advanced"].includes(widget.name)) continue;
+                if (!["character_count", "advanced", "model_family"].includes(widget.name)) continue;
                 const callback = widget.callback;
                 widget.callback = (...args) => { callback?.apply(widget, args); refresh(this); };
             }

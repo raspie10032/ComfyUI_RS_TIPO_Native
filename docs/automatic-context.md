@@ -1,3 +1,5 @@
+> Historical standalone TIPO implementation/test record. The current active node uses Gemma + TIPO LoRA. See [current usage](usage.ko.md) and [Gemma validation](gemma-tipo-validation.md).
+
 # Automatic scene/role context and socket repair — 2026-11-01
 
 The main `RSTIPOPrompt` UI accepts `common_prompt`, active `character1`–`character10`

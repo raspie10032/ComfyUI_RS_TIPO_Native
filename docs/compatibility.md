@@ -1,3 +1,5 @@
+> Historical standalone TIPO implementation/test record. The current active node uses Gemma + TIPO LoRA. See [current usage](usage.ko.md) and [Gemma validation](gemma-tipo-validation.md).
+
 # Older ComfyUI and follow-up protection — 2026-11-01
 
 ## Scope and test environment

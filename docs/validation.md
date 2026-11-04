@@ -1,3 +1,5 @@
+> Historical standalone TIPO implementation/test record. The current active node uses Gemma + TIPO LoRA. See [current usage](usage.ko.md) and [Gemma validation](gemma-tipo-validation.md).
+
 # Native baseline validation — 2026-11-01
 
 This records the initial independent TIPO execution baseline. The subsequent
@@ -64,7 +66,7 @@ they unload models and interrupt execution.
 
 ## Installed local runtime
 
-The project was linked into `/home/raspie/AI/ComfyUI/custom_nodes/` and the
+The project was linked into the test ComfyUI's `custom_nodes/` folder and the
 `comfyui.service` user service restarted after verifying its queue was empty.
 The isolated TIPO server was stopped. The existing port 8188 runtime registered
 both nodes and executed a real completion successfully: 32 output tokens,

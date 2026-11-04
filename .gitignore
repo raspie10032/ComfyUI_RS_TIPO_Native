@@ -4,3 +4,4 @@ __pycache__/
 validation/
 models/
 .venv/
+unsloth_compiled_cache/

@@ -1,280 +1,240 @@
-# RS TIPO Native 사용법
+# RS TIPO Native 가이드 — 원본 TIPO와 Gemma TIPO
 
-이 확장은 이미지 생성 전에 **전역과 캐릭터별 프롬프트를 보강**합니다.
-TIPO v2.1을 PyTorch로 실행하고, 모델 적재·해제는 ComfyUI가 관리합니다.
-새 워크플로에서는 **RS TIPO Prompt (Experimental)** 하나를 사용합니다.
-초기 실험용 노드 4개는 기본 추가 목록에서 숨겼으며, 옛 워크플로를 불러오면
-기존 동작을 유지합니다. [이전 노드와 이전 방법](legacy-nodes.md).
+**원본 TIPO 2.1과 Gemma 기반 TIPO LoRA를 같은 ComfyUI 노드에서 선택해 사용하는 방법**입니다.
+기준일: 2026-11-04. 노드 이름은 **RS TIPO Native (Experimental)**입니다.
 
-캐릭터들은 같은 장면·상호작용을 참고하면서 각자의 외형과 담당 행동을
-보강합니다. 다른 캐릭터의 외형 STRING은 해당 캐릭터의 추론에 넣지 않습니다.
-공유 행동을 참고하는 기능이며, 역할을 자동으로 설계하거나 이미지의 동작을
-보장하는 기능은 아닙니다. 결과 패널을 확인한 뒤 이미지 생성에 사용하세요.
+## 먼저, 원저작자와 출처
 
-## 1. 설치와 모델 준비
+**TIPO 논문 저자분들과, 공식 TIPO 모델·Kohaku 아키텍처·KGen 구현을 공개한
+KohakuBlueleaf(Shih-Ying Yeh) 및 각 프로젝트 기여자분들께 감사드립니다.**
+이 확장은 그 공개 작업을 바탕으로 ComfyUI 네이티브 실행과 전역·캐릭터별
+입출력, RS 파이프 연결 등을 추가한 독립 확장입니다.
 
-**RS TIPO 전용 프리빌트 휠이나 C++·CUDA 컴파일은 필요하지 않습니다.**
-ComfyUI의 PyTorch(`torch>=2.5`)와 `safetensors>=0.4`, `tokenizers>=0.21`로
-실행합니다. 이 의존성 자체는 pip에서 일반 바이너리 휠로 설치될 수 있지만,
-별도 RS TIPO 실행기를 설치하는 구조는 아닙니다. **0.1.1부터 모델은 첫 실행 시
-없으면 자동으로 받습니다.** 약 1.85GiB이며 기본 진행 막대와 노드 패널에
-**파일명·전체 퍼센트·받은 용량/전체 용량(MiB)**을 표시합니다. 다운로드 후에는
-SHA-256 검증과 모델 로딩 상태로 바뀝니다. 중단·실패하면 실행 오류를 확인한 뒤
-다시 실행하면 됩니다. 이미 완전히 받은 모델은 다운로드를 건너뜁니다.
+- [TIPO 논문: Text to Image with Text Presampling for Prompt Optimization](https://arxiv.org/abs/2411.08127)
+- [KBlueLeaf의 공식 TIPO 2.1 모델](https://huggingface.co/KBlueLeaf/TIPO-v2.1-1B-A200M)
+- [KohakuBlueleaf / KohakUwULLM](https://github.com/KohakuBlueleaf/KohakUwULLM) · [KGen](https://github.com/KohakuBlueleaf/KGen)
 
-1. ComfyUI의 `custom_nodes` 폴더에서 아래 명령으로 설치하거나, 저장소의
-   Code → Download ZIP을 받아 폴더를 풀어 넣습니다.
+Gemma 쪽의 기반 모델은 [Google DeepMind의 Gemma](https://huggingface.co/google/gemma-4-E2B-it)입니다.
+현재 지원 베이스에는 [p-e-w의 heretic-ara 파생 모델](https://huggingface.co/p-e-w/gemma-4-E2B-it-heretic-ara)과
+[mradermacher의 Q4 배포본](https://huggingface.co/mradermacher/gemma-4-E2B-it-heretic-ara-GGUF)을 사용하며,
+[raspie의 TIPO LoRA](https://huggingface.co/raspie/gemma4-tipo-lora-pilot-002)를 적용합니다.
+**Gemma TIPO는 이 확장에서 지원하는 별도 학습 경로**입니다. 공식 TIPO 체크포인트와 구분해 주세요.
+각 코드·가중치의 라이선스와 사용한 부분은 [출처 상세](references.md)와 [NOTICE](../NOTICE)에 정리했습니다.
 
-   ```sh
-   git clone https://github.com/raspie10032/ComfyUI_RS_TIPO_Native.git
-   ```
-2. **ComfyUI를 실행하는 Python**으로 의존성을 설치합니다. 시스템 Python이나
-   다른 가상환경에 설치하면 ComfyUI에서 찾지 못할 수 있습니다.
-3. 재시작한 ComfyUI에서 노드를 실행하면 없는 모델 파일을 자동으로 받습니다.
-   오프라인 사용을 위해 미리 받고 싶다면 같은 Python으로 아래 다운로드
-   도구를 실행할 수 있습니다. 모델 경로는 실제 ComfyUI 경로로 바꿉니다.
+## 1. 어떤 일을 하는 노드인가요?
 
-```sh
-python -m pip install -r requirements.txt
-# 선택: 첫 실행을 기다리지 않고 미리 다운로드
-python tools/download_model.py /path/to/ComfyUI/models/tipo/TIPO-v2.1-1B-A200M
+짧은 프롬프트를 읽고, 이미지 생성에 사용할 태그나 영어 설명을 보강합니다.
+전역 프롬프트와 캐릭터별 프롬프트를 나눠 입력하고, 같은 번호의 STRING 출력을 받습니다.
+
+| `model_family` | 실행하는 모델 | 입력 | 사용을 시작할 때 |
+| --- | --- | --- | --- |
+| `tipo_2_1` | 원저작자의 공식 `TIPO-v2.1-1B-A200M` 체크포인트 | 영어 | 짧은 영어 태그 + `tags` |
+| `gemma_tipo` | 지원 Gemma 4 E2B 베이스 + 선택한 TIPO LoRA | 한국어·영어 | `pilot-002` + `natural_language` 또는 `tags` |
+
+모델을 바꿔도 입력·출력 소켓은 같습니다. 기본 선택은 `gemma_tipo`이며,
+원본 TIPO를 쓰려면 `model_family=tipo_2_1`로 바꿉니다.
+선택한 모델 하나로 실행하며 Gemma 번역 뒤에 원본 TIPO를 연결하는 방식은 아닙니다.
+
+생성 결과는 영어입니다. 다만 `expand_common`을 끄면 전역은 입력 원문을 그대로 반환하므로
+한국어 전역도 그대로 남습니다. 전역까지 영어로 보강하려면 켜 주세요.
+
+## 2. 설치와 첫 다운로드
+
+저장소: [ComfyUI_RS_TIPO_Native](https://github.com/raspie10032/ComfyUI_RS_TIPO_Native)
+
+ComfyUI 폴더에서 다음을 실행합니다.
+
+```bash
+git clone https://github.com/raspie10032/ComfyUI_RS_TIPO_Native custom_nodes/ComfyUI_RS_TIPO_Native
+python -m pip install -r custom_nodes/ComfyUI_RS_TIPO_Native/requirements.txt
 ```
 
-Windows 포터블판은 해당 배포본의 `python_embeded/python.exe`, 가상환경은
-그 환경의 Python을 명시해서 실행하세요. 위 명령의 `python`을 그 실행 파일로
-바꾸면 됩니다. Windows 실행 검증은 아직 하지 않았습니다.
+`python`은 **ComfyUI를 실행하는 Python**으로 바꿔 주세요. 가상환경을 쓰면 그 환경에서 실행합니다.
+Windows 포터블은 배포본 최상위 폴더에서 다음처럼 실행합니다.
 
-필요한 핵심 파일은 다음과 같습니다.
-
-```text
-ComfyUI/models/tipo/TIPO-v2.1-1B-A200M/
-  config.json
-  tokenizer.json
-  model.safetensors
+```powershell
+git clone https://github.com/raspie10032/ComfyUI_RS_TIPO_Native ComfyUI/custom_nodes/ComfyUI_RS_TIPO_Native
+.\python_embeded\python.exe -m pip install -r .\ComfyUI\custom_nodes\ComfyUI_RS_TIPO_Native\requirements.txt
 ```
 
-`extra_model_paths.yaml`에 등록한 `tipo` 경로도 검색합니다. 각 검색 경로 아래에
-`TIPO-v2.1-1B-A200M` 폴더가 있어야 합니다. 기존 GGUF는 사용할 수 없습니다.
-다운로더는 고정된 공식 모델 리비전의 데이터만 받고 새 파일의 SHA-256을
-검증합니다. 기존 완전한 폴더는 재사용하며, 불완전한 다운로드는 재실행하면
-캐시를 이용해 이어받습니다. 확장을 불러오는 것만으로 다운로드하지는 않습니다.
+Windows 명령은 표준 포터블 폴더 구조 기준이며, Windows 실제 추론 검증은 아직 없습니다.
+설치 후 ComfyUI 재시작 → 브라우저 새로고침 → **RS TIPO Native (Experimental)** 검색 순서로 진행합니다.
+이전 **RS TIPO Prompt**와 내부 노드 ID `RSTIPOPrompt`가 같아 기존 연결을 이어 씁니다.
 
-ComfyUI를 재시작하고 브라우저를 새로고침한 뒤 `RS TIPO Prompt`를 검색합니다.
-노드 안에서 모델을 불러오므로 별도 모델 로더는 연결하지 않습니다.
-STRING 출력은 단독 사용 가능합니다. 빌딩 파이프를 쓰려면
-`ComfyUI_RS_MultiCharacter_Sampler`도 설치되어 있어야 합니다.
+Gemma 경로에는 Gemma 4 네이티브 텍스트 생성 API가 있는 ComfyUI가 필요합니다.
+해당 API가 없다는 오류가 나오면 ComfyUI를 업데이트해 주세요.
+추론은 ComfyUI 모델 관리와 PyTorch로 수행하며, 별도 추론 서버 설치는 필요 없습니다.
 
-## 2. 빠르게 시작하기
+**선택한 모델에 필요한 누락 파일은 첫 실행 때 자동 다운로드합니다.**
+노드에 파일명·진행률·용량과 로딩 상태가 표시됩니다.
 
-[예제 shared-interaction.json](../examples/shared-interaction.json)을 ComfyUI에
-끌어다 놓거나 워크플로 열기로 불러옵니다. 기본 Primitive STRING 입력 노드와
-TIPO 결과 패널만 사용하며, 이미지를 생성하거나 NAI에 요청하지 않습니다.
+| 선택 | 첫 설치 다운로드량 | ComfyUI 기준 저장 위치 |
+| --- | --- | --- |
+| 원본 TIPO 2.1 | 약 1.85 GiB | `models/tipo/TIPO-v2.1-1B-A200M/` |
+| Gemma TIPO 기본 Q4 경로 | 베이스·토크나이저·기본 LoRA 합계 약 3.27 GiB | `models/text_encoders/rs_gemma_q4/`, `models/loras/rs_gemma_tipo/` |
 
-1. `character_count`를 2로 둡니다.
-2. 전역·캐릭터 1·캐릭터 2 STRING을 각각 연결합니다.
-3. `expand_common=OFF`, `protect_source=ON`으로 시작합니다.
-4. 실행하고 결과 패널에서 캐릭터별 `Original`, `Added`, `Excluded`,
-   `Expanded`를 확인합니다.
-5. 확인한 출력 STRING 또는 빌딩 파이프를 이미지 생성 워크플로에 연결합니다.
+인식 가능한 로컬 Gemma 네이티브 BF16 베이스가 있으면 `language_model=auto`가 우선 사용합니다.
+실제 다운로드량은 설치된 파일에 따라 다릅니다. **파일 크기는 필요한 VRAM 용량과 다릅니다.**
+Gemma Q4 배포 파일도 이 노드에서는 네이티브 PyTorch 경로로 실행합니다.
+다운로드 중단 후 다시 실행하면 Hugging Face 캐시의 부분 파일을 재사용합니다.
+고정 리비전·SHA-256 검증, 출처·오프라인 설치는 [모델 다운로드 안내](native-models.md)를 보세요.
 
-이 노드는 입력 문자열을 읽습니다. 이미지 모델이 이미 인코딩한 CONDITIONING은
-입력으로 받지 않습니다. 영문 태그와 영문 상호작용 설명으로 먼저 시험하세요.
-한국어·일본어 역할 이해의 품질은 검증하지 않았습니다.
-
-## 3. 입력마다 담당할 내용
-
-| 입력 | 적을 내용 |
-| --- | --- |
-| `common_prompt` | 전체 인원수, 배경, 시간, 공통 상황 |
-| `character1` … `character10` | 각자의 외형·의상·위치·담당 행동 |
-| `building_pipe` (선택) | 기존 위치·마스크·LoRA·참조·카메라 등 설정 |
-
-예를 들어 컵을 건네는 장면을 만듭니다.
-
-**전역**
+## 3. 기본 연결
 
 ```text
-2girls, university cafe, afternoon, wooden table, sitting, indoors
+장면 STRING ──────→ common_prompt
+캐릭터 1 STRING ──→ character1    RS TIPO Native → common_prompt STRING
+캐릭터 2 STRING ──→ character2                   → character1 STRING
+                                                → character2 STRING
+기존 RS 파이프 ───→ building_pipe (선택)          → building_pipe (선택)
 ```
 
-**캐릭터 1 — 왼쪽에서 컵을 건네는 사람**
+`common_prompt`에는 인원수·장소·공통 상황을, `character1`, `character2`에는
+각자의 외형·의상·위치·담당 행동을 적습니다. 입력 타입은 STRING입니다.
+
+`character_count`를 실제 사용할 인원수에 맞춥니다. 0~10명을 지원하며,
+활성 번호를 벗어난 입력은 처리하지 않고 해당 STRING 출력은 빈 문자열이 됩니다.
+전역만 보강할 때는 0명과 `expand_common=ON`으로 설정하고 전역 STRING 출력을 사용하세요.
+RS 빌딩 파이프에는 최소 한 명의 캐릭터가 필요합니다.
+
+**캐릭터 번호가 이미지의 좌우 위치를 정하지는 않습니다.** 프롬프트에 위치를 적고,
+실제 영역 배치는 사용하는 이미지 생성 워크플로의 위치·마스크 설정으로 조절합니다.
+
+## 4. 원본 TIPO 2.1로 시작하기
+
+[원본 TIPO 영어 예제 JSON](../examples/tipo-2.1-english.json)을 ComfyUI로 불러오면 됩니다.
+다음은 예제 입력이며, 생성 결과를 인용한 것이 아닙니다.
 
 ```text
+common_prompt:
+2girls, university cafe, afternoon, wooden table
+
+character1:
 (blonde hair:1.2), blue eyes, pink cardigan, on left, offering cup, extending arms
-```
 
-**캐릭터 2 — 오른쪽에서 컵을 받는 사람**
-
-```text
+character2:
 black hair, brown eyes, yellow sweater, on right, receiving cup, reaching out
 ```
 
-별도 상호작용 입력은 없습니다. 전역에 공통 상황을 적고 각 캐릭터에
-`offering`과 `receiving` 같은 담당 행동을 적으면, 노드가 활성 캐릭터의
-행동·위치 절을 모아 공유 문맥을 구성합니다. 보강 대상의 역할을 다시
-표시하며, 각 캐릭터의 전체 원문은 해당 캐릭터에만 전달합니다.
-결과 패널 상단에서 실제로 수집한 문맥을 확인할 수 있습니다.
-
-현재 자동 수집은 영어 행동·위치 태그를 보수적으로 인식하는 방식입니다.
-알 수 없는 표현은 해당 캐릭터 원문에만 남고, 상대에게 공유되지 않을 수
-있습니다. 미지정 역할이나 좌우 위치를 임의로 만들어 넣지는 않습니다.
-캐릭터 번호는 출력·파이프 슬롯의 대응이며 화면 좌우 순서가 아닙니다.
-수집한 역할 목록을 이미지 생성용 전역 출력에 통째로 덧붙이지 않습니다.
-전역에 특정 캐릭터의 외형을 적으면 다른 캐릭터도 그 정보를 읽게 됩니다.
-
-## 4. 출력 연결
-
-### STRING으로 사용
-
-```text
-전역 STRING ────┐                      ┌─ common_prompt → 생성기의 전역 입력
-캐릭터 1 STRING ┼─ RS TIPO Prompt ──────┼─ character1 → 1번 캐릭터 프롬프트
-캐릭터 2 STRING ┘                      └─ character2 → 2번 캐릭터 프롬프트
-```
-
-빌딩 파이프를 사용하지 않아도 됩니다. 같은 실행의 보강 결과를 STRING과
-파이프에 함께 내보내므로 출력마다 TIPO를 다시 실행하지 않습니다.
-
-### RS 빌딩 파이프로 사용
-
-```text
-전역·각 캐릭터 STRING → RS TIPO Prompt → LoRA / 위치 / 마스크 → 최종 파이프 → 샘플러
-                              └─ common_prompt STRING ─────────────→ 전역 입력
-```
-
-기존 파이프를 TIPO의 `building_pipe`에 연결해 설정을 이어받을 수도 있습니다.
-주력 `RS TIPO Prompt`의 **프롬프트 원문은 STRING 입력이 기준**입니다.
-파이프만 연결해서 그 안의 캐릭터 문장을 자동으로 가져오는 모드가 아닙니다.
-선택한 활성 슬롯은 STRING 표로 갱신되며 글자 삽입 슬롯은 뒤에서 추가하세요.
-기존 `Native Pipe Expand` 워크플로는 계속 열 수 있습니다. 새로 구성할 때는
-전역·캐릭터 STRING을 통합 노드에 연결하세요. [입력 규칙 차이](legacy-nodes.md).
-
-위치·LoRA 같은 설정 노드는 TIPO 앞뒤에 둘 수 있습니다. 캐릭터 프롬프트를
-다시 쓰는 노드를 TIPO 뒤에 놓으면 그 노드가 보강 문장을 덮어쓸 수 있으니
-프롬프트를 정하는 순서는 확인하세요. 샘플러가 전역 입력을 따로 받는 경우
-TIPO의 `common_prompt` 출력도 연결해야 최종 전역을 명시적으로 전달합니다.
-
-`character_count`를 5→3으로 줄이면 4·5번은 실행하지 않고 해당 STRING 출력은
-빈 문자열이 됩니다. 연결된 비활성 소켓은 나중에 다시 사용할 수 있도록
-남아 있을 수 있습니다. **0명으로 전역만 보강하려면 `expand_common=ON`을
-켜세요.** OFF이면 전역 원문을 그대로 전달하고 전역 보강 추론은 하지 않습니다.
-0명은 전역 STRING만 사용하는 모드이며 빌딩 파이프를
-소비하는 노드에 연결하면 오류로 안내합니다.
-
-## 5. 조절항목
-
-| 항목 | 기본값 | 의미 |
-| --- | --- | --- |
-| `character_count` | 2 | 활성 캐릭터 0~10명 |
-| `expand_common` | OFF | 전역에도 태그를 추가할지 선택. OFF이면 전역 원문 유지 |
-| `protect_source` | ON | 알려진 외형·의상·구도 변경과 역할 충돌 태그를 보수적으로 제외 |
-| `excluded_tags` | 빈 문자열 | 생성 단계에서 막을 태그. 쉼표·줄바꿈 구분, 모든 활성 출력에 적용 |
-| `length` | long | 모델이 학습한 목표 길이. short / long / very_long |
-| `advanced` | OFF | 아래의 상세 설정 표시. 숨겨도 값은 유지 |
-| `max_new_tokens` | 128 | 출력 토큰 상한. 길이 제한에 걸린 마지막 미완성 태그는 제거 |
-| `max_added_tags` | 6 | 고급 설정. 각 출력에 실제로 추가할 태그 수의 상한(1~32). 목표 개수가 아니며 원문 태그는 세지 않음 |
-| `seed` | 0 | 텍스트 샘플링 시드. 0도 유효. 이미지 생성 시드와 별개 |
-| `temperature` | 0.5 | 텍스트 샘플링 다양성. 0은 가장 높은 점수의 토큰을 선택 |
-| `common_weight` | 0.5 | 캐릭터 보강 시 전역 입력 토큰 참고 강도, 0~4 |
-| `character_weight` | 1.5 | 자기 캐릭터 입력 토큰 참고 강도, 0~4 |
-
-강도는 **TIPO 내부 어텐션**을 조절합니다. 이미지 생성 CFG나
-`(blonde hair:1.2)`의 가중치와 다릅니다. 원문의 가중치는 출력에 보존하고,
-TIPO 입력에는 지원하는 가중치 문법을 정리한 태그 내용을 전달합니다.
-
-강도 1은 중립, 0은 해당 입력 구간을 차단합니다. `common_weight=0`이면
-전역과 자동으로 모은 행동 문맥을 모두 차단합니다. 원래 전역은 출력에 남습니다.
-전역만 보강하는 호출에는 `common_weight`가 캐릭터 호출처럼 적용되지 않습니다.
-강도를 높여도 내용이 더 정확해진다고 보장하지 않습니다. 우선 기본값을 쓰고,
-같은 입력·고정 시드·temperature 0에서 1/1과 비교해 보세요.
-
-원문 보호가 켜져 있으면 캐릭터 보강에서 지정한 행동을 보충하는 태그와
-기본 자세·표정·상대 시선 후보를 남기고, 무관한 소품·장식과 단순 동의어
-반복을 줄입니다. 예를 들어 `offering cup, extending arms`에는
-`holding cup`, `outstretched hand`를 보충할 수 있지만 `holding pen`은 제외합니다.
-기본 자세나 표정도 바뀌지 않길 원하면 원문에 명시하세요. 인식 가능한 영어
-동작·태그를 이용하는 제한된 규칙이며 의미 전체를 판정하는 기능은 아닙니다.
-원문 보호를 끄면 이 추가 선택도 꺼지지만 태그 수 상한은 유지됩니다.
-전역 보강은 이 캐릭터 행동 선택을 쓰지 않고 기존 보호와 수 상한을 적용합니다.
-
-**더 적게 추가한다고 그림이 더 좋아지는 것은 아닙니다.** 제한을 너무 엄격히
-한 첫 시험에서는 컵 전달이 오히려 약해졌습니다. 기본값은 유용한 자세·손동작을
-살리는 쪽으로 조정했지만, 같은 시드 비교만으로 모든 장면의 품질 향상을
-보장할 수 없습니다. [실험 조건과 비교 결과](role-additions.md)를 참고하세요.
-
-## 6. 결과 확인과 문제 해결
-
-**0.1.1 제외 태그 예:** `3d, white_shirt, long sleeves`.
-`long_hair`와 `long hair`는 같고, 대소문자·연속 공백도 통일해서 비교합니다.
-출력 원문의 표기와 가중치는 보존합니다. 전역이나 활성 캐릭터 원문에 이미
-동일한 제외 태그가 있으면 실행 전에 충돌을 알려주므로 한쪽을 수정해 주세요.
-
-이 기능은 결과를 만든 뒤 remove하는 방식이 아니라 **다음 토큰 후보를
-선택하는 시점에 차단**합니다. 기존 `protect_source` 후처리는 별도입니다.
-동의어나 자연어로 우회한 의미까지 막지는 못하며, 짧은 제외 태그가 더 긴
-태그의 시작 부분과 같으면 그 태그에도 영향을 줄 수 있습니다.
-대체 표현이 어색해질 수 있으니 결과를 검토하세요.
-
-결과 패널의 캐릭터 선택기에서 `Original`(원문), `Added`(추가),
-`Blocked during generation`(생성 중 차단 후보),
-`Source protection after generation`(기존 원문 보호 후처리), `Expanded`(최종)을 확인합니다.
-전역 보강을 끄면 전역은 별도 생성 결과 목록에 없고 캐릭터 결과가 표시됩니다.
-
-- **활성 캐릭터 STRING이 비어 있음:** 해당 입력을 연결하거나 인원수를 줄입니다.
-- **다운로드 실패:** 네트워크·폴더 권한·디스크 여유를 확인하고 재실행합니다.
-- **원문과 제외 목록 충돌:** 표시된 슬롯의 원문 또는 제외 목록을 수정합니다.
-- **빌딩 파이프 확장이 없다는 오류:** RS 멀티캐릭터 확장을 설치하거나 STRING만 사용합니다.
-- **문맥 길이 초과:** 전역·캐릭터 문장을 줄이거나 출력 토큰 상한을 줄입니다.
-  4096 토큰 문맥을 넘기면 조용히 잘라 쓰지 않고 오류로 알립니다.
-- **추가 태그가 거의 없음:** 보호 기능이 후보 대부분을 제외했을 수 있습니다.
-  `Excluded`를 먼저 확인하세요. OFF 비교는 가능하지만 외형·역할 변경을 직접 검토해야 합니다.
-- **의미가 어긋남:** 각자의 담당 행동을 원문에 명시하고 전역 상황과의 모순을 줄입니다.
-  현재 보호 기능은 어휘 기반이며 모든 동의어·부정·관계 충돌을 이해하지 못합니다.
-- **노드가 안 보이거나 옛 UI가 남음:** ComfyUI 재시작 후 브라우저를 새로고침하고
-  서버의 확장 로드 오류를 확인합니다.
-
-모델은 요청 중 전체 적재가 필요합니다. FP16 파라미터만 약 1.85GiB이며
-추론·캐시에 추가 메모리를 씁니다. 캐릭터는 각각 독립 추론하므로 인원수가
-늘면 텍스트 보강 시간도 늘어납니다. 부분 레이어 오프로딩·양자화는 미지원입니다.
-
-## 7. 노드 하나로 사용하기
-
-| 사용할 입력 | RS TIPO Prompt 설정 |
+| 항목 | 시작 설정 |
 | --- | --- |
-| 전역 하나 | `character_count=0`, `expand_common=ON`, 전역 STRING 출력 사용 |
-| 전역 + 캐릭터 한 명 | `character_count=1`, `common_prompt`와 `character1` 연결 |
-| 여러 캐릭터 | 인원수 1~10, 각 번호의 STRING 연결 |
-| RS 파이프 | 같은 노드의 `building_pipe` 출력 사용. LoRA·위치 등은 앞뒤로 연결 |
+| `model_family` | `tipo_2_1` |
+| `character_count` | `2` |
+| `output_format` | `tags` |
+| `expand_common` | `OFF` — 전역 원문 유지 |
+| `protect_source` | `ON` — 알려진 외형·역할 충돌을 줄이는 보호 |
 
-별도 모델 로더나 보강 노드를 추가할 필요가 없습니다. 전역만 보강할 때
-`expand_common=OFF`이면 추론 없이 원문을 그대로 전달합니다.
+실행하면 공식 TIPO 체크포인트를 네이티브로 불러와 프롬프트를 보강합니다.
+Gemma 전용 `language_model`과 `tipo_lora` 선택은 숨겨집니다.
+한국어를 입력하면 다운로드·추론 전에 Gemma TIPO 선택 안내가 나옵니다.
 
-초기 Completion / Expand / Controlled Expand / Pipe Expand는 **호환용**입니다.
-기본 검색·추가 목록에서는 숨기고 ComfyUI의 폐기 노드 표시를 켠 경우
-`RS/TIPO Native/Legacy`에서 찾을 수 있습니다. 기존 워크플로의 노드 ID·입출력·
-연결은 보존합니다. 옛 노드의 결과는 새 노드와 같지 않을 수 있어 자동 변환하지
-않습니다. [차이와 수동 이전 방법](legacy-nodes.md).
+`natural_language`도 선택할 수 있지만, 기존 확인에서는 외형을 임의로 추가하거나
+행동을 빠뜨리는 사례가 있었습니다. 우선 태그 확장부터 결과를 확인해 주세요.
+원문 보호는 제한된 영어 어휘에 대한 검사이므로 모든 의미 충돌을 잡지는 못합니다.
 
-## 검증 범위와 출처
+## 5. Gemma TIPO로 한국어 입력하기
 
-Linux에서 ComfyUI v0.3.26 / 프런트엔드 1.11.8,
-v0.3.64 / 1.27.10, 현재 0.41.0 / 1.55.17의 실제 텍스트 실행·화면 연결·저장
-왕복을 확인했습니다. 같은 현대 Python/PyTorch 환경을 사용한 시험이며,
-구형 PyTorch·Windows·모든 중간 버전의 지원을 보증하지 않습니다.
-이미지 품질 개선과 일반적인 상호작용 정확도는 아직 미검증입니다.
+[Gemma TIPO 한국어 예제 JSON](../examples/gemma-tipo-korean.json)을 불러오거나,
+같은 노드에서 아래처럼 설정합니다. 다음 문장도 입력 예시입니다.
 
-- [레퍼런스와 각 자료에서 사용한 부분](references.md)
-- [전역·캐릭터에서 자동으로 상호작용 문맥 구성 및 연결선 수정](automatic-context.md)
-- [구형 호환성 보고서](compatibility.md)
-- [역할·원문 보호의 실제 비교](source-protection.md)
-- [어텐션 제어 방식과 수치 시험](owned-attention.md)
+```text
+common_prompt:
+성인 여성 두 명이 오후 카페에서 컵을 주고받는다.
 
-## 워크플로 PNG와 현재 제한
+character1:
+왼쪽의 금발 파란 눈 여성이 흰 셔츠를 입고 컵을 건넨다.
 
-[워크플로 포함 PNG](../examples/shared-scene-workflow.png)를 원본으로 저장한 뒤
-ComfyUI 화면에 끌어다 놓으면 예제를 불러올 수 있습니다. 노드 설치와 모델 준비는
-먼저 완료해야 합니다. 미리보기나 JPEG로 변환한 파일에는 워크플로가 없을 수 있습니다.
+character2:
+오른쪽의 갈색 머리 초록 눈 여성이 파란 드레스를 입고 컵을 받는다.
+```
 
-`excluded_tags`에서 생성 단계 제외 태그를 지정할 수 있습니다. 밑줄과 공백은
-동일하게 비교합니다. `protect_source`는 알려진 원문 충돌을 막는 별도의 보호
-기능이며, 결과 패널에서 생성 단계 차단과 후처리 보호를 구분해서 확인합니다.
+| 항목 | 시작 설정 |
+| --- | --- |
+| `model_family` | `gemma_tipo` |
+| `tipo_lora` | `pilot-002` — 기본 다운로드 어댑터 |
+| `character_count` | `2` |
+| `output_format` | `natural_language` — 영어 설명 / `tags` — 영어 태그 |
+| `expand_common` | `ON` — 한국어 전역도 영어로 보강 |
+| `language_model` | 고급 설정의 `auto` |
+
+Gemma가 전역과 활성 캐릭터 입력을 함께 읽고 번호별 영어 설명을 만듭니다.
+`tags`에서는 **같은 LoRA가 적용된 같은 모델**로 그 설명을 태그화합니다.
+생성된 설명에서 명시된 외형·방향을 우선 반영하고 근거 없는 추가 태그를 걸러내지만,
+이 검사로 원래 입력의 모든 의미가 보존되지는 않습니다.
+
+`pilot-001`, `image-30k`도 선택할 수 있습니다. 이름이나 데이터 규모만으로
+어댑터 간 품질 우열이 확인된 것은 아닙니다. 처음에는 기본 `pilot-002`를 사용하세요.
+
+11월 3일 학습 완료한 [공개 학습본](https://huggingface.co/raspie/gemma4-tipo-lora-scale-20pct-001)은
+**`tipo_lora=scale-20pct-001`**로 선택합니다. 첫 실행 때 약 45.3 MiB를 자동으로 받고
+크기·SHA-256을 검증합니다. 파일을 직접 설치하거나 별도 LoRA 로더를 연결할 필요는 없습니다.
+이 학습본은 **CC BY-NC 4.0 비상업용 실험본**입니다. 기존 기본값은 유지됩니다.
+[자동 다운로드 예제 JSON](../examples/gemma-tipo-scale-20pct.json)을 불러오면
+이 학습본과 Gemma Q4 베이스가 선택되어 있습니다. `0.2.0` 이상이 필요합니다.
+
+`local:<이름>`은 해당 컴퓨터에 설치한 별도 학습본입니다.
+`local:scale-20pct-001`은 같은 가중치를 수동 설치했을 때의 선택명입니다.
+[기존 로컬 학습본용 예제](../examples/gemma-tipo-trained-local.json)를 그대로 쓸 수도 있고,
+그 예제의 `tipo_lora`를 `scale-20pct-001`로 바꾸면 공개 자동 다운로드 경로를 사용합니다.
+노드를 업데이트하거나 새 로컬 어댑터를 추가했다면 서버를 재시작해 주세요.
+
+## 6. 결과 확인과 이미지 생성 연결
+
+실행 후 결과 패널에서 `All prompts` 또는 개별 번호를 선택합니다.
+
+- **Output**: 실제 출력 프롬프트.
+- **Source**: 입력 원문. 외형·의상·행동이 유지됐는지 대조합니다.
+- **Model details / raw output**: 실행 모델, 적용 LoRA·rank·가중치 SHA-256과 원시 생성 기록.
+- **Copy**: 현재 표시한 내용 복사.
+
+결과 패널 자체는 워크플로에 저장되지 않습니다. 필요한 결과는 복사해 보관하세요.
+
+**일반 연결:** 전역·캐릭터 STRING 출력을 사용 중인 텍스트 인코더나
+프롬프트 입력 노드에 연결합니다. 모델의 태그·자연어 수용 방식에 맞춰 `output_format`을 고릅니다.
+이 노드는 텍스트를 보강하므로 이미지 모델·샘플러 등 이미지 생성 부분은 별도로 연결합니다.
+
+**RS 멀티캐릭터 연결:** `building_pipe` 출력을 RS 위치·마스크·LoRA 구성과
+최종 파이프를 거쳐 샘플러에 연결합니다. 기존 파이프를 입력하면 위치·마스크·LoRA·참조 등
+프롬프트 이외의 설정을 유지하면서 프롬프트를 교체합니다.
+파이프 기능에는 [RS MultiCharacter Sampler](https://github.com/raspie10032/ComfyUI_RS_MultiCharacter_Sampler)가 필요합니다.
+개별 STRING 출력은 그 확장 없이도 사용할 수 있습니다.
+
+## 7. 알아두면 좋은 설정
+
+| 설정 | 의미 |
+| --- | --- |
+| `expand_common` | 켜면 전역도 보강. 끄면 원문 그대로 반환 |
+| `max_added_tags` | 기본 6. 필드별 추가 묘사 예산이며 반드시 채우는 개수가 아님 |
+| `excluded_tags` | 제외할 태그·구절. 공백과 언더스코어를 동등하게 취급하는 문자열 기반 차단 |
+| `rating`, `quality`, `quality_era` | 모델에 전달하는 보강 방향 메타데이터. 기본 `unspecified`로 시작 |
+| `advanced` | 베이스, 토큰 상한, 시드, 온도 등 고급 설정 표시 |
+| `generation_max_tokens` | Gemma는 전체 응답 한도. TIPO 2.1은 출력별 한도이며 입력+출력이 4096 토큰 이내여야 함 |
+
+입력에 직접 적은 구절을 `excluded_tags`에도 지정하면 모순으로 오류를 알립니다.
+제외 설정은 동의어·다른 언어 표현까지 모두 막는 의미 기반 필터가 아닙니다.
+
+오래된 워크플로에 남은 `common_weight`, `character_weight`, `max_new_tokens`,
+`input_language`, `translation_max_tokens`는 현재 공유 노드에서 무시됩니다.
+출력 길이는 `generation_max_tokens`로 조절하세요.
+`protect_source`는 원본 TIPO에서 사용하며 Gemma 모드에서는 숨겨집니다.
+
+## 8. 문제가 생겼을 때
+
+| 증상 | 확인할 내용 |
+| --- | --- |
+| 노드가 검색되지 않음 | ComfyUI의 Python에 의존성을 설치했는지, 시작 로그의 import 오류와 재시작·새로고침 여부 확인 |
+| Gemma 네이티브 API 오류 | Gemma 4 텍스트 생성을 지원하는 ComfyUI 버전인지 확인 |
+| TIPO 2.1에 한국어를 넣어 오류 | `model_family=gemma_tipo`로 변경하거나 영어로 입력 |
+| 캐릭터 입력 누락 오류 | `character_count`와 활성 STRING 연결 수 확인 |
+| 한국어 전역이 그대로 출력됨 | `expand_common=ON`으로 설정 |
+| `local:` 학습본이 없다고 나옴 | 일반 설치에서는 공개 기본 어댑터 `pilot-002`와 한국어 예제 사용 |
+| 모델 크기·SHA-256 오류 | 오류가 지목한 파일을 별도 보관 후 재시도. 임의로 받은 다른 체크포인트로 대체하지 않기 |
+| 출력 잘림·문맥 상한 오류 | 입력을 줄이고 토큰 설정 확인. TIPO 2.1은 입력+출력 4096 한도 적용 |
+
+원본 TIPO와 Gemma 양쪽의 실제 텍스트 추론 및 노드 전환·저장/불러오기 확인 기록은
+[네이티브 모델 검증 범위](native-models.md#what-has-and-has-not-been-validated)에 있습니다.
+한국어·학습본의 실제 출력과 누락 사례는 [학습본 노드 확인 기록](trained-node-validation.ko.md)을 참고하세요.
+
+두 경로 모두 실험용입니다. 머리색 누락, 역할 오해, 불필요한 묘사 추가가 남아 있으므로
+**출력과 원문을 대조한 후 이미지 생성에 사용해 주세요.**
+노드 실행 성공은 이미지 품질 개선의 증거가 아니며, 이번 가이드 작성에서 새 GPU 추론이나 이미지 생성은 수행하지 않았습니다.

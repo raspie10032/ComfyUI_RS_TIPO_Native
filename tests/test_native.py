@@ -1,6 +1,7 @@
 import importlib.util
 from pathlib import Path
 import sys
+import subprocess
 import unittest
 
 import torch
@@ -103,8 +104,24 @@ class NativeTests(unittest.TestCase):
             make_model().load_state_dict({}, strict=True)
 
     def test_native_import_does_not_load_llama_or_transformers(self):
-        self.assertNotIn("llama_cpp", sys.modules)
-        self.assertNotIn("transformers", sys.modules)
+        # Training tests deliberately import transformers. The public native
+        # import contract must be checked in a fresh process, not discovery order.
+        script = '''
+import importlib.util, pathlib, sys
+root = pathlib.Path(sys.argv[1])
+spec = importlib.util.spec_from_file_location("rs_tipo_native", root / "__init__.py",
+                                            submodule_search_locations=[str(root)])
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module
+spec.loader.exec_module(module)
+from rs_tipo_native.model import KohakuConfig, KohakuForCausalLM, KVCache
+from rs_tipo_native.generation import complete
+assert "llama_cpp" not in sys.modules
+assert "transformers" not in sys.modules
+'''
+        result = subprocess.run([sys.executable, '-c', script, str(ROOT)],
+            capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ import math
 import torch
 
 from .grounding import model_text
+from .metadata import metadata_header, UNSPECIFIED
 
 
 @dataclass(frozen=True)
@@ -60,7 +61,8 @@ class OwnedAttention:
 
 
 def controlled_prompt(tokenizer, common, character=None, *, length="long",
-                      common_weight=0.5, character_weight=1.5, interaction="", interaction_weight=1.0):
+                      common_weight=0.5, character_weight=1.5, interaction="", interaction_weight=1.0,
+                      rating=UNSPECIFIED, quality=UNSPECIFIED, quality_era=UNSPECIFIED):
     """Keep the learned tag format; owner labels live outside the model text.
 
     Each target gets an independent sequence/cache. Other characters are never
@@ -72,7 +74,8 @@ def controlled_prompt(tokenizer, common, character=None, *, length="long",
         if not math.isfinite(weight) or weight < 0:
             raise ValueError("TIPO attention weights must be finite and nonnegative.")
     interaction = interaction.strip()
-    prefix = f"target: <|{length}|>" + (" <|long_to_tag|>" if interaction else "") + "\n"
+    prefix = metadata_header(rating=rating, quality=quality, quality_era=quality_era)
+    prefix += f"target: <|{length}|>" + (" <|long_to_tag|>" if interaction else "") + "\n"
     common = model_text(common).strip().rstrip(",")
     character = None if character is None else model_text(character).strip().rstrip(",")
     if not common and not character:

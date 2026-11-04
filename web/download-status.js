@@ -6,10 +6,14 @@ export function formatDownloadStatus(data) {
     const percent = total ? (100 * current / total).toFixed(1) : '0.0';
     const amount = `${percent}% · ${mib(current)} / ${mib(total)} MiB`;
     switch (data.phase) {
+        case 'gemma-loading': return 'Loading Gemma base + TIPO LoRA…';
+        case 'gemma-generating': return 'Gemma TIPO · Writing scene and character outputs…';
+        case 'tipo-loading': return 'Loading TIPO 2.1…';
+        case 'tipo-generating': return 'TIPO 2.1 · Writing prompt outputs…';
         case 'starting': return `Preparing model download · ${amount}`;
         case 'downloading': return `Downloading ${data.filename} · ${amount}`;
         case 'verifying': return `Checking SHA-256: ${data.filename} · ${amount}`;
-        case 'ready': return 'Model download verified · Loading TIPO…';
+        case 'ready': return 'Model files verified · Ready to load selected model.';
         case 'stopped': return 'Model download stopped · See execution error; run again to resume.';
         default: return '';
     }
@@ -27,4 +31,11 @@ export function bindDownloadStatus(api, app, panels) {
         const panel = node && panels.get(node);
         if (panel) panel.textContent = 'TIPO ready · Execution complete.';
     });
+    for (const eventName of ['execution_error', 'execution_interrupted']) {
+        api.addEventListener(eventName, event => {
+            const node = app.graph?.getNodeById(event.detail?.node_id);
+            const panel = node && panels.get(node);
+            if (panel) panel.textContent = 'TIPO stopped · See execution error.';
+        });
+    }
 }

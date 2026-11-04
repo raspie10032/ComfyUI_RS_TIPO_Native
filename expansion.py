@@ -6,6 +6,7 @@ from .generation import complete
 from .grounding import guard_additions
 from .exclusion import parse_excluded, validate_sources
 from .additions import select_additions
+from .metadata import metadata_fields, UNSPECIFIED
 
 
 def append_completion(original, completion):
@@ -31,14 +32,16 @@ def finished_completion(completion, finish_reason):
 def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
                  character_weight=1.5, length="long", interaction="", interaction_weight=1.0,
                  protect_source=True, peer_actions=(), max_added_tags=None,
-                 grounded_additions=False, **sampling):
+                 grounded_additions=False, rating=UNSPECIFIED, quality=UNSPECIFIED,
+                 quality_era=UNSPECIFIED, **sampling):
     if max_added_tags is not None and (type(max_added_tags) is not int or not 1 <= max_added_tags <= 32):
         raise ValueError('TIPO max_added_tags must be between 1 and 32.')
     validate_sources(parse_excluded(sampling.get('excluded_tags', '')),
                      [('common_prompt', common), ('character', character or '')])
     prompt, attention = controlled_prompt(tokenizer, common, character, length=length,
         common_weight=common_weight, character_weight=character_weight,
-        interaction=interaction, interaction_weight=interaction_weight)
+        interaction=interaction, interaction_weight=interaction_weight,
+        rating=rating, quality=quality, quality_era=quality_era)
     result = complete(model, tokenizer, prompt, attention_control=attention, **sampling)
     original = common if character is None else character
     # A token cap can stop halfway through a tag. Only a model stop/EOS/newline
@@ -66,6 +69,7 @@ def expand_owned(model, tokenizer, common, character=None, *, common_weight=0.5,
         completion = ', '.join(kept)
     expanded, added = append_completion(original, completion)
     return expanded, {**asdict(result), "input": prompt, "original": original,
+                      "metadata": metadata_fields(rating=rating, quality=quality, quality_era=quality_era),
                       "added_tags": added, "output": expanded,
                       "common_weight": common_weight, "character_weight": character_weight,
                       "interaction": interaction, "interaction_weight": interaction_weight,

@@ -19,6 +19,9 @@ def download_status_sender():
     """Bind transient status to the executing node and its requesting client."""
     from server import PromptServer
     server = PromptServer.instance
+    if server is None:
+        from .gemma_runtime import status
+        return status
     node = server.last_node_id
     try:
         from comfy_execution.utils import get_executing_context

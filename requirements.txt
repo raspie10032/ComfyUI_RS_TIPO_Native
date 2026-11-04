@@ -2,3 +2,4 @@ torch>=2.5
 safetensors>=0.4
 tokenizers>=0.21
 huggingface_hub>=0.27
+gguf>=0.19.0,<0.20

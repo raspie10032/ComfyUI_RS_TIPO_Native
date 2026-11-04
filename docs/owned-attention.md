@@ -1,3 +1,5 @@
+> Historical standalone TIPO implementation/test record. The current active node uses Gemma + TIPO LoRA. See [current usage](usage.ko.md) and [Gemma validation](gemma-tipo-validation.md).
+
 # Input ownership and controlled native TIPO — 2026-11-01
 
 The native execution baseline is now extended with actual input-span attention

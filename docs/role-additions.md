@@ -1,3 +1,5 @@
+> Historical standalone TIPO implementation/test record. The current active node uses Gemma + TIPO LoRA. See [current usage](usage.ko.md) and [Gemma validation](gemma-tipo-validation.md).
+
 # 역할을 보존하는 적은 보강: 구현과 실제 이미지 비교
 
 이 변경은 `RS TIPO Prompt (Experimental)`의 캐릭터별 보강을 조정합니다.

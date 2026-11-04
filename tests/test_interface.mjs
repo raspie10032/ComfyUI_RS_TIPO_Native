@@ -9,6 +9,7 @@ const source = (await readFile(new URL('../web/interface.js', import.meta.url), 
     .replace('import { app } from "../../scripts/app.js";', 'const app = globalThis.tipoTestApp;')
     .replace('import { api } from "../../scripts/api.js";', 'const api = {addEventListener(){}};')
     .replace('"./download-status.js"', JSON.stringify('data:text/javascript;base64,' + Buffer.from(await readFile(new URL('../web/download-status.js', import.meta.url), 'utf8')).toString('base64')))
+    .replace('"./report.js"', JSON.stringify('data:text/javascript;base64,' + Buffer.from(await readFile(new URL('../web/report.js', import.meta.url), 'utf8')).toString('base64')))
     .replace('"./sockets.js"', JSON.stringify(socketURL));
 globalThis.tipoTestApp = app;
 await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));

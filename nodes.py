@@ -4,6 +4,8 @@ from .generation import complete
 from .expansion import expand_owned, expand_pipe, append_completion, finished_completion
 from .runtime import LOCK, MODEL_NAME, MODEL_REVISION, acquire_model
 from .exclusion import parse_excluded, validate_sources
+from .metadata import metadata_inputs, metadata_fields, UNSPECIFIED
+from .tipo_native_lora import adapter_choices
 
 
 def exclusion_input():
@@ -190,24 +192,30 @@ class RSTIPOPrompt:
     FUNCTION = "expand"
     OUTPUT_NODE = True
     DESCRIPTION = ("Expand character STRINGs using the common scene and action context derived automatically from all active character inputs. Outputs the same results as STRINGs and an RS building pipe. "
-        "0–10 characters; out-of-count inputs are ignored. Optional incoming pipe keeps LoRA, mask, position and camera settings. "
-        "Source protection conservatively rejects unrequested appearance, composition and recognized role conflicts. Experimental: this is not a general relationship planner.")
+        "Choose Gemma TIPO (one adapted Gemma, Korean/English) or standalone TIPO 2.1 (English). Missing models download on first use. 0–10 characters; out-of-count inputs are ignored. Optional incoming pipe keeps LoRA, mask, position and camera settings. "
+        "Review original, output and model details in the result panel. Experimental: meanings and roles can still be omitted or changed.")
 
     @classmethod
     def INPUT_TYPES(cls):
+        from .language import MODES
+        try:
+            from .gemma_runtime import model_choices
+            language_models = model_choices()
+        except (ImportError, KeyError):  # Import/schema checks outside ComfyUI.
+            language_models = ['auto']
         return {"required": {
             "character_count": ("INT", {"default": 2, "min": 0, "max": 10,
                 "tooltip": "0 = common prompt only. Only slots 1–N are expanded; saved connections above N are ignored."}),
             "expand_common": ("BOOLEAN", {"default": False,
-                "tooltip": "Expand the shared scene too. Source protection removes recognized participant-specific additions; review remaining tags."}),
+                "tooltip": "Rewrite the shared scene in the selected English output format. Off returns it unchanged. Review generated details."}),
             **control_inputs(),
             "advanced": ("BOOLEAN", {"default": False,
-                "tooltip": "Show token limit, seed, temperature and source-attention weights. Does not reset their values."}),
+                "tooltip": "Show Gemma base, token limit, seed and temperature. Does not reset their values."}),
         }, "optional": {
             "common_prompt": ("STRING", {"forceInput": True, "multiline": True,
                 "tooltip": "Shared scene and interaction. Character inputs supply each participant’s appearance and role; their action context is gathered automatically."}),
             **{f"character{i}": ("STRING", {"forceInput": True, "multiline": True,
-                "tooltip": f"Character {i}: positive prompt. Original text and weights are preserved."}) for i in range(1, 11)},
+                "tooltip": f"Character {i}: positive STRING prompt. Only active slots are read. Review facts and roles in the output. / {i}번 긍정 프롬프트. 활성 번호만 읽습니다."}) for i in range(1, 11)},
             "protect_source": ("BOOLEAN", {"default": True,
                 "tooltip": "Keep supplied roles and appearance. Add action details and limited basic posture/gaze support; reject unrelated props and redundant tags. Limited English vocabulary. / 역할과 외형을 지키며 행동·기본 자세를 보강. 무관한 소품과 중복은 줄입니다."}),
             "building_pipe": (PIPE_TYPES, {"tooltip": "Optional: retain existing LoRA, masks, positions, references and deferred cameras. STRING inputs replace the prompt table."}),
@@ -215,60 +223,96 @@ class RSTIPOPrompt:
             # Append new widgets so old positional widgets_values retain the
             # excluded_tags index even without our named restore properties.
             "max_added_tags": ("INT", {"default": 6, "min": 1, "max": 32,
-                "tooltip": "Maximum added tags per output, not a target to fill. Does not change the decoder token budget. / 출력별 추가 태그 상한입니다. 개수를 채우려고 추가하지 않습니다."}),
+                "tooltip": "Requested detail budget per field in prose or tags; not a target to fill. / 자연어·태그의 필드별 묘사 보강 요청량입니다."}),
+            **metadata_inputs(),
+            "input_language": (list(MODES), {"default": "auto",
+                "tooltip": "Legacy saved control; ignored. All languages use the selected Gemma base with its TIPO LoRA. / 이전 워크플로 호환용 숨김 항목."}),
+            "language_model": (language_models, {"default": "auto",
+                "tooltip": "Gemma TIPO only: auto uses a local unmerged Gemma 4 E2B or downloads Q4. Ignored by TIPO 2.1. / Gemma TIPO 전용 베이스 선택."}),
+            "translation_max_tokens": ("INT", {"default": 2048, "min": 256, "max": 8192,
+                "tooltip": "Legacy saved control; ignored. Use generation_max_tokens. / 이전 번역 설정은 사용하지 않습니다."}),
+            "tipo_lora": (adapter_choices(), {"default": "pilot-002",
+                "tooltip": "TIPO LoRA on the same Gemma; published choices download on first run. scale-20pct-001: experimental, CC BY-NC 4.0. local:* uses installed weights. / 공개본은 첫 실행 때 자동 다운로드. scale-20pct-001은 비상업용 실험본. 결과 패널에서 적용본 확인."}),
+            "output_format": (["tags", "natural_language"], {"default": "tags",
+                "tooltip": "Output style for the same common/character STRING sockets. / 같은 STRING 출력의 태그·자연어 형식."}),
+            "generation_max_tokens": ("INT", {"default": 2048, "min": 256, "max": 8192,
+                "tooltip": "Gemma: joint response limit. TIPO 2.1: per-output limit, input + output <=4096. / 모델의 문맥 상한을 넘으면 오류로 안내합니다."}),
+            "model_family": (["gemma_tipo", "tipo_2_1"], {"default": "gemma_tipo",
+                "tooltip": "Gemma TIPO: adapted Gemma for Korean/English. TIPO 2.1: standalone English model. Selected assets download once; no chained models. / 실행할 단일 모델 계열 선택."}),
         }, "hidden": {"prompt": "PROMPT", "unique_id": "UNIQUE_ID"}}
 
     def expand(self, character_count=2, common_prompt="", expand_common=False,
                building_pipe=None, prompt=None, unique_id=None, advanced=False,
-               protect_source=True, excluded_tags="", max_added_tags=6, **values):
-        from .interface import (validate_inputs, expand_strings, pipe_adapter,
-                                make_building_pipe, pipe_is_requested)
+               protect_source=True, excluded_tags="", max_added_tags=6,
+               rating=UNSPECIFIED, quality=UNSPECIFIED, quality_era=UNSPECIFIED,
+               input_language='auto', language_model='auto', translation_max_tokens=2048,
+               tipo_lora='pilot-002', output_format='tags', generation_max_tokens=2048,
+               model_family='gemma_tipo', **values):
+        from .interface import validate_inputs, pipe_adapter, make_building_pipe, pipe_is_requested
+        from .gemma_runtime import run_scene, status_context
         characters = validate_inputs(common_prompt, character_count, values)
-        if type(max_added_tags) is not int or not 1 <= max_added_tags <= 32:
-            raise ValueError('TIPO max_added_tags must be between 1 and 32. / 추가 태그 상한은 1~32입니다.')
-        validate_sources(parse_excluded(excluded_tags), [('common_prompt', common_prompt),
+        excluded = parse_excluded(excluded_tags)
+        if model_family not in ('gemma_tipo', 'tipo_2_1'):
+            raise ValueError('Select Gemma TIPO or TIPO 2.1. / 모델 계열을 선택해 주세요.')
+        if model_family == 'tipo_2_1':
+            from .tipo_runtime import validate_request
+            validate_request(common_prompt, characters, excluded, output_format, generation_max_tokens)
+        validate_sources(excluded, [('common_prompt', common_prompt),
             *((f'character {i}', text) for i, text in enumerate(characters, 1))])
+        if type(max_added_tags) is not int or not 1 <= max_added_tags <= 32:
+            raise ValueError('TIPO max_added_tags must be between 1 and 32.')
+        if type(generation_max_tokens) is not int or not 256 <= generation_max_tokens <= 8192:
+            raise ValueError('TIPO generation_max_tokens must be between 256 and 8192.')
         if not characters and pipe_is_requested(prompt, unique_id):
-            raise ValueError("TIPO: a building pipe needs at least one character. Use common_prompt STRING for a scene-only expansion. / 빌딩 파이프는 최소 1명이 필요합니다. 전역만 쓸 때는 STRING 출력을 연결해 주세요.")
+            raise ValueError('TIPO: a building pipe needs at least one character. Use common_prompt STRING for a scene-only expansion.')
+        metadata = metadata_fields(rating=rating, quality=quality, quality_era=quality_era)
         adapter = pipe_adapter()
         if adapter is None and (building_pipe is not None or pipe_is_requested(prompt, unique_id)):
-            raise ValueError("TIPO building pipe needs ComfyUI_RS_MultiCharacter_Sampler. Install it, or use the individual STRING outputs. / 빌딩 파이프는 RS 멀티캐릭터 확장이 필요합니다. STRING 출력은 단독 사용 가능합니다.")
-        # Validate/normalize pipe before allocating the TIPO model.
+            raise ValueError('TIPO building pipe needs ComfyUI_RS_MultiCharacter_Sampler. Install it, or use STRING outputs.')
         draft = make_building_pipe(adapter, building_pipe, common_prompt, characters) if adapter else None
-        settings = {name: values.get(name, schema[1]["default"] if len(schema) > 1 else schema[0][0])
-                    for name, schema in control_inputs().items()}
-        import comfy.model_management as mm
-        from comfy.utils import ProgressBar
-        from .scene_context import scene_context
-        shared_context, roles = scene_context(common_prompt, characters)
-        slot_index = -1
-        with LOCK:
-            model, tokenizer = acquire_model()
-            def run(scene, person):
-                nonlocal slot_index
-                if person is not None:
-                    slot_index += 1
-                context, _ = scene_context(scene, characters, slot_index if person is not None else None)
-                bar = ProgressBar(settings["max_new_tokens"])
-                output, report = expand_owned(model, tokenizer, scene, person, interaction=context,
-                    interaction_weight=settings["common_weight"] if person is not None else 1.0,
-                    protect_source=protect_source,
-                    max_added_tags=max_added_tags, grounded_additions=True,
-                    excluded_tags=excluded_tags,
-                    peer_actions=tuple(action for i, actions in enumerate(roles) if i != slot_index for action in actions) if person is not None else (),
-                    **settings,
-                    interrupt=mm.throw_exception_if_processing_interrupted, progress=bar.update_absolute)
-                report["context_source"] = "common_and_character_inputs"
-                return output, report
-            scene, expanded, reports = expand_strings(common_prompt, characters, run, expand_common=expand_common)
+        seed = values.get('seed', 0)
+        temperature = values.get('temperature', .3)
+        with LOCK, status_context(unique_id):
+            try:
+                settings = dict(output_format=output_format,
+                    length=values.get('length', 'long'), max_added_tags=max_added_tags,
+                    expand_common=expand_common, excluded=excluded, metadata=metadata,
+                    max_tokens=generation_max_tokens, temperature=temperature, seed=seed)
+                if model_family == 'gemma_tipo':
+                    scene, expanded, model_info = run_scene(common_prompt, characters,
+                        model=language_model, adapter=tipo_lora, **settings)
+                else:
+                    from .tipo_runtime import run_scene as run_tipo
+                    scene, expanded, model_info = run_tipo(common_prompt, characters,
+                        protect_source=protect_source, **settings)
+            except BaseException:
+                from .gemma_runtime import status
+                status('stopped')
+                raise
+        # English tag sources are immutable. Use the generated text only for
+        # additions, not as authority to replace an identity, weight or role.
+        if output_format == 'tags':
+            from .language import has_korean
+            from .expansion import append_completion
+            def preserve(source, output):
+                if has_korean(source):
+                    return output
+                combined, added = append_completion(source, output)
+                if not added:
+                    return source
+                additions = [t.strip() for t in added.split(',') if t.strip()][:max_added_tags]
+                return source.rstrip().rstrip(',') + ', ' + ', '.join(additions)
+            scene = preserve(common_prompt, scene) if expand_common else common_prompt
+            expanded = tuple(preserve(source, output) for source, output in zip(characters, expanded))
         pipe = make_building_pipe(adapter, draft, scene, expanded) if adapter else None
-        info = {"model": MODEL_NAME, "revision": MODEL_REVISION,
-                "protect_source": protect_source,
-                "max_added_tags": max_added_tags,
-                "excluded_tags": list(parse_excluded(excluded_tags)),
-                "character_count": character_count, "shared_context": shared_context,
-                "participant_roles": roles, "context_source": "common_and_character_inputs",
-                "building_pipe_available": pipe is not None,
-                "seconds": round(sum(row.get("seconds", 0.) for row in reports), 4), "slots": reports}
-        return {"ui": {"tipo_report": [json.dumps(info, ensure_ascii=False)]},
-                "result": (pipe, scene, *expanded, *("" for _ in range(10-len(expanded))))}
+        reports = [{'slot': 'common', 'original': common_prompt, 'output': scene}]
+        reports += [{'slot': i, 'original': source, 'output': output}
+                    for i, (source, output) in enumerate(zip(characters, expanded), 1)]
+        info = {**model_info, 'model_family': 'Gemma TIPO' if model_family == 'gemma_tipo' else 'TIPO 2.1', 'output_format': output_format,
+            'character_count': character_count, 'building_pipe_available': pipe is not None,
+            'context_source': ('joint_common_and_all_characters' if model_family == 'gemma_tipo' else 'owner_separated_with_shared_action_context'), 'slots': reports, 'metadata': metadata,
+            'max_added_tags': max_added_tags,
+            'legacy_controls_ignored': ['common_weight', 'character_weight', 'max_new_tokens',
+                'input_language', 'translation_max_tokens'] + (['protect_source'] if model_family == 'gemma_tipo' else ['language_model', 'tipo_lora'])}
+        return {'ui': {'tipo_report': [json.dumps(info, ensure_ascii=False)]},
+                'result': (pipe, scene, *expanded, *('' for _ in range(10-len(expanded))))}

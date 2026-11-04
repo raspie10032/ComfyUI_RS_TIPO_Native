@@ -1,0 +1,95 @@
+[
+  {
+    "name": "cup",
+    "english": {
+      "common": "2girls, adult women, cafe, afternoon, wooden table, passing a cup, looking at each other",
+      "characters": [
+        "blonde hair, blue eyes, white shirt, on left, offering cup, extending arms",
+        "brown hair, green eyes, blue dress, on right, receiving cup, reaching out"
+      ]
+    },
+    "korean_tags": {
+      "common": "여성 2명, 성인 여성, 카페, 오후, 나무 탁자, 컵 주고받기, 서로 바라보기",
+      "characters": [
+        "금발, 파란 눈, 흰 셔츠, 왼쪽, 컵 건네기, 팔 내밀기",
+        "갈색 머리, 초록 눈, 파란 원피스, 오른쪽, 컵 받기, 손 뻗기"
+      ]
+    },
+    "korean_sentence": {
+      "common": "오후의 카페에서 성인 여성 두 명이 나무 탁자를 사이에 두고 서로 바라보며 컵을 주고받는다.",
+      "characters": [
+        "왼쪽의 금발에 파란 눈을 가진 여성이 흰 셔츠를 입고 팔을 내밀어 컵을 건넨다.",
+        "오른쪽의 갈색 머리에 초록 눈을 가진 여성이 파란 원피스를 입고 손을 뻗어 컵을 받는다."
+      ]
+    }
+  },
+  {
+    "name": "dance",
+    "english": {
+      "common": "2girls, adult women, ballroom, evening, dancing together, looking at each other",
+      "characters": [
+        "pink hair, red eyes, black dress, on left, leading dance, hand on other waist",
+        "brown hair, blue eyes, white dress, on right, following dance, hand on other shoulder"
+      ]
+    },
+    "korean_tags": {
+      "common": "여성 2명, 성인 여성, 무도회장, 저녁, 함께 춤추기, 서로 바라보기",
+      "characters": [
+        "분홍 머리, 빨간 눈, 검은 드레스, 왼쪽, 춤 이끌기, 상대 허리에 손",
+        "갈색 머리, 파란 눈, 흰 드레스, 오른쪽, 춤 따라가기, 상대 어깨에 손"
+      ]
+    },
+    "korean_sentence": {
+      "common": "저녁의 무도회장에서 성인 여성 두 명이 서로 바라보며 함께 춤을 춘다.",
+      "characters": [
+        "왼쪽의 분홍 머리에 빨간 눈을 가진 여성이 검은 드레스를 입고 상대의 허리에 손을 얹어 춤을 이끈다.",
+        "오른쪽의 갈색 머리에 파란 눈을 가진 여성이 흰 드레스를 입고 상대의 어깨에 손을 얹어 춤을 따라간다."
+      ]
+    }
+  },
+  {
+    "name": "braid",
+    "english": {
+      "common": "2girls, adult women, bedroom, morning, hairdressing",
+      "characters": [
+        "blonde hair, blue eyes, white shirt, sitting in front, having hair braided, hands on own lap",
+        "black hair, brown eyes, blue cardigan, standing behind, braiding another's hair, both hands holding strands of partner's hair"
+      ]
+    },
+    "korean_tags": {
+      "common": "여성 2명, 성인 여성, 침실, 아침, 머리 손질",
+      "characters": [
+        "금발, 파란 눈, 흰 셔츠, 앞에 앉기, 머리를 땋아 받기, 자기 무릎에 두 손",
+        "검은 머리, 갈색 눈, 파란 카디건, 뒤에 서기, 상대 머리 땋기, 양손으로 상대 머리카락 잡기"
+      ]
+    },
+    "korean_sentence": {
+      "common": "아침의 침실에서 성인 여성 두 명이 머리를 손질한다.",
+      "characters": [
+        "금발에 파란 눈을 가진 여성이 흰 셔츠를 입고 앞에 앉아 자기 무릎에 두 손을 놓고 상대에게 머리를 땋아 받는다.",
+        "검은 머리에 갈색 눈을 가진 여성이 파란 카디건을 입고 뒤에 서서 양손으로 상대의 머리카락을 잡아 땋아 준다."
+      ]
+    }
+  },
+  {
+    "name": "garden",
+    "english": {
+      "common": "1girl, adult woman, garden, sunny afternoon, wooden bench, reading a book",
+      "characters": [
+        "brown hair, green eyes, yellow sweater, sitting, holding an open book with both hands, looking down at book"
+      ]
+    },
+    "korean_tags": {
+      "common": "여성 1명, 성인 여성, 정원, 화창한 오후, 나무 벤치, 독서",
+      "characters": [
+        "갈색 머리, 초록 눈, 노란 스웨터, 앉기, 양손으로 펼친 책 들기, 책 내려다보기"
+      ]
+    },
+    "korean_sentence": {
+      "common": "화창한 오후의 정원에서 성인 여성 한 명이 나무 벤치에 앉아 책을 읽는다.",
+      "characters": [
+        "갈색 머리에 초록 눈을 가진 여성이 노란 스웨터를 입고 앉아 양손으로 펼친 책을 들고 책을 내려다본다."
+      ]
+    }
+  }
+]
