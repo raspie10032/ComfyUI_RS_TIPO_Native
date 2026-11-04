@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.2.3 — 2026-11-04
+
+- Remove ComfyUI literal-parenthesis escapes from intermediate Gemma prose
+  input, where copied escapes could produce invalid JSON. Keep strict JSON
+  parsing, report the actual decoder error, and retry once with explicit
+  escaping instructions rather than guessing or altering malformed output.
+- Plan English tag inputs using their unweighted meaning. Preserve the
+  original character identity, escapes and weighted groups in the final node
+  output. For direct natural-language output, move an inserted sentence
+  article outside an otherwise exact weighted group; report the precise field
+  and missing clause when repair is still required.
+- Reject sentence echoes in the caption-to-tag stage and retry with a compact
+  tag-conversion request using the same adapted model.
+- Keep commas inside parentheses/brackets together during tag deduplication
+  and addition-budget enforcement, so a group such as `(smile, blush:1.5)`
+  cannot be truncated halfway through.
+- Add eight regression tests and verify a two-character escaped-name/weighted
+  prompt on the live ComfyUI server with both BF16 and Q4 plus the
+  `scale-20pct-001` adapter. This checks text execution and source preservation;
+  downstream image generation and general semantic fidelity are not established
+  by this patch. See [validation notes](docs/gemma-json-weight-fix.ko.md).
+
 ## 0.2.2 — 2026-11-04
 
 - Keep the Gemma GGUF per-layer embedding (PLE) table in CPU RAM and gather

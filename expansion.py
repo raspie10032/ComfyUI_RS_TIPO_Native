@@ -9,11 +9,28 @@ from .additions import select_additions
 from .metadata import metadata_fields, UNSPECIFIED
 
 
+def split_tags(text):
+    """Commas inside prompt groups or literal character names are not separators."""
+    depth, start, tags = 0, 0, []
+    for i, char in enumerate(text):
+        if char in '([':
+            depth += 1
+        elif char in ')]':
+            depth = max(0, depth - 1)
+        elif char == ',' and not depth:
+            if text[start:i].strip():
+                tags.append(text[start:i].strip())
+            start = i + 1
+    if text[start:].strip():
+        tags.append(text[start:].strip())
+    return tags
+
+
 def append_completion(original, completion):
     first = completion.split("<|eos|>", 1)[0].split("\n", 1)[0].strip(" ,")
-    seen = {t.strip().casefold() for t in original.split(",")}
+    seen = {t.casefold() for t in split_tags(original)}
     added = []
-    for tag in first.split(","):
+    for tag in split_tags(first):
         tag = tag.strip()
         if tag and tag.casefold() not in seen:
             seen.add(tag.casefold())

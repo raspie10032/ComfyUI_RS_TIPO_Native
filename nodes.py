@@ -293,14 +293,14 @@ class RSTIPOPrompt:
         # additions, not as authority to replace an identity, weight or role.
         if output_format == 'tags':
             from .language import has_korean
-            from .expansion import append_completion
+            from .expansion import append_completion, split_tags
             def preserve(source, output):
                 if has_korean(source):
                     return output
                 combined, added = append_completion(source, output)
                 if not added:
                     return source
-                additions = [t.strip() for t in added.split(',') if t.strip()][:max_added_tags]
+                additions = split_tags(added)[:max_added_tags]
                 return source.rstrip().rstrip(',') + ', ' + ', '.join(additions)
             scene = preserve(common_prompt, scene) if expand_common else common_prompt
             expanded = tuple(preserve(source, output) for source, output in zip(characters, expanded))

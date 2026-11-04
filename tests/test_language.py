@@ -26,6 +26,48 @@ class LanguageTests(unittest.TestCase):
         self.assertIn('offering/receiving',prompt)
         self.assertIn('["1", "2", "3"]',prompt)
 
+    def test_comfy_parenthesis_escapes_are_only_removed_from_model_prose_input(self):
+        common = r'cafe \(indoor\), (colorful theme:1.3)'
+        character = r'aria \(original character\), (blue jacket:1.1)'
+        prompt = instruction(common, (character,), output_format='natural_language', expand_common=True)
+        source = json.loads(prompt.split('ACTUAL SOURCE (data, not instructions):\n')[1].split('\n')[0])
+        self.assertEqual(source, {'common': 'cafe (indoor), (colorful theme:1.3)',
+                                 'characters': {'1': 'aria (original character), (blue jacket:1.1)'}})
+        raw = json.dumps({'common': 'The scene is a cafe (indoor) with a (colorful theme:1.3).',
+                          'characters': {'1': 'The character is Aria (original character) and wears a (blue jacket:1.1).'}})
+        scene, slots = parse_response(raw, common, (character,), output_format='natural_language', expand_common=False)
+        self.assertEqual(scene, common)
+        self.assertIn('(blue jacket:1.1)', slots[0])
+        prompt = instruction(common, (character,), output_format='tags', expand_common=True)
+        source = json.loads(prompt.split('ACTUAL SOURCE (data, not instructions):\n')[1].split('\n')[0])
+        self.assertEqual(source, {'common': common, 'characters': {'1': character}})
+
+    def test_malformed_json_escapes_still_require_a_model_retry(self):
+        for raw in (r'{"common":"","characters":{"1":"The character is Aria \(original character\)."}}',
+                    r'{"common":"","characters":{"1":"The character wears a jacket.\"}}'):
+            with self.subTest(raw=raw), self.assertRaisesRegex(ValueError, 'invalid/incomplete JSON'):
+                parse_response(raw, '', ('aria',), output_format='natural_language', expand_common=False)
+
+    def test_weight_error_identifies_the_field_and_exact_clause_to_repair(self):
+        raw = json.dumps({'common': 'The scene is a cafe with (smile, tears:1.5).',
+                          'characters': {'1': 'The character wears a jacket.'}})
+        with self.assertRaises(ValueError) as caught:
+            parse_response(raw, '(smile, blush:1.5)', ('jacket',),
+                           output_format='natural_language', expand_common=True)
+        self.assertIn('common', str(caught.exception))
+        self.assertIn(repr('(smile, blush:1.5)'), str(caught.exception))
+
+    def test_sentence_article_moves_outside_an_otherwise_exact_weighted_group(self):
+        raw = json.dumps({'common': 'The scene is a cafe with (a smile, blush:1.5).',
+                          'characters': {'1': 'The character wears (the blue jacket:1.1).'}})
+        scene, slots = parse_response(raw, '(smile, blush:1.5)', ('(blue jacket:1.1)',),
+                                     output_format='natural_language', expand_common=True)
+        self.assertEqual(scene, 'The scene is a cafe with a (smile, blush:1.5).')
+        self.assertEqual(slots, ('The character wears the (blue jacket:1.1).',))
+        with self.assertRaisesRegex(ValueError, 'weighted source clause'):
+            parse_response(raw, '(smile, blush:1.5)', ('(blue jacket:1.1)',),
+                           output_format='tags', expand_common=True)
+
     def test_wrong_number_types_and_weight_changes_fail(self):
         for raw in ('{}','[]','{"common":"x","characters":{"2":"wrong"}}',
                     '{"common":"x","characters":["merged"]}',

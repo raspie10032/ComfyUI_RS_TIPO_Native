@@ -96,6 +96,14 @@ class ControlTests(unittest.TestCase):
         self.assertEqual(result, source + ", garden")
         self.assertEqual(added, "garden")
 
+    def test_weighted_groups_and_literal_names_are_indivisible_tags(self):
+        from rs_tipo_native.expansion import split_tags
+        source = r'aria \(original, alternate\), (smile, blush:1.5)'
+        self.assertEqual(split_tags(source), [r'aria \(original, alternate\)', '(smile, blush:1.5)'])
+        combined, added = append_completion(source, '(smile, blush:1.5), (blue jacket, long sleeves:1.2)')
+        self.assertEqual(combined, source + ', (blue jacket, long sleeves:1.2)')
+        self.assertEqual(added, '(blue jacket, long sleeves:1.2)')
+
     def test_pipe_keeps_objects_and_never_passes_other_characters_to_run(self):
         @dataclass(frozen=True)
         class Character:

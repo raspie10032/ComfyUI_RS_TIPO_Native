@@ -65,11 +65,11 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Native Gemma GGUF memory and compute improvements: CPU-resident PLE with row-only transfers,
-            ComfyUI native Linear LoRA output calculation, Q4_K/Q5_K dequantization buffer reuse,
-            and packed-weight reload fixes. No new runtime dependencies. In the measured Q4 setup,
-            ten-character peak PyTorch allocated VRAM fell from about 3.60 to 1.78 GiB;
-            PLE still uses CPU RAM. Results depend on model and hardware; see CHANGELOG and benchmark notes.
+            Fix Gemma JSON escaping for literal parentheses, preserve weighted prompt groups
+            and source identities, and retry sentence echoes during tag conversion using the same model.
+            Strict JSON validation remains enabled; no malformed-output guessing or model fallback.
+            Verified escaped-name and weighted-group text execution with BF16 and Q4 plus scale-20pct-001.
+            No new runtime dependencies. See CHANGELOG and the patch validation notes.
             TIPO authors, KohakuBlueleaf, Gemma and City96 contributors retain credit and their licenses.
         run: |
           test -n "$REGISTRY_ACCESS_TOKEN"

@@ -91,6 +91,14 @@ class MetadataTests(unittest.TestCase):
                          ["max_added_tags", "rating", "quality", "quality_era"])
         self.assertEqual(optional[-7:], ['input_language', 'language_model', 'translation_max_tokens', 'tipo_lora', 'output_format', 'generation_max_tokens', 'model_family'])
 
+    def test_addition_budget_keeps_a_complete_weighted_group(self):
+        with patch('rs_tipo_native.interface.pipe_adapter', return_value=None), \
+             patch('rs_tipo_native.gemma_runtime.run_scene', return_value=(
+                 '', ('(blue jacket, long sleeves:1.2), seated',), {})):
+            result = RSTIPOPrompt().expand(character_count=1, character1=r'aria \(original\)',
+                                           max_added_tags=1)
+        self.assertEqual(result['result'][2], r'aria \(original\), (blue jacket, long sleeves:1.2)')
+
 
 if __name__ == "__main__":
     unittest.main()

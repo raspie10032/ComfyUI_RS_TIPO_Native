@@ -226,6 +226,27 @@ class GemmaRuntimeTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'after one retry'):
                 run_scene('', ('black hair',), output_format='tags')
 
+    def test_prose_echo_in_tag_stage_is_retried_instead_of_published_as_tags(self):
+        caption = 'The character has black hair.'
+        raw = json.dumps({'common': '', 'characters': {'1': caption}})
+        responses = iter([raw, caption, 'black hair'])
+        info = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k: (next(responses), info)):
+            _, slots, report = run_scene('', ('black hair',), output_format='tags')
+        self.assertEqual(slots, ('black hair',))
+        self.assertIn('not prose sentences', report['calls'][1]['format_error'])
+        self.assertEqual(report['model_calls'], 3)
+
+    def test_tag_planning_does_not_require_image_weight_syntax_in_english_prose(self):
+        raw = json.dumps({'common': '', 'characters': {'1': 'The character has red hair and blue eyes.'}})
+        responses = iter([raw, 'red hair, blue eyes'])
+        info = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k: (next(responses), info)):
+            _, slots, _ = run_scene('', ('(red hair, blue eyes:1.2)',), output_format='tags')
+        self.assertEqual(slots, ('red hair, blue eyes',))
+
     def test_caption_tags_keep_weights_and_exclude_recipient_position(self):
         caption='The woman on the left has (blonde hair:1.2) and blue eyes, and is handing a cup to the woman on the right.'
         anchors=caption_anchors(caption)
