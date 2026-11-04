@@ -21,11 +21,12 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.6:** remove Gemma's lexical content filters. Keep generated tag
-content and remove only duplicate tags, including members of weighted groups.
-Remove the common novelty and literal outfit-wording checks, and unrelated
-concrete examples from planning and tag-format repair. JSON, output format,
-participant-count, explicit exclusions and source weights remain validated.
+**Version 0.2.7:** remove the remaining sentence-word and punctuation rejection
+from Gemma's tag conversion. Keep generated content and remove duplicate tags,
+including members of weighted groups. Join wrapped lines without dropping later
+details. Sentence-like wording is accepted; compact tag wording is not guaranteed.
+JSON structure, participant counts, explicit exclusions and source weights remain
+validated, with bounded tag-format repair for empty or JSON responses.
 See [deduplication behavior and text validation](docs/gemma-expansion-retry-fix.ko.md).
 
 **Version 0.2.2:** reduce native Gemma GGUF memory and repeated LoRA work.

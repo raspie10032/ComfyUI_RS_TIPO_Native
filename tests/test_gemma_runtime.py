@@ -210,37 +210,66 @@ class GemmaRuntimeTests(unittest.TestCase):
 
     def test_tag_retry_is_bounded_and_does_not_return_unprocessed_source(self):
         raw = json.dumps({'common': '', 'characters': {'1': 'The woman has black hair.'}})
-        responses = iter([raw, 'bad\nformat', 'bad\nformat'])
+        responses = iter([raw, '', ''])
         info = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
         with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
              patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k: (next(responses), info)):
             with self.assertRaisesRegex(ValueError, 'after one retry'):
                 run_scene('', ('black hair',), output_format='tags')
 
-    def test_prose_echo_in_tag_stage_is_retried_instead_of_published_as_tags(self):
+    def test_sentence_wording_in_tag_stage_is_preserved_without_retry(self):
         caption = 'The character has black hair.'
         raw = json.dumps({'common': '', 'characters': {'1': caption}})
-        responses = iter([raw, caption, 'black hair'])
+        responses = iter([raw, caption])
         info = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
         with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
              patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k: (next(responses), info)):
             _, slots, report = run_scene('', ('black hair',), output_format='tags')
-        self.assertEqual(slots, ('black hair',))
-        self.assertIn('not prose sentences', report['calls'][1]['format_error'])
-        self.assertEqual(report['model_calls'], 3)
+        self.assertEqual(slots, ('black hair, ' + caption,))
+        self.assertNotIn('format_error', report['calls'][1])
+        self.assertEqual(report['model_calls'], 2)
 
-    def test_multisentence_caption_without_simple_finite_verbs_is_not_a_tag_line(self):
+    def test_sentence_punctuation_does_not_reject_generated_content(self):
         caption = 'A colorful cafe. The warm glow casts soft shadows across the tables.'
         raw = json.dumps({'common': caption, 'characters': {}})
-        responses = iter((raw, caption, 'colorful cafe, warm glow, soft shadows'))
+        responses = iter((raw, caption))
         with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
              patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
                  (next(responses), {'seconds': .1, 'output_tokens': 5,
                     'exclusion': {'blocked_candidates': 0}})):
             scene, _, report = run_scene('colorful cafe', (), output_format='tags', expand_common=True)
-        self.assertEqual(scene, 'colorful cafe, warm glow, soft shadows')
-        self.assertIn('format_error', report['calls'][1])
-        self.assertEqual(report['model_calls'], 3)
+        self.assertEqual(scene, caption)
+        self.assertNotIn('format_error', report['calls'][1])
+        self.assertEqual(report['model_calls'], 2)
+
+    def test_reported_common_lighting_clause_survives_with_only_duplicates_removed(self):
+        caption = ('The scene is a colorful living room with a chair. '
+            'The lighting is soft and even, highlighting the details of the room.')
+        raw = json.dumps({'common': caption, 'characters': {}})
+        rendered = ('colorful theme, open mouth, smile, one eye closed, half-closed eyes, '
+            'blush, living roo m, on a chair, lighting is soft and even, '
+            'highlighting the details of the room, colorful_theme, lighting is soft and even')
+        responses = iter((raw, rendered))
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), {'seconds': .1, 'output_tokens': 5,
+                    'exclusion': {'blocked_candidates': 0}})):
+            scene, _, report = run_scene('(colorful theme:1.3), living roo m, on chair', (),
+                output_format='tags', expand_common=True)
+        self.assertEqual(scene, rendered.rsplit(', colorful_theme', 1)[0])
+        self.assertEqual(report['model_calls'], 2)
+        self.assertNotIn('format_error', report['calls'][1])
+
+    def test_wrapped_tag_lines_keep_later_details_and_deduplicate(self):
+        raw = json.dumps({'common': 'The scene is a cafe.', 'characters': {}})
+        responses = iter((raw, 'cafe,\nsoft lighting,\r\nbokeh,\nsoft_lighting'))
+        with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
+             patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k:
+                 (next(responses), {'seconds': .1, 'output_tokens': 5,
+                    'exclusion': {'blocked_candidates': 0}})):
+            scene, _, report = run_scene('cafe', (), output_format='tags', expand_common=True)
+        self.assertEqual(scene, 'cafe, soft lighting, bokeh')
+        self.assertEqual(report['model_calls'], 2)
 
     def test_korean_common_repair_keeps_translated_scene_and_not_only_additions(self):
         responses = iter((json.dumps({'common': 'cafe', 'characters': {}}),

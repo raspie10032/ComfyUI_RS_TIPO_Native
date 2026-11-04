@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.7 — 2026-11-05
+
+- Remove the remaining sentence-word and punctuation rejection in Gemma's
+  caption-to-tag stage. A generated phrase such as `lighting is soft and even`
+  now reaches downstream unchanged instead of exhausting a retry and failing.
+- Join wrapped output lines before tag deduplication so later details are
+  retained. Keep the tag-conversion instruction, source weights, addition
+  budget, explicit exclusions and bounded repair for empty/JSON tag responses.
+  Sentence-like wording is accepted; this does not guarantee compact tags.
+- Add regression coverage for the reported lighting clause, sentence wording,
+  punctuation, wrapped lines and duplicate removal. No model, dependency or
+  native resource-management changes. Preserve upstream credits and licenses.
+
 ## 0.2.6 — 2026-11-04
 
 - Remove Gemma's lexical caption-to-tag content guard. Preserve generated

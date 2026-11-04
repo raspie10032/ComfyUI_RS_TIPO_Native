@@ -201,18 +201,15 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
                     temperature=temperature, seed=seed, excluded=excluded)
                 calls.append({'stage': 'caption_to_tags', 'slot': slot, 'caption': caption,
                               'anchored_prefix': prefix, 'raw': raw, **report})
-                text = raw.strip().strip('`').strip()
-                # Common caption echoes omit their subject ("in a cafe ... who
-                # are smiling", "wears a jacket"). Tag actions use participles
-                # such as wearing/holding, not these finite sentence verbs.
-                sentence = re.search(r'\b(?:is|are|was|were|has|have|wears|holds)\b', text, re.I)
-                sentence = sentence or re.search(r'[.!?]\s+(?:the|a|an|she|he|they|it)\b', text, re.I)
-                valid_format = text and '\n' not in text and not text.startswith(('{', '[')) and not sentence
+                # Wraps and sentence wording are consumable prompt text. Do
+                # not reject content or let append_completion drop later lines.
+                text = ' '.join(raw.strip().strip('`').split())
+                valid_format = text and not text.startswith(('{', '['))
                 if valid_format:
                     # Content is the model's responsibility. Compare complete
                     # tags only; never require words to appear in the caption.
                     return deduplicate_tag_rendering(anchors, text)
-                reason = 'Expected a single comma-separated tag line, not prose sentences.'
+                reason = 'Expected nonempty prompt text, not a JSON object or array.'
                 calls[-1]['format_error'] = reason
                 if attempt:
                     raise GemmaOutputError(f'{slot} tag conversion: {reason}', calls)
