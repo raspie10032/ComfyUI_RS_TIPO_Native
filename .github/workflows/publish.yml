@@ -65,12 +65,12 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Remove the remaining sentence-word and punctuation rejection from
-            Gemma caption-to-tag output. Preserve generated phrases such as
-            lighting is soft and even. Join wrapped lines without dropping
-            later details, then remove duplicate tags. Preserve source weights,
-            explicit exclusions, addition budgets and bounded repair for empty
-            or JSON tag responses. Compact tag wording is not guaranteed.
+            Recover broken Gemma common-string quotes and separators only when
+            the complete character object is independently valid. Preserve
+            later common text and every participant. Other JSON syntax errors
+            receive one syntax-only retry without repeating expansion. Keep
+            raw diagnostics, source weights, explicit exclusions, addition
+            budgets and tag deduplication. Reject incomplete or ambiguous data.
             No new runtime dependencies or model-weight changes.
             TIPO authors, KohakuBlueleaf, Gemma and City96 contributors retain credit and their licenses.
         run: |

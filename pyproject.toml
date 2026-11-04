@@ -1,6 +1,6 @@
 [project]
 name = "rs-tipo-native"
-version = "0.2.7"
+version = "0.2.8"
 description = "Independent ComfyUI-native TIPO prompt expansion, based on the TIPO authors' and KohakuBlueleaf's work, with a separate Gemma TIPO LoRA backend and up to ten character prompts."
 readme = "README.md"
 license = { file = "LICENSE" }

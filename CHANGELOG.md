@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.8 — 2026-11-05
+
+- Recover malformed common-string quotes, line breaks and separators only
+  when a complete, independently valid character object identifies the field
+  boundary. Preserve later common text, literal inner quotes and every
+  character description. Never fill in missing participant fields.
+- For other JSON syntax failures, retry once with a syntax-only request
+  containing the previous response and required shape. Do not repeat the
+  original expansion task while repairing JSON. Keep raw diagnostics and
+  existing slot, source-weight and explicit-exclusion checks.
+- Add regression coverage for early quotes, inner quotes, missing commas,
+  line breaks, escapes, 0/1/2/10 participant routing, bounded repair and rejected
+  incomplete/ambiguous structures. No new dependencies or model changes.
+  Preserve upstream credits and licenses.
+
 ## 0.2.7 — 2026-11-05
 
 - Remove the remaining sentence-word and punctuation rejection in Gemma's

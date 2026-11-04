@@ -181,13 +181,41 @@ OUTPUT JSON:
 
 
 
+def scene_json(text):
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError as original:
+        # Recover only common when the complete character object is valid.
+        # Never infer missing participant boundaries or invent missing fields.
+        match = re.fullmatch(r'\s*\{\s*"common"\s*:\s*"(.*?)'
+            r'"characters"\s*:\s*(\{.*\})\s*\}\s*', text, re.S)
+        if match is None:
+            raise original
+        body, participant_json = match.groups()
+        if re.search(r'(?<!\\)"[^"\r\n]*"\s*:', body):
+            raise original
+        participants = json.loads(participant_json)
+        body = body.rstrip()
+        if body.endswith(','):
+            body = body[:-1].rstrip()
+        if body.endswith('"'):
+            body = body[:-1]
+        elif not re.search(r'(?<!\\)"', body):
+            raise original
+        # Preserve inner quotes, line breaks and literal invalid escapes.
+        # Valid JSON escapes still have their usual meaning.
+        body = re.sub(r'\\(?:["\\/bfnrt]|u[0-9a-fA-F]{4})|\\|"',
+            lambda m: m[0] if len(m[0]) > 1 else json.dumps(m[0])[1:-1], body)
+        return {'common': json.loads('"'+body+'"', strict=False), 'characters': participants}
+
+
 def parse_response(raw, common, characters, *, output_format, expand_common, excluded=()):
     text = raw.strip()
     if text.startswith('```'):
         text = re.sub(r'^```(?:json)?\s*\n', '', text)
         text = re.sub(r'\n```\s*$', '', text)
     try:
-        result = json.loads(text)
+        result = scene_json(text)
     except (ValueError, TypeError) as exc:
         raise ValueError(f'Gemma TIPO returned invalid/incomplete JSON: {exc}. No other model was used.') from exc
     if (not isinstance(result, dict) or set(result) != {'common', 'characters'}

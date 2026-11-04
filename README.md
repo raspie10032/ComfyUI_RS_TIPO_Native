@@ -21,13 +21,15 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.7:** remove the remaining sentence-word and punctuation rejection
-from Gemma's tag conversion. Keep generated content and remove duplicate tags,
-including members of weighted groups. Join wrapped lines without dropping later
-details. Sentence-like wording is accepted; compact tag wording is not guaranteed.
-JSON structure, participant counts, explicit exclusions and source weights remain
-validated, with bounded tag-format repair for empty or JSON responses.
-See [deduplication behavior and text validation](docs/gemma-expansion-retry-fix.ko.md).
+**Version 0.2.8:** recover broken common-string quotes and separators when the
+complete character object is independently valid. Keep the common description,
+including text after an early quote, and preserve every character slot. Other
+JSON syntax errors get one formatting-only retry without repeating the expansion
+task. Incomplete or ambiguous structures still fail with raw diagnostics.
+Generated content still passes through with only tag deduplication, source
+preservation and the configured addition budget.
+See [JSON repair and limits](docs/gemma-json-repair.ko.md) and
+[deduplication behavior](docs/gemma-expansion-retry-fix.ko.md).
 
 **Version 0.2.2:** reduce native Gemma GGUF memory and repeated LoRA work.
 Keep the per-layer embedding (PLE) table in CPU RAM and transfer selected rows;
