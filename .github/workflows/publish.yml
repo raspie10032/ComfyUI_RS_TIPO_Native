@@ -65,16 +65,16 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Default Gemma TIPO to the published presampling-fresh-r8-v1 adapter,
-            matching instruction, text LoRA strength 0.25 and temperature 0.
-            Download pinned adapter files with size and SHA-256 verification.
-            Strength 0 uses the same instruction without adapter patches or
-            adapter download. Keep legacy adapter selections, local aliases,
-            source weights, bounded recovery, cancellation and ComfyUI model
-            management. Add a public automatic-download workflow and report
-            effective patch strength. No new runtime dependencies. Experimental
-            non-commercial adapter; retain TIPO authors, KohakuBlueleaf, Gemma,
-            City96, Korean-localization contributors and source-material terms.
+            Detach explicit SD/NAI numeric weights before Gemma expansion and
+            restore them per source field afterward. Keep generated details
+            when weighted phrases change or disappear; remove duplicate tags.
+            Translate Korean weighted phrases in one extra batched call on the
+            same Gemma and pair by phrase. Failed translation preserves original
+            weighted phrases with visible warnings. Preserve numbered slots,
+            exact disabled-common source, exclusions, budgets, bounded recovery,
+            cancellation and native ComfyUI model management. Keep presampling
+            LoRA strength 0.25 and temperature 0. No new runtime dependencies
+            or adapter weights. Retain upstream attribution and license terms.
         run: |
           test -n "$REGISTRY_ACCESS_TOKEN"
           comfy --skip-prompt --no-enable-telemetry node publish --token "$REGISTRY_ACCESS_TOKEN"

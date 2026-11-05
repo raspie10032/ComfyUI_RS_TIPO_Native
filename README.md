@@ -21,7 +21,15 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.12:** default to the published `presampling-fresh-r8-v1` adapter
+**Version 0.2.13:** detach explicit SD/NAI numeric weights before Gemma expansion
+and restore them afterward. Weight punctuation changes no longer discard a
+field's generated details. Restore missing weighted phrases and remove duplicate
+tags while retaining new descriptions. Korean weighted phrases use one extra
+batched translation call on the same Gemma instance; failed translation preserves
+the original weighted phrase with a visible warning. No new runtime dependencies.
+See [weight handling, validation and limits](docs/gemma-weight-handling.ko.md).
+
+Version 0.2.12: default to the published `presampling-fresh-r8-v1` adapter
 with its matching instruction, **text LoRA strength 0.25** and greedy temperature 0.
 Pinned first-use download with size/SHA-256 checks. Strength 0 uses the same
 instruction without adapter patches or an adapter download. No new runtime
@@ -165,9 +173,14 @@ the pinned assets.
   equivalence, and checked again before routing output. A source that explicitly
   contains a banned phrase is an error. This is literal phrase blocking, not a
   semantic guarantee against every synonym or grammatical variant.
+- Explicit SD `(phrase:1.3)` and NAI `1.3::phrase ::` numeric weights are held
+  by the node, detached for Gemma input, then restored per field after expansion.
+  Missing weighted phrases are reinserted without discarding other generated
+  details. Korean weighted phrases require one extra batched translation call;
+  failed translation retains the original phrase and records a warning.
 - Blank string fields retain their own source, with recovery recorded in model
   details; this may leave the field unexpanded or untranslated. Invalid/incomplete
-  JSON, wrong character keys and lost weighted clauses use one correction with
+  JSON and wrong character keys use one correction with
   the same model. If that fails, independently owned valid fields survive and
   affected fields revert to their own source. Ambiguous documents revert the
   entire scene to its sources. Failed tag conversion retains its own caption.

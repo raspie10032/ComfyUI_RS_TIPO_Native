@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.2.13 — 2026-11-05
+
+- Keep explicit SD/NAI numeric image-prompt weights outside Gemma's response
+  contract. Detach weights before expansion and restore them per source field
+  afterward, preserving numeric spelling, nested groups and escaped names.
+  Missing or changed weighted phrases are reinserted without erasing the rest
+  of an expanded field. Remove duplicate tags while retaining new descriptions.
+- Translate Korean weighted phrases in one batched call on the same loaded
+  Gemma and pair weights by phrase, never by a repeated numeric value. If
+  translation fails, preserve the original weighted phrase with a warning and
+  retain generated details. Disabled common expansion returns its exact source.
+- Preserve numbered-slot ownership, explicit exclusions, addition budgets,
+  bounded format recovery and ComfyUI model management. Keep the published
+  presampling adapter at strength 0.25 and temperature 0. No new dependencies,
+  adapter weights or attribution changes.
+- Validation: 207 Python tests and four JavaScript checks; earlier isolated
+  RTX 5060 Ti Q4 inference covered the reported weighted input before/after,
+  Korean two-person weights, NAI background weights and natural-language
+  restoration. Ten-slot weight ownership is covered by automated tests, not
+  a new ten-person GPU or image-quality evaluation.
+  See [behavior and limits](docs/gemma-weight-handling.ko.md).
+
 ## 0.2.10 — 2026-11-05
 
 - Stop aborting when a structurally valid Gemma response leaves a common or

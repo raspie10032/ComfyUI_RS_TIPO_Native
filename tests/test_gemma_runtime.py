@@ -39,7 +39,7 @@ class GemmaRuntimeTests(unittest.TestCase):
                  (next(responses), info)) as generate:
             scene, slots, report = run_scene('(colorful theme:1.3), cafe',
                 ('adult, red coat', 'adult, blue jacket'), output_format='tags', expand_common=True)
-        self.assertEqual(scene, 'cafe, soft lighting')
+        self.assertEqual(scene, '(colorful theme:1.3), cafe, soft lighting')
         self.assertEqual(slots, ('red coat, waving', 'blue jacket, holding book'))
         self.assertEqual(generate.call_count, 4)
         self.assertIn('CAPTION:\ncolorful theme, cafe\nTAGS:', generate.call_args_list[1].args[1])
@@ -233,8 +233,12 @@ class GemmaRuntimeTests(unittest.TestCase):
                 with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
                      patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k: (next(responses), {'seconds': .1, 'output_tokens': 5})):
                     _, slots, report = run_scene('', (source,), excluded=excluded, output_format='natural_language')
-                self.assertEqual(slots, (source,))
-                self.assertEqual(report['warnings'][0]['action'], 'source_restored_after_retry')
+                if excluded:
+                    self.assertEqual(slots, (source,))
+                    self.assertEqual(report['warnings'][0]['action'], 'source_restored_after_retry')
+                else:
+                    self.assertEqual(slots, ('The character has (silver hair:1.2).',))
+                    self.assertEqual(report['warnings'], [])
 
     def test_caption_tags_must_keep_explicit_attributes(self):
         self.assertEqual(caption_anchors('A woman with black hair and brown eyes wears a blue cardigan, standing behind.'),
@@ -307,7 +311,8 @@ class GemmaRuntimeTests(unittest.TestCase):
                     'exclusion': {'blocked_candidates': 0}})):
             scene, _, report = run_scene('(colorful theme:1.3), living roo m, on chair', (),
                 output_format='tags', expand_common=True)
-        self.assertEqual(scene, rendered.rsplit(', colorful_theme', 1)[0])
+        self.assertEqual(scene, '(colorful theme:1.3), ' +
+            rendered.rsplit(', colorful_theme', 1)[0].removeprefix('colorful theme, '))
         self.assertEqual(report['model_calls'], 2)
         self.assertNotIn('format_error', report['calls'][1])
 
@@ -342,7 +347,7 @@ class GemmaRuntimeTests(unittest.TestCase):
         with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
              patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k: (next(responses), info)):
             _, slots, _ = run_scene('', ('(red hair, blue eyes:1.2)',), output_format='tags')
-        self.assertEqual(slots, ('red hair, blue eyes',))
+        self.assertEqual(slots, ('(red hair, blue eyes:1.2)',))
 
     def test_scene_count_comes_from_explicit_caption(self):
         self.assertEqual(scene_count_anchors('Two adult women are in a cafe.'),('2girls',))

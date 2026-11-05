@@ -77,8 +77,9 @@ class ResilienceTests(unittest.TestCase):
              patch('rs_tipo_native.gemma_runtime.generate', return_value=(raw, INFO)):
             scene, slots, report = run_scene('cafe', ('(blue coat:1.2)', 'adult'),
                 output_format='natural_language', expand_common=True)
-        self.assertEqual((scene, slots), ('Cafe, morning light.', ('(blue coat:1.2)', 'Adult reading.')))
-        self.assertEqual(report['calls'][-1]['source_restored_fields'], ['character1'])
+        self.assertEqual((scene, slots), ('Cafe, morning light.', ('(blue coat:1.2).', 'Adult reading.')))
+        self.assertNotIn('source_restored_fields', report['calls'][-1])
+        self.assertEqual(report['model_calls'], 1)
 
     def test_complete_json_at_token_limit_is_accepted(self):
         raw = '{"common":"cafe","characters":{"1":"Adult waving."}}'

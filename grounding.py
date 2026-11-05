@@ -7,15 +7,9 @@ import re
 
 # Strip explicit weight wrappers only in model inputs/comparison keys. Keep
 # escaped parentheses, artist: prefixes and names containing parentheses intact.
-_WEIGHT = re.compile(r'(?<!\\)\(([^()]*?)(?<!\\):\s*[+-]?\d+(?:\.\d+)?\s*\)')
-_V4 = re.compile(r'(?<!\S)[+-]?\d+(?:\.\d+)?::(.*?)::', re.S)
-
-
 def model_text(text):
-    old = None
-    while old != text:
-        old, text = text, _WEIGHT.sub(r'\1', text)
-    return _V4.sub(r'\1', text)
+    from .prompt_weights import detach_weights
+    return detach_weights(text).plain()
 
 
 def key(text):
