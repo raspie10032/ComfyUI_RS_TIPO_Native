@@ -7,6 +7,7 @@ import hashlib
 from functools import lru_cache
 import json
 import logging
+import math
 import os
 from pathlib import Path
 import re
@@ -16,7 +17,9 @@ import threading
 
 BASE_MODEL = "p-e-w/gemma-4-E2B-it-heretic-ara"
 BASE_REVISION = "c9a1d4c031981f14d86eeb0c7d87de7fafd34513"
-CHOICES = ("none", "pilot-001", "pilot-002", "image-30k", "scale-20pct-001")
+PRESAMPLING_ADAPTER = 'presampling-fresh-r8-v1'
+LOCAL_PRESAMPLING_ADAPTER = 'local:' + PRESAMPLING_ADAPTER
+CHOICES = ("none", "pilot-001", "pilot-002", "image-30k", "scale-20pct-001", PRESAMPLING_ADAPTER)
 REQUIREMENTS = (
     "TIPO adapter for the unmerged p-e-w/gemma-4-E2B-it-heretic-ara base. "
     "Requires native Gemma 4 E2B (~9.57 GiB) or the built-in Q4 base (~3.19 GiB plus tokenizer). "
@@ -29,6 +32,13 @@ REQUIREMENTS = (
 
 # Public release identifiers and SHA-256 hashes, never personal dataset paths.
 CATALOG = {
+    PRESAMPLING_ADAPTER: {
+        "repo": "raspie/gemma4-tipo-lora-presampling-fresh-r8-v1", "revision": "fc610b78d849315af0b9ae45a27c9c3aba09d992",
+        "files": {
+            "adapter_config.json": (11125, "ea6e8a22ffc1e65ac0bccecaaaa2832096acdea3e93bfccd4fddafd65438dcb1"),
+            "adapter_model.safetensors": (47487272, "e0339ef0b200f823ffa2585415cd1b510ea90c182aaabd5b9e0b3e58e76bbf0e"),
+        },
+    },
     "scale-20pct-001": {
         "repo": "raspie/gemma4-tipo-lora-scale-20pct-001", "revision": "3668df754885175408ac247a9e85309fa6528486",
         "files": {
@@ -65,7 +75,7 @@ _LOCAL_NAME = re.compile(r'local:([A-Za-z0-9][A-Za-z0-9_-]{0,63})$')
 
 def adapter_choices(root=None):
     """Published defaults plus explicitly installed local training bundles."""
-    choices=['pilot-002','pilot-001','image-30k','scale-20pct-001']
+    choices=[PRESAMPLING_ADAPTER,'pilot-002','pilot-001','image-30k','scale-20pct-001']
     if root is None:
         try:
             import folder_paths
@@ -95,6 +105,18 @@ def adapter_details(directory, choice):
         'weights_sha256': files.get('adapter_model.safetensors', (None, None))[1],
         'status': manifest.get('status', 'experimental published TIPO adapter'),
     }
+
+
+def default_adapter(root=None):
+    """The published weak-LoRA baseline is available on clean installations."""
+    return PRESAMPLING_ADAPTER
+
+
+def checked_strength(strength):
+    strength = float(strength)
+    if not math.isfinite(strength) or not 0 <= strength <= 2:
+        raise ValueError('TIPO LoRA strength must be finite and between 0 and 2.')
+    return strength
 
 
 def _local_bundle(choice,root,progress=None):
@@ -306,8 +328,9 @@ def adapter_mapping(config, tensors, model_state):
     return mapping
 
 
-def apply_tipo_lora(clip, choice="none"):
-    if choice == "none":
+def apply_tipo_lora(clip, choice="none", strength=1.0):
+    strength = checked_strength(strength)
+    if choice == "none" or strength == 0:
         return clip
     if choice not in CATALOG and not _LOCAL_NAME.fullmatch(choice):
         raise ValueError(f"Unknown TIPO LoRA: {choice}")
@@ -341,7 +364,7 @@ def apply_tipo_lora(clip, choice="none"):
     if set(patches) != set(mapping.values()):
         raise RuntimeError("ComfyUI did not recognize all 190 TIPO adapter targets. Update ComfyUI.")
     result = clip.clone()
-    applied = result.patcher.add_patches(patches, strength_patch=1.0)
+    applied = result.patcher.add_patches(patches, strength_patch=strength)
     if set(applied) != set(patches):
         raise RuntimeError("ComfyUI rejected TIPO adapter targets")
     return result

@@ -65,15 +65,16 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Audit Gemma response handling across empty and capped generations,
-            unambiguous JSON framing repairs, one bounded correction and
-            source restoration after exhausted format repair. Preserve valid
-            explicitly owned fields and retain captions after failed tag
-            rendering. Show recovery warnings without claiming translation
-            or expansion succeeded. Preserve cancellation and runtime errors,
-            source weights, explicit exclusions, budgets and deduplication.
-            No new runtime dependencies or model-weight changes.
-            TIPO authors, KohakuBlueleaf, Gemma and City96 contributors retain credit and their licenses.
+            Default Gemma TIPO to the published presampling-fresh-r8-v1 adapter,
+            matching instruction, text LoRA strength 0.25 and temperature 0.
+            Download pinned adapter files with size and SHA-256 verification.
+            Strength 0 uses the same instruction without adapter patches or
+            adapter download. Keep legacy adapter selections, local aliases,
+            source weights, bounded recovery, cancellation and ComfyUI model
+            management. Add a public automatic-download workflow and report
+            effective patch strength. No new runtime dependencies. Experimental
+            non-commercial adapter; retain TIPO authors, KohakuBlueleaf, Gemma,
+            City96, Korean-localization contributors and source-material terms.
         run: |
           test -n "$REGISTRY_ACCESS_TOKEN"
           comfy --skip-prompt --no-enable-telemetry node publish --token "$REGISTRY_ACCESS_TOKEN"

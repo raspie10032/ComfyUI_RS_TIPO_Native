@@ -21,7 +21,14 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.11:** audit the entire Gemma response path. Repair unambiguous JSON
+**Version 0.2.12:** default to the published `presampling-fresh-r8-v1` adapter
+with its matching instruction, **text LoRA strength 0.25** and greedy temperature 0.
+Pinned first-use download with size/SHA-256 checks. Strength 0 uses the same
+instruction without adapter patches or an adapter download. No new runtime
+dependencies. Experimental non-commercial adapter; source terms remain applicable.
+See [defaults, evaluation and limits](docs/gemma-presampling-defaults.ko.md).
+
+Version 0.2.11: audit the entire Gemma response path. Repair unambiguous JSON
 framing, retry malformed/empty responses once, and keep only explicitly owned
 character fields. After exhausted format repair, restore affected source fields;
 failed tag rendering retains its own caption. Recovery is visible in the result
@@ -92,10 +99,15 @@ large download; it is not claimed to support native Gemma inference.
    character STRING inputs. Set the active character count; stale higher
    numbered inputs do not participate.
 2. Select **model_family**: `gemma_tipo` or `tipo_2_1`.
-   For Gemma TIPO, select **TIPO LoRA**. The default is `pilot-002`; `pilot-001`, `image-30k` and `scale-20pct-001`
-   are also selectable. Their quality can differ. Selecting no adapter is not
-   supported for Gemma TIPO. TIPO 2.1 ignores and hides the Gemma base/LoRA selectors.
-   Separately trained local bundles appear as `local:<name>`.
+   For Gemma TIPO, the published `presampling-fresh-r8-v1` adapter is the
+   default with its matching instruction, **TIPO LoRA strength 0.25**, and greedy
+   temperature 0. It downloads on first execution. `pilot-002`, `pilot-001`,
+   `image-30k` and `scale-20pct-001` remain selectable. Strength controls only
+   the text adapter; 0 uses the same instruction without adapter patches/download.
+   TIPO 2.1 hides and ignores Gemma-only choices and strength.
+   Local bundles appear as `local:<name>`. The previous
+   `local:presampling-fresh-r8-v1` selection keeps the same instruction.
+   See [instruction + weak LoRA defaults](docs/gemma-presampling-defaults.ko.md).
    The [2026-11-03 20% training candidate](https://huggingface.co/raspie/gemma4-tipo-lora-scale-20pct-001)
    downloads on first execution when `scale-20pct-001` is selected. It is
    experimental and **CC BY-NC 4.0 (non-commercial)**. Its weights match the
@@ -110,7 +122,8 @@ large download; it is not claimed to support native Gemma inference.
    MultiCharacter Sampler. An incoming pipe retains positions, masks, LoRAs,
    references and other non-prompt state.
 
-Examples: [Gemma TIPO Korean](examples/gemma-tipo-korean.json) ·
+Examples: [New Gemma default (automatic download)](examples/gemma-tipo-presampling.json) ·
+[Gemma Korean (legacy adapter)](examples/gemma-tipo-korean.json) ·
 [TIPO 2.1 English tags](examples/tipo-2.1-english.json) ·
 [Gemma TIPO scale-20pct-001 (automatic download)](examples/gemma-tipo-scale-20pct.json) ·
 [Previously installed local weights](examples/gemma-tipo-trained-local.json).

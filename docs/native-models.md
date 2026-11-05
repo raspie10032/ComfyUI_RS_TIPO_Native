@@ -11,10 +11,11 @@ inference backend; it never chains a translator and a separate prompt model.
 
 Gemma's `language_model=auto` reuses `gemma4-e2b-native-bf16.safetensors` if
 present. Otherwise it fetches the Q4 base. Explicit `heretic_ara_q4` selects the
-downloadable base. Bare Gemma, arbitrary Gemma families and already merged TIPO
-weights are not valid substitutes for the supported base plus adapter.
-The default public adapter remains `pilot-002`. Local training candidates do not
-silently replace it. TIPO 2.1 hides/ignores Gemma-only base and adapter choices.
+downloadable base. Arbitrary Gemma families and already merged TIPO weights are not supported.
+The default is `presampling-fresh-r8-v1` with its matching instruction and
+text LoRA strength 0.25, temperature 0. Strength 0 runs the same instruction
+without adapter patches or an adapter download. Local candidates do not silently
+replace a saved selection. TIPO 2.1 hides/ignores Gemma-only base and adapter choices.
 Select `tipo_lora=scale-20pct-001` for the published 2026-11-03 20% training
 candidate (rank 8, alpha 16). Its two pinned files download on first execution,
 about 45.3 MiB, and are verified before use. This experimental release is
@@ -28,7 +29,7 @@ contains the same weights; saved local selections continue to work.
   `models/text_encoders/rs_gemma_q4/`.
 - [Gemma tokenizer](https://huggingface.co/p-e-w/gemma-4-E2B-it-heretic-ara),
   revision `c9a1d4c031981f14d86eeb0c7d87de7fafd34513`, in the same folder.
-- [Default Gemma TIPO adapter](https://huggingface.co/raspie/gemma4-tipo-lora-pilot-002),
+- [Legacy pilot-002 adapter](https://huggingface.co/raspie/gemma4-tipo-lora-pilot-002),
   revision `c31d210508c0dfb9f3e08981baa73f2e06eafd0a`:
   `models/loras/rs_gemma_tipo/pilot-002/`.
   Other published adapters are pinned in `tipo_native_lora.py`.
@@ -80,3 +81,7 @@ Korean meaning/omission limitations described in the existing evaluation.
 Neither model file size nor successful native loading establishes the VRAM
 requirement or useful output quality. See the published adapter's model card
 for its training sources, non-commercial license and measured limitations.
+
+The [new default adapter](https://huggingface.co/raspie/gemma4-tipo-lora-presampling-fresh-r8-v1)
+is pinned in `tipo_native_lora.py`, at `models/loras/rs_gemma_tipo/presampling-fresh-r8-v1/`.
+See [instruction, evaluation and source terms](gemma-presampling-defaults.ko.md).

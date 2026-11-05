@@ -29,4 +29,9 @@ const recovered = {...report, warnings: [{stage: 'joint_prose', fields: ['charac
     action: 'source_restored_after_retry', reason: 'Malformed JSON'}]};
 assert(modelSummary(recovered).includes('⚠ 1 recovery warning'));
 assert(resultText(recovered, 'all', 'details').includes('source_restored_after_retry'));
+const weak = {...report, lora_strength: .25, effective_patch_strengths: [.25], inference_mode: 'instruction-presampling'};
+assert(modelSummary(weak).includes('strength 0.25'));
+assert(resultText(weak, 'all', 'details').includes('instruction-presampling'));
+assert(resultText(weak, 'all', 'details').includes('effective_patch_strengths'));
+assert(modelSummary({...report, lora_strength: 0}).includes('strength 0'));
 console.log('Separate source/output/model details, slot routing and trained-weight identity PASS');

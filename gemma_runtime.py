@@ -13,7 +13,8 @@ import sys
 import time
 
 from .exclusion import normalize
-from .tipo_native_lora import apply_tipo_lora, _file_stat, adapter_choices, ensure_adapter, adapter_details
+from .tipo_native_lora import (apply_tipo_lora, _file_stat, adapter_choices, ensure_adapter,
+    adapter_details, checked_strength, PRESAMPLING_ADAPTER, LOCAL_PRESAMPLING_ADAPTER)
 
 _NODE = ContextVar('gemma_tipo_node', default=None)
 
@@ -54,16 +55,17 @@ def _load_native(path, signature):
 
 
 @lru_cache(maxsize=1)
-def _adapt(clip, choice, signature):
-    return apply_tipo_lora(clip, choice)
+def _adapt(clip, choice, signature, strength=1.0):
+    return apply_tipo_lora(clip, choice, strength=strength)
 
 
-def load_gemma(model='auto', adapter='pilot-002'):
+def load_gemma(model='auto', adapter='pilot-002', lora_strength=1.0):
+    lora_strength = checked_strength(lora_strength)
     from .tipo_gguf import resolve_clip, check_native_runtime
     check_native_runtime()
     status('gemma-loading')
     if adapter not in adapter_choices():
-        raise ValueError('Choose a TIPO LoRA. A bare Gemma is not Gemma TIPO. / TIPO LoRA를 선택해 주세요.')
+        raise ValueError('Choose an installed or published TIPO LoRA; strength 0 disables its patches. / TIPO LoRA를 선택하고, 지시문만 사용하려면 강도를 0으로 설정하세요.')
     import folder_paths
     import comfy.model_management as mm
     from comfy.utils import ProgressBar
@@ -72,9 +74,10 @@ def load_gemma(model='auto', adapter='pilot-002'):
         mm.throw_exception_if_processing_interrupted()
         bar.update_absolute(current, total)
     # Validate/download the small adapter before loading a multi-GiB base.
-    directory = ensure_adapter(adapter, Path(folder_paths.models_dir) / 'loras' / 'rs_gemma_tipo', progress)
-    signature = tuple(_file_stat(directory / name) for name in
-                      ('adapter_config.json', 'adapter_model.safetensors'))
+    directory = (ensure_adapter(adapter, Path(folder_paths.models_dir) / 'loras' / 'rs_gemma_tipo', progress)
+                 if lora_strength else None)
+    signature = (tuple(_file_stat(directory / name) for name in
+                      ('adapter_config.json', 'adapter_model.safetensors')) if directory else ())
     choices = model_choices()
     if model == 'auto':
         preferred = 'gemma4-e2b-native-bf16.safetensors'
@@ -89,23 +92,29 @@ def load_gemma(model='auto', adapter='pilot-002'):
         path = Path(folder_paths.get_full_path_or_raise('text_encoders', model)).resolve()
         clip = _load_native(str(path), _file_stat(path))
         base = str(path)
-    result = _adapt(clip, adapter, signature)
+    result = _adapt(clip, adapter, signature, lora_strength) if lora_strength else clip
     patches = result.patcher.patches
-    if len(patches) != 190:
-        raise RuntimeError(f'Gemma TIPO: expected 190 LoRA target patches, got {len(patches)}.')
+    expected = 190 if lora_strength else 0
+    if len(patches) != expected:
+        raise RuntimeError(f'Gemma TIPO: expected {expected} LoRA target patches, got {len(patches)}.')
+    strengths = sorted({float(entry[0]) for entries in patches.values() for entry in entries})
+    if strengths != ([lora_strength] if lora_strength else []):
+        raise RuntimeError('Gemma TIPO: applied LoRA patch strengths do not match the request.')
     return result, {'backend': 'comfy-native-gemma4-tipo-lora', 'base': base,
-                    'adapter': adapter, 'adapter_details': adapter_details(directory, adapter),
+                    'adapter': adapter, 'adapter_details': adapter_details(directory, adapter) if directory else None,
+                    'lora_strength': lora_strength,
+                    'effective_patch_strengths': strengths,
                     'lora_targets': len(patches)}
 
 
 def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_format='tags',
               length='long', max_added_tags=6, expand_common=False, excluded=(),
-              metadata=None, max_tokens=2048, temperature=.3, seed=0):
-    """Same adapted Gemma throughout: joint role-aware prose, then tag rendering.
+              metadata=None, max_tokens=2048, temperature=.3, seed=0, lora_strength=1.0):
+    """Expand numbered fields using one selected native Gemma base and adapter.
 
-    The TIPO adapter was trained to render captions as tags. Asking it to
-    simultaneously translate, plan ownership and format tags loses roles.
-    Its own prose output provides that caption, without a second model.
+    Legacy adapters plan prose before tag rendering. The separately trained
+    presampling adapter uses its matching instruction and returns the requested
+    format directly, with the same slot checks and bounded error recovery.
     """
     from .gemma_prompt import (instruction, parse_response,
         caption_anchors, deduplicate_tag_rendering, scene_count_anchors, caption_instruction,
@@ -119,16 +128,24 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
     # tag grammar inside English sentences. Korean weights still need translation.
     from .grounding import model_text
     from .expansion import split_tags
+    presampling = adapter in (PRESAMPLING_ADAPTER, LOCAL_PRESAMPLING_ADAPTER)
+    joint_format = output_format if presampling else 'natural_language'
+    stage = 'presampling' if presampling else 'joint_prose'
     def prose_input(text):
+        if presampling:
+            return text
         return (', '.join(split_tags(model_text(text)))
             if output_format == 'tags' and not re.search('[\uac00-\ud7af]', text) else text)
     joint_common = prose_input(common)
     joint_characters = tuple(prose_input(text) for text in characters)
-    request = instruction(joint_common, joint_characters, output_format='natural_language',
+    if presampling:
+        from .presampling_prompt import instruction
+    request = instruction(joint_common, joint_characters, output_format=joint_format,
         length=length, max_added_tags=max_added_tags, expand_common=expand_common,
         excluded=excluded, metadata=metadata)
     # Validate source size and task options before loading a multi-GiB model.
-    clip, info = load_gemma(model, adapter)
+    clip, info = load_gemma(model, adapter, lora_strength=lora_strength)
+    info['inference_mode'] = 'instruction-presampling' if presampling else 'prose-then-tags'
     status('gemma-generating')
     calls, warnings = [], []
 
@@ -140,17 +157,17 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
     for attempt in range(2):
         raw, report = generate(clip, request, max_tokens=max_tokens,
             temperature=temperature, seed=(seed + attempt) % (2**64), excluded=excluded)
-        calls.append({'stage': 'joint_prose', 'raw': raw, **report})
+        calls.append({'stage': stage, 'raw': raw, **report})
         try:
             restored_fields, repairs = [], []
             scene, slots = parse_response(raw, joint_common, joint_characters,
-                output_format='natural_language', expand_common=expand_common, excluded=excluded,
+                output_format=joint_format, expand_common=expand_common, excluded=excluded,
                 restored_fields=restored_fields, json_repairs=repairs)
             if repairs:
                 calls[-1]['json_repairs'] = repairs
             if restored_fields:
                 calls[-1]['source_restored_fields'] = restored_fields
-                warn('joint_prose', restored_fields, 'Empty model field restored from its own source.', 'source_restored')
+                warn(stage, restored_fields, 'Empty model field restored from its own source.', 'source_restored')
             break
         except ValueError as exc:
             calls[-1]['validation_error'] = str(exc)
@@ -161,7 +178,7 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
                     restored_fields, repairs = [], []
                     try:
                         scene, slots = parse_response(failed['raw'], joint_common, joint_characters,
-                            output_format='natural_language', expand_common=expand_common, excluded=excluded,
+                            output_format=joint_format, expand_common=expand_common, excluded=excluded,
                             restored_fields=restored_fields, json_repairs=repairs, recover_fields=True)
                     except ValueError:
                         continue
@@ -174,7 +191,7 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
                     restored_fields = (['common'] if expand_common and common.strip() else []) + [
                         f'character{i}' for i in range(1, len(characters)+1)]
                     calls[-1]['source_restored_fields'] = restored_fields
-                warn('joint_prose', restored_fields, exc, 'source_restored_after_retry')
+                warn(stage, restored_fields, exc, 'source_restored_after_retry')
                 break
             if isinstance(exc.__cause__, json.JSONDecodeError):
                 shape = {'common': '', 'characters': {
@@ -200,7 +217,11 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
                 json.dumps({'source': {'common': joint_common, 'characters': {
                     str(i): text for i, text in enumerate(joint_characters, 1)}},
                     'previous_response': raw}, ensure_ascii=False)+'\nOUTPUT JSON:\n')
-    if output_format == 'tags':
+    if output_format == 'tags' and presampling:
+        if expand_common:
+            scene = deduplicate_tag_rendering((), scene)
+        slots = tuple(deduplicate_tag_rendering((), text) for text in slots)
+    elif output_format == 'tags':
         def tags(caption, slot):
             if not caption.strip():
                 return ''

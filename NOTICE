@@ -23,3 +23,14 @@ RS-Seasonal-Prompt-Generator by raspie10032, revision 354cc9b.
 Apache-2.0, see Seasonal-APACHE-LICENSE. Native inference and joint prompt
 routing are modified for this extension. Packed GGUF decoding retains its
 separate attribution in vendor/gguf_torch/NOTICE.md.
+
+Gemma presampling-fresh-r8-v1 (independent RS adapter, 2026-11-05):
+TIPO text presampling: TIPO authors, KohakuBlueleaf and KGen contributors.
+Gemma: Google DeepMind; modified base by p-e-w.
+Training prompts: KBlueLeaf/titpop-dataset (source card CC BY-NC-ND 4.0).
+Korean localization: mengod-hf / 이오리네 and contributors (Korean contributions
+CC BY-SA 4.0, with separate upstream notices retained on the model repository).
+RS adapter contributions: CC BY-NC 4.0. Base and source terms remain applicable
+to their materials; this code's Apache-2.0 license does not relicense them.
+No weights or source datasets are bundled. Model card and retained notices:
+https://huggingface.co/raspie/gemma4-tipo-lora-presampling-fresh-r8-v1

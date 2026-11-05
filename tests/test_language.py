@@ -5,6 +5,7 @@ from unittest.mock import patch
 import test_native
 from rs_tipo_native.nodes import RSTIPOPrompt
 from rs_tipo_native.gemma_prompt import instruction, parse_response
+from rs_tipo_native.tipo_native_lora import PRESAMPLING_ADAPTER
 
 class LanguageTests(unittest.TestCase):
     def test_one_adapted_model_for_both_languages_and_formats(self):
@@ -16,7 +17,7 @@ class LanguageTests(unittest.TestCase):
                      patch('rs_tipo_native.gemma_runtime.run_scene',return_value=(source,('blonde hair',),report)) as run:
                     result=RSTIPOPrompt().expand(character_count=1,common_prompt=source,character1='blonde hair',output_format=form)
                 self.assertEqual(run.call_count,1)
-                self.assertEqual(run.call_args.kwargs['adapter'],'pilot-002')
+                self.assertEqual(run.call_args.kwargs['adapter'],PRESAMPLING_ADAPTER)
                 self.assertEqual(run.call_args.kwargs['output_format'],form)
                 self.assertEqual(result['result'][1:3],(source,'blonde hair'))
 

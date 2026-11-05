@@ -108,11 +108,11 @@ function refresh(node, sockets = true) {
         layoutPromptSockets(node);
     }
     for (const widget of node.widgets ?? []) {
-        if (!advancedNames.has(widget.name) && !retiredNames.has(widget.name) && widget.name !== 'tipo_lora') continue;
+        if (!advancedNames.has(widget.name) && !retiredNames.has(widget.name) && !['tipo_lora', 'tipo_lora_strength'].includes(widget.name)) continue;
         const linked = node.inputs?.find(input => input.name === widget.name)?.link != null;
         const standalone = value(node, 'model_family', 'gemma_tipo') === 'tipo_2_1';
         const hide = (retiredNames.has(widget.name) && !(standalone && widget.name === 'protect_source'))
-            || (standalone && ['language_model', 'tipo_lora'].includes(widget.name))
+            || (standalone && ['language_model', 'tipo_lora', 'tipo_lora_strength'].includes(widget.name))
             || (advancedNames.has(widget.name) && !value(node, "advanced", false) && !linked);
         if (hide && !widget.tipoSaved && !widget.type?.startsWith("converted-widget")) {
             widget.tipoSaved = { type: widget.type, computeSize: widget.computeSize, hidden: widget.hidden };

@@ -89,7 +89,7 @@ class MetadataTests(unittest.TestCase):
         optional = list(RSTIPOPrompt.INPUT_TYPES()["optional"])
         self.assertEqual(optional[optional.index('max_added_tags'):optional.index('quality_era')+1],
                          ["max_added_tags", "rating", "quality", "quality_era"])
-        self.assertEqual(optional[-7:], ['input_language', 'language_model', 'translation_max_tokens', 'tipo_lora', 'output_format', 'generation_max_tokens', 'model_family'])
+        self.assertEqual(optional[-8:], ['input_language', 'language_model', 'translation_max_tokens', 'tipo_lora', 'output_format', 'generation_max_tokens', 'model_family', 'tipo_lora_strength'])
 
     def test_node_skips_weighted_source_echoes_before_the_addition_budget(self):
         common = '(colorful theme:1.3), (open mouth, determined, one eye closed, :1.3)'

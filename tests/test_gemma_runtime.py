@@ -19,7 +19,8 @@ class GemmaRuntimeTests(unittest.TestCase):
                  (next(responses), info)), \
              patch('rs_tipo_native.interface.pipe_adapter', return_value=None):
             result = RSTIPOPrompt().expand(character_count=1, expand_common=True,
-                common_prompt='(colorful theme:1.3), cafe', character1='(blue jacket:1.2), adult')
+                common_prompt='(colorful theme:1.3), cafe', character1='(blue jacket:1.2), adult',
+                tipo_lora='pilot-002', tipo_lora_strength=1.0)
         self.assertEqual(result['result'][1], '(colorful theme:1.3), cafe, rim lighting')
         self.assertEqual(result['result'][2], '(blue jacket:1.2), adult, waving')
         report = json.loads(result['ui']['tipo_report'][0])

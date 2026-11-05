@@ -5,7 +5,7 @@ from .expansion import expand_owned, expand_pipe, append_completion, finished_co
 from .runtime import LOCK, MODEL_NAME, MODEL_REVISION, acquire_model
 from .exclusion import parse_excluded, validate_sources
 from .metadata import metadata_inputs, metadata_fields, UNSPECIFIED
-from .tipo_native_lora import adapter_choices
+from .tipo_native_lora import adapter_choices, default_adapter
 
 
 def exclusion_input():
@@ -209,6 +209,8 @@ class RSTIPOPrompt:
             "expand_common": ("BOOLEAN", {"default": False,
                 "tooltip": "Rewrite the shared scene in the selected English output format. Off returns it unchanged. Review generated details."}),
             **control_inputs(),
+            "temperature": ("FLOAT", {"default": 0., "min": 0., "max": 2., "step": 0.05,
+                "tooltip": "0 = greedy decoding, used for the instruction + weak LoRA baseline. / 0은 지시문 + 약한 LoRA 비교에 사용한 greedy 설정입니다."}),
             "advanced": ("BOOLEAN", {"default": False,
                 "tooltip": "Show Gemma base, token limit, seed and temperature. Does not reset their values."}),
         }, "optional": {
@@ -231,14 +233,16 @@ class RSTIPOPrompt:
                 "tooltip": "Gemma TIPO only: auto uses a local unmerged Gemma 4 E2B or downloads Q4. Ignored by TIPO 2.1. / Gemma TIPO 전용 베이스 선택."}),
             "translation_max_tokens": ("INT", {"default": 2048, "min": 256, "max": 8192,
                 "tooltip": "Legacy saved control; ignored. Use generation_max_tokens. / 이전 번역 설정은 사용하지 않습니다."}),
-            "tipo_lora": (adapter_choices(), {"default": "pilot-002",
-                "tooltip": "TIPO LoRA on the same Gemma; published choices download on first run. scale-20pct-001: experimental, CC BY-NC 4.0. local:* uses installed weights. / 공개본은 첫 실행 때 자동 다운로드. scale-20pct-001은 비상업용 실험본. 결과 패널에서 적용본 확인."}),
+            "tipo_lora": (adapter_choices(), {"default": default_adapter(),
+                "tooltip": "Default: presampling-fresh-r8-v1 + instruction at strength 0.25. Published choices download on first run. New presampling and scale adapters are non-commercial; see their model cards and source terms. local:* uses installed weights. / 기본값: 새 학습본 + 지시문 + 강도 0.25. 공개본 첫 실행 자동 다운로드. 모델별 라이선스와 출처 조건 확인."}),
             "output_format": (["tags", "natural_language"], {"default": "tags",
                 "tooltip": "Output style for the same common/character STRING sockets. / 같은 STRING 출력의 태그·자연어 형식."}),
             "generation_max_tokens": ("INT", {"default": 2048, "min": 256, "max": 8192,
                 "tooltip": "Gemma: joint response limit. TIPO 2.1: per-output limit, input + output <=4096. / 모델의 문맥 상한을 넘으면 오류로 안내합니다."}),
             "model_family": (["gemma_tipo", "tipo_2_1"], {"default": "gemma_tipo",
                 "tooltip": "Gemma TIPO: adapted Gemma for Korean/English. TIPO 2.1: standalone English model. Selected assets download once; no chained models. / 실행할 단일 모델 계열 선택."}),
+            "tipo_lora_strength": ("FLOAT", {"default": 0.25, "min": 0., "max": 2., "step": 0.05,
+                "tooltip": "Gemma text LoRA only. 0.25 = instruction + weak LoRA; 0 = instruction only. Independent of image LoRAs. / Gemma 텍스트 LoRA 강도. 이미지용 LoRA와 별개입니다."}),
         }, "hidden": {"prompt": "PROMPT", "unique_id": "UNIQUE_ID"}}
 
     def expand(self, character_count=2, common_prompt="", expand_common=False,
@@ -246,8 +250,8 @@ class RSTIPOPrompt:
                protect_source=True, excluded_tags="", max_added_tags=6,
                rating=UNSPECIFIED, quality=UNSPECIFIED, quality_era=UNSPECIFIED,
                input_language='auto', language_model='auto', translation_max_tokens=2048,
-               tipo_lora='pilot-002', output_format='tags', generation_max_tokens=2048,
-               model_family='gemma_tipo', **values):
+               tipo_lora=None, output_format='tags', generation_max_tokens=2048,
+               model_family='gemma_tipo', tipo_lora_strength=0.25, **values):
         from .interface import validate_inputs, pipe_adapter, make_building_pipe, pipe_is_requested
         from .gemma_runtime import run_scene, status_context
         characters = validate_inputs(common_prompt, character_count, values)
@@ -271,7 +275,7 @@ class RSTIPOPrompt:
             raise ValueError('TIPO building pipe needs ComfyUI_RS_MultiCharacter_Sampler. Install it, or use STRING outputs.')
         draft = make_building_pipe(adapter, building_pipe, common_prompt, characters) if adapter else None
         seed = values.get('seed', 0)
-        temperature = values.get('temperature', .3)
+        temperature = values.get('temperature', 0.)
         with LOCK, status_context(unique_id):
             try:
                 settings = dict(output_format=output_format,
@@ -279,8 +283,9 @@ class RSTIPOPrompt:
                     expand_common=expand_common, excluded=excluded, metadata=metadata,
                     max_tokens=generation_max_tokens, temperature=temperature, seed=seed)
                 if model_family == 'gemma_tipo':
+                    tipo_lora = default_adapter() if tipo_lora is None else tipo_lora
                     scene, expanded, model_info = run_scene(common_prompt, characters,
-                        model=language_model, adapter=tipo_lora, **settings)
+                        model=language_model, adapter=tipo_lora, lora_strength=tipo_lora_strength, **settings)
                 else:
                     from .tipo_runtime import run_scene as run_tipo
                     scene, expanded, model_info = run_tipo(common_prompt, characters,

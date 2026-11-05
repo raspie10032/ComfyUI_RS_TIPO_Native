@@ -1,7 +1,14 @@
 # RS TIPO Native 가이드 — 원본 TIPO와 Gemma TIPO
 
 **원본 TIPO 2.1과 Gemma 기반 TIPO LoRA를 같은 ComfyUI 노드에서 선택해 사용하는 방법**입니다.
-기준일: 2026-11-04. 노드 이름은 **RS TIPO Native (Experimental)**입니다.
+기준일: 2026-11-05. 노드 이름은 **RS TIPO Native (Experimental)**입니다.
+
+**0.2.12 기본값:** 공개 `presampling-fresh-r8-v1`과 전용 확장 지시문,
+`tipo_lora_strength=0.25`, `temperature=0`입니다. 첫 실행 때 약 45.3 MiB의
+어댑터를 자동 다운로드하고 고정 revision·크기·SHA-256을 검사합니다.
+강도 0은 같은 지시문으로 무LoRA 실행합니다. RS 어댑터 기여분은 비상업용
+CC BY-NC 4.0이며 원자료·베이스 조건은 계속 적용됩니다.
+[적용 범위와 예제](gemma-presampling-defaults.ko.md)
 
 **v0.2.2**에는 Gemma Q4의 PLE 표를 RAM에 보관하는 처리와 LoRA·역양자화
 최적화가 포함됩니다. 기존 워크플로우와 모델 선택을 그대로 사용하며 추가
@@ -35,7 +42,7 @@ Gemma 쪽의 기반 모델은 [Google DeepMind의 Gemma](https://huggingface.co/
 | `model_family` | 실행하는 모델 | 입력 | 사용을 시작할 때 |
 | --- | --- | --- | --- |
 | `tipo_2_1` | 원저작자의 공식 `TIPO-v2.1-1B-A200M` 체크포인트 | 영어 | 짧은 영어 태그 + `tags` |
-| `gemma_tipo` | 지원 Gemma 4 E2B 베이스 + 선택한 TIPO LoRA | 한국어·영어 | `pilot-002` + `natural_language` 또는 `tags` |
+| `gemma_tipo` | 지원 Gemma 4 E2B 베이스 + 선택한 TIPO LoRA | 한국어·영어 | `presampling-fresh-r8-v1` + 강도 `0.25` |
 
 모델을 바꿔도 입력·출력 소켓은 같습니다. 기본 선택은 `gemma_tipo`이며,
 원본 TIPO를 쓰려면 `model_family=tipo_2_1`로 바꿉니다.
@@ -166,19 +173,21 @@ character2:
 | 항목 | 시작 설정 |
 | --- | --- |
 | `model_family` | `gemma_tipo` |
-| `tipo_lora` | `pilot-002` — 기본 다운로드 어댑터 |
+| `tipo_lora` | `presampling-fresh-r8-v1` — 기본 자동 다운로드 어댑터 |
+| `tipo_lora_strength` | `0.25` — 텍스트 LoRA 강도. `0`은 지시문만 사용 |
 | `character_count` | `2` |
 | `output_format` | `natural_language` — 영어 설명 / `tags` — 영어 태그 |
 | `expand_common` | `ON` — 한국어 전역도 영어로 보강 |
 | `language_model` | 고급 설정의 `auto` |
 
 Gemma가 전역과 활성 캐릭터 입력을 함께 읽고 번호별 영어 설명을 만듭니다.
-`tags`에서는 **같은 LoRA가 적용된 같은 모델**로 그 설명을 태그화합니다.
-생성된 설명에서 명시된 외형·방향을 우선 반영하고 근거 없는 추가 태그를 걸러내지만,
-이 검사로 원래 입력의 모든 의미가 보존되지는 않습니다.
+기존 어댑터의 `tags`는 같은 모델로 설명을 태그화합니다.
+`presampling-fresh-r8-v1`은 새 학습 계약에 맞춰 태그나 자연어를 직접 생성하고,
+태그 중복을 정리합니다. 가중치·슬롯·빈 필드·공통 확장 스위치 검사와
+제한된 재시도는 유지합니다. 원래 입력의 모든 의미가 보존된다는 보장은 없습니다.
 
 `pilot-001`, `image-30k`도 선택할 수 있습니다. 이름이나 데이터 규모만으로
-어댑터 간 품질 우열이 확인된 것은 아닙니다. 처음에는 기본 `pilot-002`를 사용하세요.
+어댑터 간 품질 우열이 확인된 것은 아닙니다. 새 기본값은 `presampling-fresh-r8-v1` + 강도 `0.25`입니다.
 
 11월 3일 학습 완료한 [공개 학습본](https://huggingface.co/raspie/gemma4-tipo-lora-scale-20pct-001)은
 **`tipo_lora=scale-20pct-001`**로 선택합니다. 첫 실행 때 약 45.3 MiB를 자동으로 받고
@@ -253,7 +262,7 @@ v0.2.5부터 Gemma는 태그 변환 전에 전역의 조명·분위기와 캐릭
 | TIPO 2.1에 한국어를 넣어 오류 | `model_family=gemma_tipo`로 변경하거나 영어로 입력 |
 | 캐릭터 입력 누락 오류 | `character_count`와 활성 STRING 연결 수 확인 |
 | 한국어 전역이 그대로 출력됨 | `expand_common=ON` 확인. 복구 경고가 있으면 해당 칸의 원문을 유지했을 수 있음 |
-| `local:` 학습본이 없다고 나옴 | 일반 설치에서는 공개 기본 어댑터 `pilot-002`와 한국어 예제 사용 |
+| `local:` 학습본이 없다고 나옴 | 일반 설치에서는 공개 기본 어댑터 `presampling-fresh-r8-v1`과 새 기본 예제 사용 |
 | 모델 크기·SHA-256 오류 | 오류가 지목한 파일을 별도 보관 후 재시도. 임의로 받은 다른 체크포인트로 대체하지 않기 |
 | Gemma 복구 경고 | 모델 상세의 `warnings`, `calls`, `source_restored_fields` 확인. 원문 복구는 확장·번역 성공을 뜻하지 않음 |
 | 출력 잘림·문맥 상한 | 입력을 줄이고 토큰 설정 확인. Gemma의 형식 오류는 1회 재시도 후 해당 원문/설명을 유지하며 경고. TIPO 2.1은 입력+출력 4096 한도 적용 |
