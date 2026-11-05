@@ -21,7 +21,15 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.10:** blank common/character strings retain their own source and
+**Version 0.2.11:** audit the entire Gemma response path. Repair unambiguous JSON
+framing, retry malformed/empty responses once, and keep only explicitly owned
+character fields. After exhausted format repair, restore affected source fields;
+failed tag rendering retains its own caption. Recovery is visible in the result
+panel and model details. GPU/runtime errors and user cancellation still propagate.
+No new runtime dependencies or model-weight changes.
+See [audit findings, validation and limits](docs/gemma-runtime-audit.ko.md).
+
+Version 0.2.10: blank common/character strings retain their own source and
 continue without a contract retry. Valid neighboring descriptions stay intact;
 restored fields are recorded in model details as `source_restored_fields`.
 This prevents an empty field from stopping the workflow; it does not guarantee
@@ -146,9 +154,13 @@ the pinned assets.
   semantic guarantee against every synonym or grammatical variant.
 - Blank string fields retain their own source, with recovery recorded in model
   details; this may leave the field unexpanded or untranslated. Invalid/incomplete
-  JSON, wrong character keys and lost weighted clauses use a bounded correction
-  with the same model, then fail clearly if still invalid. No fallback switches
-  to another model.
+  JSON, wrong character keys and lost weighted clauses use one correction with
+  the same model. If that fails, independently owned valid fields survive and
+  affected fields revert to their own source. Ambiguous documents revert the
+  entire scene to its sources. Failed tag conversion retains its own caption.
+  Duplicate JSON keys, arrays of participants and unknown slot keys are never
+  guessed into slots. Explicit exclusion conflicts in the source fail before
+  loading the model. No fallback switches to another model.
 - The adapters are experimental. They can omit details, add unwanted tags, or
   misunderstand an interaction. The result panel exposes source, final output,
   raw model calls, active base/adapter and applied LoRA target count.

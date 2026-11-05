@@ -7,6 +7,7 @@ from contextvars import ContextVar
 from functools import lru_cache
 from pathlib import Path
 import json
+import logging
 import re
 import sys
 import time
@@ -15,16 +16,6 @@ from .exclusion import normalize
 from .tipo_native_lora import apply_tipo_lora, _file_stat, adapter_choices, ensure_adapter, adapter_details
 
 _NODE = ContextVar('gemma_tipo_node', default=None)
-
-
-class GemmaOutputError(ValueError):
-    """Retain failed model calls for diagnostics instead of losing their text."""
-    def __init__(self, reason, calls):
-        self.calls = calls
-        caption = calls[-1].get('caption', '')
-        super().__init__('Gemma TIPO output failed after one retry: ' + str(reason)
-            + '. No output was sent downstream. Last response: ' + repr(calls[-1]['raw'][:4000])
-            + ('. Caption: ' + repr(caption[:4000]) if caption else ''))
 
 
 @contextmanager
@@ -117,11 +108,12 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
     Its own prose output provides that caption, without a second model.
     """
     from .gemma_prompt import (instruction, parse_response,
-        caption_anchors, deduplicate_tag_rendering, scene_count_anchors, caption_instruction)
+        caption_anchors, deduplicate_tag_rendering, scene_count_anchors, caption_instruction,
+        tag_response, contains_excluded)
     if output_format not in ('tags', 'natural_language'):
         raise ValueError('Unknown Gemma TIPO output_format.')
-    clip, info = load_gemma(model, adapter)
-    status('gemma-generating')
+    if any(contains_excluded(source, excluded) for source in (common, *characters)):
+        raise ValueError('Gemma TIPO source conflicts with excluded_tags. Resolve the source/exclusion conflict before generation.')
     # English image-tag weights belong to the final, immutable source prefix.
     # The intermediate prose planner needs their meaning, not byte-for-byte
     # tag grammar inside English sentences. Korean weights still need translation.
@@ -135,23 +127,55 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
     request = instruction(joint_common, joint_characters, output_format='natural_language',
         length=length, max_added_tags=max_added_tags, expand_common=expand_common,
         excluded=excluded, metadata=metadata)
-    calls = []
+    # Validate source size and task options before loading a multi-GiB model.
+    clip, info = load_gemma(model, adapter)
+    status('gemma-generating')
+    calls, warnings = [], []
+
+    def warn(stage, fields, reason, action):
+        warning = dict(stage=stage, fields=list(fields), reason=str(reason), action=action)
+        warnings.append(warning)
+        logging.warning('RS TIPO %s: %s (%s)', stage, reason, action)
+
     for attempt in range(2):
         raw, report = generate(clip, request, max_tokens=max_tokens,
-            temperature=temperature, seed=seed, excluded=excluded)
+            temperature=temperature, seed=(seed + attempt) % (2**64), excluded=excluded)
         calls.append({'stage': 'joint_prose', 'raw': raw, **report})
         try:
-            restored_fields = []
+            restored_fields, repairs = [], []
             scene, slots = parse_response(raw, joint_common, joint_characters,
                 output_format='natural_language', expand_common=expand_common, excluded=excluded,
-                restored_fields=restored_fields)
+                restored_fields=restored_fields, json_repairs=repairs)
+            if repairs:
+                calls[-1]['json_repairs'] = repairs
             if restored_fields:
                 calls[-1]['source_restored_fields'] = restored_fields
+                warn('joint_prose', restored_fields, 'Empty model field restored from its own source.', 'source_restored')
             break
         except ValueError as exc:
             calls[-1]['validation_error'] = str(exc)
             if attempt:
-                raise GemmaOutputError(exc, calls) from exc
+                # Use only independently numbered, unambiguous fields. A
+                # malformed/ambiguous document never supplies routed content.
+                for failed in reversed(calls):
+                    restored_fields, repairs = [], []
+                    try:
+                        scene, slots = parse_response(failed['raw'], joint_common, joint_characters,
+                            output_format='natural_language', expand_common=expand_common, excluded=excluded,
+                            restored_fields=restored_fields, json_repairs=repairs, recover_fields=True)
+                    except ValueError:
+                        continue
+                    failed['source_restored_fields'] = restored_fields
+                    if repairs:
+                        failed['json_repairs'] = repairs
+                    break
+                else:
+                    scene, slots = joint_common, joint_characters
+                    restored_fields = (['common'] if expand_common and common.strip() else []) + [
+                        f'character{i}' for i in range(1, len(characters)+1)]
+                    calls[-1]['source_restored_fields'] = restored_fields
+                warn('joint_prose', restored_fields, exc, 'source_restored_after_retry')
+                break
             if isinstance(exc.__cause__, json.JSONDecodeError):
                 shape = {'common': '', 'characters': {
                     str(i): '' for i in range(1, len(characters)+1)}}
@@ -181,6 +205,9 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
             if not caption.strip():
                 return ''
             anchors = caption_anchors(caption) if slot != 'common' else scene_count_anchors(caption)
+            # An inferred prefix is optional. Do not introduce an explicitly
+            # excluded phrase that was never present in the caption itself.
+            anchors = tuple(anchor for anchor in anchors if not contains_excluded(anchor, excluded))
             # Prefix only facts already explicit in this same model's caption.
             # Like preserving the user's English tag prefix, this prevents the
             # tag conversion stage from silently dropping eyes/clothing/side.
@@ -188,21 +215,33 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
             prompt = caption_instruction(caption, prefix)
             for attempt in range(2):
                 raw, report = generate(clip, prompt, max_tokens=max_tokens,
-                    temperature=temperature, seed=seed, excluded=excluded)
+                    temperature=temperature, seed=(seed + attempt) % (2**64), excluded=excluded)
                 calls.append({'stage': 'caption_to_tags', 'slot': slot, 'caption': caption,
                               'anchored_prefix': prefix, 'raw': raw, **report})
                 # Wraps and sentence wording are consumable prompt text. Do
                 # not reject content or let append_completion drop later lines.
-                text = ' '.join(raw.strip().strip('`').split())
-                valid_format = text and not text.startswith(('{', '['))
-                if valid_format:
+                try:
+                    text = tag_response(raw)
+                    text = deduplicate_tag_rendering(anchors, text)
+                    if contains_excluded(text, excluded):
+                        raise ValueError('Tag output conflicts with explicit excluded_tags.')
+                except ValueError as exc:
+                    reason = str(exc)
+                else:
                     # Content is the model's responsibility. Compare complete
                     # tags only; never require words to appear in the caption.
-                    return deduplicate_tag_rendering(anchors, text)
-                reason = 'Expected nonempty prompt text, not a JSON object or array.'
+                    if report.get('finish_reason') == 'length':
+                        warn('caption_to_tags', [slot], 'Output token limit reached; prompt text preserved.',
+                             'token_limit_reached')
+                    return text
                 calls[-1]['format_error'] = reason
                 if attempt:
-                    raise GemmaOutputError(f'{slot} tag conversion: {reason}', calls)
+                    # Prose is consumable image-prompt text. Keep this exact
+                    # slot's caption when formatting fails; never return an
+                    # empty string or a different participant's output.
+                    warn('caption_to_tags', [slot], reason, 'caption_preserved_after_retry')
+                    calls[-1]['caption_preserved'] = True
+                    return deduplicate_tag_rendering(anchors, ' '.join(caption.split()))
                 prompt = ('Convert this image caption into compact Danbooru-style English tags. '
                     'Return ONLY one comma-separated line of tag phrases. Do not copy sentences. '
                     'No JSON, newlines, labels, explanations or code fences. '
@@ -218,15 +257,21 @@ def run_scene(common, characters, *, model='auto', adapter='pilot-002', output_f
         slots = tuple(tags(text, i) for i, text in enumerate(slots, 1))
     elif output_format != 'natural_language':
         raise ValueError('Unknown Gemma TIPO output_format.')
-    for text in (scene, *slots):
-        if any(re.search(r'(?<!\w)'+re.escape(tag)+r'(?!\w)', normalize(text)) for tag in excluded):
-            raise ValueError('Gemma TIPO final output conflicts with excluded_tags, including a derived tag prefix. No post-removal was performed.')
-    info.update(model_calls=len(calls), calls=calls,
+    outputs = [scene, *slots]
+    for i, (source, text) in enumerate(zip((common, *characters), outputs)):
+        if contains_excluded(text, excluded):
+            # Last guard for a failed tag renderer's caption fallback. Preserve
+            # this slot's validated source instead of deleting words from text.
+            outputs[i] = source
+            warn('final_output', ['common' if i == 0 else f'character{i}'],
+                'Output conflicts with explicit excluded_tags.', 'source_restored')
+    scene, slots = outputs[0], tuple(outputs[1:])
+    info.update(model_calls=len(calls), calls=calls, warnings=warnings,
         seconds=round(sum(c['seconds'] for c in calls), 4),
         output_tokens=sum(c['output_tokens'] for c in calls),
         raw_output='\n\n'.join(c['stage']+'\n'+c['raw'] for c in calls),
         exclusion={'method': 'decoded-phrase-next-token-block', 'tags': list(excluded),
-                   'blocked_candidates': sum(c['exclusion']['blocked_candidates'] for c in calls)})
+                   'blocked_candidates': sum(c.get('exclusion', {}).get('blocked_candidates', 0) for c in calls)})
     return scene, slots, info
 
 
@@ -315,9 +360,6 @@ def generate(clip, instruction, *, max_tokens=2048, temperature=.3, seed=0, excl
         if callable(cleanup):
             cleanup()
     mm.throw_exception_if_processing_interrupted()
-    if not raw.strip():
-        raise RuntimeError('Gemma TIPO returned an empty response. Check base/tokenizer and token limit.')
-    if len(ids) >= max_tokens:
-        raise RuntimeError('Gemma TIPO output reached the token limit. Increase generation_max_tokens or shorten the inputs.')
     return raw, {'seconds': round(time.monotonic()-started, 4), 'output_tokens': len(ids),
+                 'finish_reason': 'empty' if not raw.strip() else ('length' if len(ids) >= max_tokens else 'stop'),
                  'exclusion': exclusion}

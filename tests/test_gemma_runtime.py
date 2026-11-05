@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 import torch
 import test_native
-from rs_tipo_native.gemma_runtime import token_constraints, run_scene, GemmaOutputError
+from rs_tipo_native.gemma_runtime import token_constraints, run_scene
 from rs_tipo_native.gemma_prompt import (caption_anchors, deduplicate_tag_rendering, scene_count_anchors,
     prose_source, labelled_character_fields)
 
@@ -185,11 +185,13 @@ class GemmaRuntimeTests(unittest.TestCase):
         self.assertEqual(slots,('black hair, offering cup',));self.assertEqual(info['model_calls'],3)
         self.assertIn('검은 머리',seen[0]);self.assertIn('검은 머리',seen[0])
 
-    def test_incorrect_slots_retry_same_model_then_fail(self):
+    def test_incorrect_slots_retry_same_model_then_restore_sources(self):
         info={'seconds':.1,'output_tokens':5,'exclusion':{'blocked_candidates':0}}
         with patch('rs_tipo_native.gemma_runtime.load_gemma',return_value=(object(),{})) as load, \
              patch('rs_tipo_native.gemma_runtime.generate',return_value=('{}',info)) as generate:
-            with self.assertRaises(ValueError):run_scene('cafe',('black hair',),output_format='natural_language')
+            scene, slots, report = run_scene('cafe',('black hair',),output_format='natural_language')
+        self.assertEqual((scene, slots), ('cafe', ('black hair',)))
+        self.assertEqual(report['warnings'][0]['action'], 'source_restored_after_retry')
         self.assertEqual(load.call_count,1);self.assertEqual(generate.call_count,2)
 
     def test_invalid_structure_retry_retains_raw_responses(self):
@@ -197,12 +199,11 @@ class GemmaRuntimeTests(unittest.TestCase):
         with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
              patch('rs_tipo_native.gemma_runtime.generate', return_value=(raw,
                  {'seconds': .1, 'output_tokens': 5})) as generate:
-            with self.assertRaises(GemmaOutputError) as caught:
-                run_scene('', ('adult character',), output_format='natural_language')
+            _, slots, report = run_scene('', ('adult character',), output_format='natural_language')
         self.assertEqual(generate.call_count, 2)
-        self.assertEqual([call['raw'] for call in caught.exception.calls], [raw, raw])
-        self.assertIn('slot count/type mismatch', str(caught.exception))
-        self.assertIn('Last response:', str(caught.exception))
+        self.assertEqual(slots, ('adult character',))
+        self.assertEqual([call['raw'] for call in report['calls']], [raw, raw])
+        self.assertIn('slot count/type mismatch', report['calls'][-1]['validation_error'])
         self.assertIn('Repair the reported contract error only', generate.call_args_list[1].args[1])
         self.assertNotIn('Rewrite the failed fields as English sentences', generate.call_args_list[1].args[1])
 
@@ -219,7 +220,7 @@ class GemmaRuntimeTests(unittest.TestCase):
         self.assertIn('wearing retro astronaut suit.', prose_source(carried))
         self.assertIn('also has helmet carried under arm.', prose_source(carried))
 
-    def test_repair_still_rejects_lost_weights_and_excluded_tags(self):
+    def test_failed_repair_restores_source_weights_and_avoids_excluded_tags(self):
         for source, excluded, repaired in (
             ('(silver hair:1.2)', (), 'The character has silver hair.'),
             ('silver hair', ('glasses',), 'The character has silver hair and glasses.'),
@@ -230,14 +231,15 @@ class GemmaRuntimeTests(unittest.TestCase):
                     json.dumps({'common': '', 'characters': {'1': repaired}})])
                 with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
                      patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k: (next(responses), {'seconds': .1, 'output_tokens': 5})):
-                    with self.assertRaises(GemmaOutputError):
-                        run_scene('', (source,), excluded=excluded, output_format='natural_language')
+                    _, slots, report = run_scene('', (source,), excluded=excluded, output_format='natural_language')
+                self.assertEqual(slots, (source,))
+                self.assertEqual(report['warnings'][0]['action'], 'source_restored_after_retry')
 
     def test_caption_tags_must_keep_explicit_attributes(self):
         self.assertEqual(caption_anchors('A woman with black hair and brown eyes wears a blue cardigan, standing behind.'),
                          ('black hair','brown eyes','blue cardigan','behind'))
 
-    def test_invalid_tag_format_gets_one_same_model_retry_and_retains_raw_calls(self):
+    def test_single_tag_json_value_is_unwrapped_without_retry(self):
         clip = object()
         raw = json.dumps({'common': '', 'characters': {'1': 'The woman has black hair.'}})
         responses = iter([raw, '{"tags": "black hair"}', 'black hair'])
@@ -249,18 +251,21 @@ class GemmaRuntimeTests(unittest.TestCase):
              patch('rs_tipo_native.gemma_runtime.generate', side_effect=generate):
             _, slots, report = run_scene('', ('black hair',), output_format='tags')
         self.assertEqual(slots, ('black hair',))
-        self.assertEqual(report['model_calls'], 3)
-        self.assertIn('format_error', report['calls'][1])
+        self.assertEqual(report['model_calls'], 2)
+        self.assertNotIn('format_error', report['calls'][1])
         self.assertEqual(report['calls'][1]['raw'], '{"tags": "black hair"}')
 
-    def test_tag_retry_is_bounded_and_does_not_return_unprocessed_source(self):
+    def test_tag_retry_is_bounded_and_preserves_caption_with_warning(self):
         raw = json.dumps({'common': '', 'characters': {'1': 'The woman has black hair.'}})
         responses = iter([raw, '', ''])
         info = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
         with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
              patch('rs_tipo_native.gemma_runtime.generate', side_effect=lambda *a, **k: (next(responses), info)):
-            with self.assertRaisesRegex(ValueError, 'after one retry'):
-                run_scene('', ('black hair',), output_format='tags')
+            _, slots, report = run_scene('', ('black hair',), output_format='tags')
+        self.assertEqual(slots, ('black hair, The woman has black hair.',))
+        self.assertEqual(report['model_calls'], 3)
+        self.assertTrue(report['calls'][-1]['caption_preserved'])
+        self.assertEqual(report['warnings'][0]['action'], 'caption_preserved_after_retry')
 
     def test_sentence_wording_in_tag_stage_is_preserved_without_retry(self):
         caption = 'The character has black hair.'
@@ -348,8 +353,9 @@ class GemmaRuntimeTests(unittest.TestCase):
         info={'seconds':.1,'output_tokens':5,'exclusion':{'blocked_candidates':0}}
         with patch('rs_tipo_native.gemma_runtime.load_gemma',return_value=(object(),{})), \
              patch('rs_tipo_native.gemma_runtime.generate',side_effect=lambda *a,**kw:(next(responses),info)):
-            with self.assertRaisesRegex(ValueError,'derived tag prefix'):
-                run_scene('two women',('black hair',),expand_common=True,excluded=('2girls',))
+            scene, slots, report = run_scene('two women',('black hair',),expand_common=True,excluded=('2girls',))
+        self.assertNotIn('2girls', scene)
+        self.assertEqual(len(slots), 1)
 
     def test_common_restatement_does_not_trigger_content_retry(self):
         raw = json.dumps({'common': 'The scene is a cafe.',

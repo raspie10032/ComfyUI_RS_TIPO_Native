@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import test_native
 from rs_tipo_native.gemma_prompt import parse_response
-from rs_tipo_native.gemma_runtime import run_scene, GemmaOutputError
+from rs_tipo_native.gemma_runtime import run_scene
 
 
 class GemmaJSONTests(unittest.TestCase):
@@ -139,7 +139,8 @@ class GemmaJSONTests(unittest.TestCase):
         with patch('rs_tipo_native.gemma_runtime.load_gemma', return_value=(object(), {})), \
              patch('rs_tipo_native.gemma_runtime.generate', return_value=(raw,
                  {'seconds': .1, 'output_tokens': 5})) as generate:
-            with self.assertRaises(GemmaOutputError) as caught:
-                run_scene('cafe', ('adult',), output_format='natural_language', expand_common=True)
+            scene, slots, report = run_scene('cafe', ('adult',), output_format='natural_language', expand_common=True)
         self.assertEqual(generate.call_count, 2)
-        self.assertEqual([call['raw'] for call in caught.exception.calls], [raw, raw])
+        self.assertEqual((scene, slots), ('cafe', ('adult',)))
+        self.assertEqual([call['raw'] for call in report['calls']], [raw, raw])
+        self.assertEqual(report['warnings'][0]['action'], 'source_restored_after_retry')

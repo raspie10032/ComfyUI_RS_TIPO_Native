@@ -3,6 +3,7 @@ import json
 import re
 
 from .exclusion import normalize
+from .gemma_json import scene_json
 
 FORMATS = ('tags', 'natural_language')
 CONTRACT = 'rs-gemma-tipo-scene/2'
@@ -81,6 +82,35 @@ def deduplicate_tag_rendering(anchors, text):
     return append_completion(', '.join(anchors), text)[0]
 
 
+def tag_response(raw):
+    """Unwrap a single tag value; do not classify or filter its vocabulary."""
+    from .gemma_json import decode_document
+    text = raw.strip()
+    text = re.sub(r'^```(?:json|text)?\s*|\s*```$', '', text, flags=re.I).strip()
+    if text.startswith(('{', '[', '"')):
+        try:
+            value = decode_document(text)
+        except json.JSONDecodeError:
+            # Bracketed attention and NAI {tags} are ordinary prompt text.
+            # Retry only an apparent broken JSON mapping, not punctuation.
+            if re.match(r'\{\s*"[^"\n]+"\s*:', text):
+                raise
+            value = text
+        if isinstance(value, dict):
+            if len(value) != 1 or next(iter(value)) not in ('tags', 'tag', 'prompt'):
+                raise ValueError('Tag JSON must contain one tags/tag/prompt value, without scene slots.')
+            value = next(iter(value.values()))
+        if isinstance(value, list) and all(isinstance(item, str) for item in value):
+            value = ', '.join(value)
+        if not isinstance(value, str):
+            raise ValueError('Tag response is not text or an array of tag strings.')
+        text = value
+    text = ' '.join(text.split())
+    if not text:
+        raise ValueError('Tag response is empty.')
+    return text
+
+
 def scene_count_anchors(caption):
     words = 'one two three four five six seven eight nine ten'.split()
     match = re.search(r'\b('+ '|'.join(words)+r'|10|[1-9])\s+(?:adult\s+)?(women|woman|girls?|men|boys?|people|persons?|person)\b', caption, re.I)
@@ -157,46 +187,62 @@ OUTPUT JSON:
 
 
 
-def scene_json(text):
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError as original:
-        # Recover only common when the complete character object is valid.
-        # Never infer missing participant boundaries or invent missing fields.
-        match = re.fullmatch(r'\s*\{\s*"common"\s*:\s*"(.*?)'
-            r'"characters"\s*:\s*(\{.*\})\s*\}\s*', text, re.S)
-        if match is None:
-            raise original
-        body, participant_json = match.groups()
-        if re.search(r'(?<!\\)"[^"\r\n]*"\s*:', body):
-            raise original
-        participants = json.loads(participant_json)
-        body = body.rstrip()
-        if body.endswith(','):
-            body = body[:-1].rstrip()
-        if body.endswith('"'):
-            body = body[:-1]
-        elif not re.search(r'(?<!\\)"', body):
-            raise original
-        # Preserve inner quotes, line breaks and literal invalid escapes.
-        # Valid JSON escapes still have their usual meaning.
-        body = re.sub(r'\\(?:["\\/bfnrt]|u[0-9a-fA-F]{4})|\\|"',
-            lambda m: m[0] if len(m[0]) > 1 else json.dumps(m[0])[1:-1], body)
-        return {'common': json.loads('"'+body+'"', strict=False), 'characters': participants}
+def contains_excluded(text, excluded):
+    normalized = normalize(text)
+    return any(re.search(r'(?<!\w)'+re.escape(tag)+r'(?!\w)', normalized) for tag in excluded)
 
 
-def parse_response(raw, common, characters, *, output_format, expand_common, excluded=(), restored_fields=None):
+def _checked_field(source, output, field, output_format, excluded):
+    for weight in re.findall(r'\([^()]+:\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+)\s*\)', source):
+        # English weighted clauses must survive byte for byte; Korean
+        # clauses can change language but their numeric weights cannot.
+        if re.search('[\uac00-\ud7af]', weight):
+            number = re.search(r':\s*([^:)]+)\)$', weight)[1]
+            if not re.search(r':\s*'+re.escape(number)+r'\)', output):
+                raise ValueError(f'Gemma TIPO {field} changed the source prompt weight in {weight!r}.')
+        elif weight not in output:
+            if output_format == 'natural_language':
+                # An article belongs to the sentence, outside the immutable
+                # prompt group. Move only this exact, otherwise unchanged
+                # source clause; never guess from a matching weight number.
+                pattern = r'\((a|an|the) ' + re.escape(weight[1:])
+                output = re.sub(pattern, lambda match: match[1] + ' ' + weight, output)
+            if weight not in output:
+                raise ValueError(f'Gemma TIPO {field} omitted or changed a weighted source clause: {weight!r}. '
+                    'Copy that clause exactly; put sentence articles outside its parentheses.')
+    if contains_excluded(output, excluded):
+        raise ValueError('Gemma TIPO output contains excluded content. No post-removal was performed.')
+    return output
+
+
+def parse_response(raw, common, characters, *, output_format, expand_common, excluded=(),
+                   restored_fields=None, json_repairs=None, recover_fields=False):
     text = raw.strip()
     if text.startswith('```'):
         text = re.sub(r'^```(?:json)?\s*\n', '', text)
         text = re.sub(r'\n```\s*$', '', text)
     try:
-        result = scene_json(text)
+        result = scene_json(text, json_repairs)
     except (ValueError, TypeError) as exc:
         raise ValueError(f'Gemma TIPO returned invalid/incomplete JSON: {exc}. No other model was used.') from exc
+    expected = {str(i) for i in range(1, len(characters)+1)}
+    if recover_fields and isinstance(result, dict) and set(result) <= {'common', 'characters'}:
+        participants = result.get('characters', {})
+        if isinstance(participants, dict) and set(participants) <= expected:
+            # Only explicit numbered ownership is usable. Never zip a list,
+            # renumber keys or borrow a description from another character.
+            result = {'common': result.get('common'), 'characters': {
+                key: participants.get(key) for key in expected}}
+            for key, source in [('common', common), *[
+                    (str(i), text) for i, text in enumerate(characters, 1)]]:
+                owner = result if key == 'common' else result['characters']
+                if not isinstance(owner.get(key), str):
+                    owner[key] = source
+                    if restored_fields is not None and source.strip():
+                        restored_fields.append('common' if key == 'common' else 'character'+key)
     if (not isinstance(result, dict) or set(result) != {'common', 'characters'}
             or not isinstance(result['common'], str) or not isinstance(result['characters'], dict)
-            or set(result['characters']) != {str(i) for i in range(1,len(characters)+1)}
+            or set(result['characters']) != expected
             or any(not isinstance(t, str) for t in result['characters'].values())):
         raise ValueError('Gemma TIPO output slot count/type mismatch; refusing to route characters to wrong slots.')
     result['characters'] = [result['characters'][str(i)] for i in range(1,len(characters)+1)]
@@ -213,26 +259,14 @@ def parse_response(raw, common, characters, *, output_format, expand_common, exc
             output = source
             if restored_fields is not None:
                 restored_fields.append(field)
-        for weight in re.findall(r'\([^()]+:\s*[+-]?(?:\d+(?:\.\d*)?|\.\d+)\s*\)', source):
-            # English weighted clauses must survive byte for byte; Korean
-            # clauses can change language but their numeric weights cannot.
-            if re.search('[\uac00-\ud7af]', weight):
-                number = re.search(r':\s*([^:)]+)\)$', weight)[1]
-                if not re.search(r':\s*'+re.escape(number)+r'\)', output):
-                    raise ValueError(f'Gemma TIPO {field} changed the source prompt weight in {weight!r}.')
-            elif weight not in output:
-                if output_format == 'natural_language':
-                    # An article belongs to the sentence, outside the immutable
-                    # prompt group. Move only this exact, otherwise unchanged
-                    # source clause; never guess from a matching weight number.
-                    pattern = r'\((a|an|the) ' + re.escape(weight[1:])
-                    output = re.sub(pattern, lambda match: match[1] + ' ' + weight, output)
-                if weight not in output:
-                    raise ValueError(f'Gemma TIPO {field} omitted or changed a weighted source clause: {weight!r}. '
-                        'Copy that clause exactly; put sentence articles outside its parentheses.')
-        normalized = normalize(output)
-        if any(re.search(r'(?<!\w)'+re.escape(tag)+r'(?!\w)', normalized) for tag in excluded):
-            raise ValueError('Gemma TIPO output contains excluded content. No post-removal was performed.')
+        try:
+            output = _checked_field(source, output, field, output_format, excluded)
+        except ValueError:
+            if not recover_fields:
+                raise
+            output = _checked_field(source, source, field, output_format, excluded)
+            if restored_fields is not None and field not in restored_fields:
+                restored_fields.append(field)
         if i == 0:
             result['common'] = output
         else:

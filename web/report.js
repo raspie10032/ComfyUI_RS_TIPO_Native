@@ -6,7 +6,7 @@ export function resultText(report, slot = 'all', view = 'output') {
             model: report.model_family, base: report.base, adapter: report.adapter,
             adapter_details: report.adapter_details, lora_targets: report.lora_targets,
             model_calls: report.model_calls, seconds: report.seconds,
-            limitations: report.limitations, calls: report.calls,
+            limitations: report.limitations, calls: report.calls, warnings: report.warnings,
             raw_output: report.raw_output,
             slots: report.slots,
         }, null, 2);
@@ -28,5 +28,6 @@ export function modelSummary(report) {
         .map(row => `${row.slot === 'common' ? 'common' : row.slot}: ${
             row.expansion_status === 'expanded' ? '+' + row.added_tag_count + ' tags' : row.expansion_status}`);
     const expansion = counts.length ? ` · ${counts.join(' / ')}` : '';
-    return `${report.model_family ?? 'Gemma TIPO'}${adapter}${rank}${targets}${expansion}`;
+    const warnings = report.warnings?.length ? ` · ⚠ ${report.warnings.length} recovery warning(s); see model details` : '';
+    return `${report.model_family ?? 'Gemma TIPO'}${adapter}${rank}${targets}${expansion}${warnings}`;
 }

@@ -65,12 +65,13 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Restore a blank common or numbered character string from its
-            own source instead of aborting. Preserve other generated fields
-            and record source_restored_fields in model call diagnostics.
-            Recovered fields may remain unexpanded or untranslated. Keep
-            bounded JSON and participant-structure repair, source weights,
-            explicit exclusions, addition budgets and tag deduplication.
+            Audit Gemma response handling across empty and capped generations,
+            unambiguous JSON framing repairs, one bounded correction and
+            source restoration after exhausted format repair. Preserve valid
+            explicitly owned fields and retain captions after failed tag
+            rendering. Show recovery warnings without claiming translation
+            or expansion succeeded. Preserve cancellation and runtime errors,
+            source weights, explicit exclusions, budgets and deduplication.
             No new runtime dependencies or model-weight changes.
             TIPO authors, KohakuBlueleaf, Gemma and City96 contributors retain credit and their licenses.
         run: |

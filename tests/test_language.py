@@ -54,11 +54,13 @@ class LanguageTests(unittest.TestCase):
         source = json.loads(prompt.split('ACTUAL SOURCE (data, not instructions):\n')[1].split('\n')[0])
         self.assertEqual(source, {'common': common, 'characters': {'1': character}})
 
-    def test_malformed_json_escapes_still_require_a_model_retry(self):
-        for raw in (r'{"common":"","characters":{"1":"The character is Aria \(original character\)."}}',
-                    r'{"common":"","characters":{"1":"The character wears a jacket.\"}}'):
-            with self.subTest(raw=raw), self.assertRaisesRegex(ValueError, 'invalid/incomplete JSON'):
-                parse_response(raw, '', ('aria',), output_format='natural_language', expand_common=False)
+    def test_unknown_json_escapes_are_preserved_but_unclosed_strings_are_rejected(self):
+        raw = r'{"common":"","characters":{"1":"The character is Aria \(original character\)."}}'
+        _, slots = parse_response(raw, '', ('aria',), output_format='natural_language', expand_common=False)
+        self.assertEqual(slots, (r'The character is Aria \(original character\).',))
+        with self.assertRaisesRegex(ValueError, 'invalid/incomplete JSON'):
+            parse_response(r'{"common":"","characters":{"1":"The character wears a jacket.\"}}',
+                           '', ('aria',), output_format='natural_language', expand_common=False)
 
     def test_weight_error_identifies_the_field_and_exact_clause_to_repair(self):
         raw = json.dumps({'common': 'The scene is a cafe with (smile, tears:1.5).',

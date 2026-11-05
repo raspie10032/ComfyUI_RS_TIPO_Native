@@ -25,4 +25,8 @@ const expanded = {...report, slots: [
 ]};
 assert(modelSummary(expanded).includes('common: unchanged / 1: +1 tags / 2: translated'));
 assert(resultText(expanded, 'all', 'details').includes('added_tag_count'));
+const recovered = {...report, warnings: [{stage: 'joint_prose', fields: ['character1'],
+    action: 'source_restored_after_retry', reason: 'Malformed JSON'}]};
+assert(modelSummary(recovered).includes('⚠ 1 recovery warning'));
+assert(resultText(recovered, 'all', 'details').includes('source_restored_after_retry'));
 console.log('Separate source/output/model details, slot routing and trained-weight identity PASS');

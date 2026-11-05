@@ -310,7 +310,9 @@ class RSTIPOPrompt:
             if output_format == 'tags':
                 from .language import has_korean
                 if has_korean(source):
-                    row['expansion_status'] = 'translated' if enabled else 'disabled'
+                    row['expansion_status'] = ('disabled' if not enabled else
+                        'unchanged' if source == output else
+                        'rewritten' if has_korean(output) else 'translated')
                 else:
                     _, added = append_completion(source, output)
                     additions = split_tags(added)
@@ -321,6 +323,12 @@ class RSTIPOPrompt:
         reports = [slot_report('common', common_prompt, scene, expand_common)]
         reports += [slot_report(i, source, output)
                     for i, (source, output) in enumerate(zip(characters, expanded), 1)]
+        for row in reports:
+            keys = {row['slot'], 'common' if row['slot'] == 'common' else f"character{row['slot']}"}
+            actions = [warning['action'] for warning in model_info.get('warnings', [])
+                       if keys.intersection(warning['fields'])]
+            if actions:
+                row['recovery_actions'] = list(dict.fromkeys(actions))
         info = {**model_info, 'model_family': 'Gemma TIPO' if model_family == 'gemma_tipo' else 'TIPO 2.1', 'output_format': output_format,
             'character_count': character_count, 'building_pipe_available': pipe is not None,
             'context_source': ('joint_common_and_all_characters' if model_family == 'gemma_tipo' else 'owner_separated_with_shared_action_context'), 'slots': reports, 'metadata': metadata,
