@@ -65,16 +65,13 @@ jobs:
         env:
           REGISTRY_ACCESS_TOKEN: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
           COMFY_NODE_CHANGELOG: >-
-            Detach explicit SD/NAI numeric weights before Gemma expansion and
-            restore them per source field afterward. Keep generated details
-            when weighted phrases change or disappear; remove duplicate tags.
-            Translate Korean weighted phrases in one extra batched call on the
-            same Gemma and pair by phrase. Failed translation preserves original
-            weighted phrases with visible warnings. Preserve numbered slots,
-            exact disabled-common source, exclusions, budgets, bounded recovery,
-            cancellation and native ComfyUI model management. Keep presampling
-            LoRA strength 0.25 and temperature 0. No new runtime dependencies
-            or adapter weights. Retain upstream attribution and license terms.
+            Keep result and download-status panels inside the allocated node
+            area when display scaling, browser/canvas zoom or node width
+            changes. Scroll long summaries and results internally; keep both
+            result selectors and Copy on one row. Refresh the browser after
+            updating. Preserve generation behavior, model defaults, native
+            ComfyUI model management, upstream attribution and license terms.
+            No new runtime dependencies or model weights.
         run: |
           test -n "$REGISTRY_ACCESS_TOKEN"
           comfy --skip-prompt --no-enable-telemetry node publish --token "$REGISTRY_ACCESS_TOKEN"

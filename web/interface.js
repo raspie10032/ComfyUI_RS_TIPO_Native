@@ -128,12 +128,17 @@ function refresh(node, sockets = true) {
 
 function addReport(node) {
     const root = document.createElement("div");
-    root.style.cssText = "display:flex;flex-direction:column;gap:6px;padding:8px;box-sizing:border-box;height:100%;background:#18212b;color:#e0e8f3;font:12px sans-serif;";
-    root.style.width = "100%";
+    root.style.cssText = "display:flex;flex-direction:column;gap:6px;padding:8px;box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:0;overflow:hidden;background:#18212b;color:#e0e8f3;font:12px sans-serif;";
+    // ComfyUI owns the DOM widget's size and zoom transform. Keep every child
+    // inside that allocation, even when font metrics or line wrapping change.
+    const summary = document.createElement("div");
+    summary.style.cssText = "flex:0 1 auto;min-width:0;min-height:0;max-height:96px;overflow:auto;overflow-wrap:anywhere;";
     const help = document.createElement("div");
     help.textContent = "Choose Gemma TIPO for Korean/English, or TIPO 2.1 for English. Missing files download on first use. Review meaning and roles.";
     const status = document.createElement("div");
+    status.style.marginTop = "6px";
     status.textContent = "Connect common / character STRINGs, then run. Results appear here.";
+    summary.append(help, status);
     const select = document.createElement("select");
     select.setAttribute("aria-label", "TIPO result slot");
     const view = document.createElement("select");
@@ -146,12 +151,16 @@ function addReport(node) {
     copy.type = "button"; copy.textContent = "Copy";
     copy.setAttribute("aria-label", "Copy TIPO displayed result");
     const controls = document.createElement("div");
-    controls.style.cssText = "display:flex;gap:6px;flex-wrap:wrap;";
-    select.style.flex = "1"; view.style.flex = "1";
+    controls.style.cssText = "display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:6px;flex:0 0 auto;min-width:0;";
+    for (const control of [select, view, copy]) {
+        control.style.cssText = "box-sizing:border-box;min-width:0;max-width:100%;font:inherit;";
+    }
+    select.style.width = view.style.width = "100%";
+    copy.style.whiteSpace = "nowrap";
     controls.append(select, view, copy);
     const text = document.createElement("textarea");
     text.readOnly = true; text.setAttribute("aria-label", "TIPO expansion result");
-    text.style.cssText = "flex:1;min-height:100px;resize:none;background:#0f1720;color:#e0e8f3;border:1px solid #40536a;padding:8px;white-space:pre-wrap;";
+    text.style.cssText = "flex:1 1 0;box-sizing:border-box;width:100%;min-width:0;min-height:0;overflow:auto;resize:none;background:#0f1720;color:#e0e8f3;border:1px solid #40536a;padding:8px;white-space:pre-wrap;overflow-wrap:anywhere;";
     let modelReport = null;
     const render = () => {
         text.value = resultText(modelReport, select.value || 'all', view.value || 'output');
@@ -170,10 +179,11 @@ function addReport(node) {
             copy.textContent = 'Press Ctrl+C';
         }
     };
-    root.append(help, status, controls, text);
+    root.append(summary, controls, text);
     // Legacy ComfyUI resets display on the outer DOM widget each frame.
     // Preserve the report's flex layout inside an independent inner element.
     const container = document.createElement("div");
+    container.style.cssText = "box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:0;overflow:hidden;";
     container.append(root);
     node.addDOMWidget("tipo_results", "rs-tipo-results", container, {
         serialize: false, hideOnZoom: false, getMinHeight: () => 245, getMaxHeight: () => 245,
@@ -206,7 +216,7 @@ app.registerExtension({
         nodeType.prototype.onNodeCreated = function () {
             const result = originalCreated?.apply(this, arguments);
             const status = document.createElement("div");
-            status.style.cssText = "padding:6px;box-sizing:border-box;font:12px sans-serif;white-space:normal;overflow-wrap:anywhere;color:#b9dcec;";
+            status.style.cssText = "padding:6px;box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:0;overflow:auto;font:12px sans-serif;white-space:normal;overflow-wrap:anywhere;color:#b9dcec;";
             status.textContent = "Selected model downloads on first use. Gemma Q4 + adapter ~3.27 GiB; TIPO 2.1 ~1.85 GiB. Cached files are reused.";
             this.addDOMWidget("tipo_download", "rs-tipo-download", status, {
                 serialize: false, hideOnZoom: false, getMinHeight: () => 42, getMaxHeight: () => 42,

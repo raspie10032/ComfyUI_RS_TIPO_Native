@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.2.14 — 2026-11-06
+
+- Keep the result panel inside ComfyUI's allocated DOM widget when display
+  scaling, browser zoom, canvas zoom or node width changes. Scroll long
+  help/status text internally and size the result area to the remaining height.
+- Keep both result selectors and Copy on one row with controls that shrink to
+  fit the node. Constrain the download-status widget to its allocated height.
+- Browser validation: 296 layout checks across device pixel ratios 1/1.25/2,
+  browser zoom 75–150%, canvas zoom 0.35–1.5, node widths 390/450/720 and
+  live device-pixel-ratio changes. Slot/view selection and clipboard copying
+  also passed. These checks use fixture reports, without new GPU inference.
+- No runtime dependencies, model weights, generation defaults or upstream
+  attribution changes. Refresh the browser after updating to load the UI fix.
+
 ## 0.2.13 — 2026-11-05
 
 - Keep explicit SD/NAI numeric image-prompt weights outside Gemma's response

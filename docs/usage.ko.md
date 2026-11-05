@@ -1,7 +1,12 @@
 # RS TIPO Native 가이드 — 원본 TIPO와 Gemma TIPO
 
 **원본 TIPO 2.1과 Gemma 기반 TIPO LoRA를 같은 ComfyUI 노드에서 선택해 사용하는 방법**입니다.
-기준일: 2026-11-05. 노드 이름은 **RS TIPO Native (Experimental)**입니다.
+기준일: 2026-11-06. 노드 이름은 **RS TIPO Native (Experimental)**입니다.
+
+**0.2.14 화면 배율 대응:** 화면 배율·브라우저/캔버스 줌·노드 폭이 바뀌어도
+결과 패널이 노드 안에 들어가도록 수정했습니다. 긴 설명과 결과는 내부에서
+스크롤하며, 선택 메뉴와 복사 버튼은 한 줄로 배치됩니다. 업데이트 후
+`Ctrl+Shift+R`로 브라우저를 새로고침해 주세요.
 
 **0.2.12 기본값:** 공개 `presampling-fresh-r8-v1`과 전용 확장 지시문,
 `tipo_lora_strength=0.25`, `temperature=0`입니다. 첫 실행 때 약 45.3 MiB의

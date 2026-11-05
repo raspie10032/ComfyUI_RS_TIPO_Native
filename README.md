@@ -21,7 +21,12 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.13:** detach explicit SD/NAI numeric weights before Gemma expansion
+**Version 0.2.14:** keep result and download-status panels inside the node when
+display scaling, browser/canvas zoom or node width changes. Long summaries and
+results scroll internally; selectors and Copy stay on one row. Refresh the
+browser after updating. No new runtime dependencies or generation changes.
+
+Version 0.2.13: detach explicit SD/NAI numeric weights before Gemma expansion
 and restore them afterward. Weight punctuation changes no longer discard a
 field's generated details. Restore missing weighted phrases and remove duplicate
 tags while retaining new descriptions. Korean weighted phrases use one extra
