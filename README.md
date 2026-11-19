@@ -21,7 +21,11 @@ These are alternative backends selected by `model_family`, never a two-model
 translation chain. Korean input requires Gemma TIPO; TIPO 2.1 accepts English.
 [한국어 사용법](docs/usage.ko.md) · [Model sources and download behavior](docs/native-models.md)
 
-**Version 0.2.14:** keep result and download-status panels inside the node when
+**Version 0.2.15** fixes a Gemma TIPO VRAM allocation failure seen on ComfyUI
+0.46.0. When the per-layer embedding is backed by CPU memory and supports
+row lookup, Gemma TIPO can transfer only the rows needed by the input tokens.
+
+Version 0.2.14: keep result and download-status panels inside the node when
 display scaling, browser/canvas zoom or node width changes. Long summaries and
 results scroll internally; selectors and Copy stay on one row. Refresh the
 browser after updating. No new runtime dependencies or generation changes.

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.15 — 2026-11-19
+
+- Fix a Gemma TIPO out-of-memory error observed on ComfyUI 0.46.0.
+  During generation, gather the required rows of a CPU-backed FP16/BF16
+  per-layer embedding before transferring them to CUDA. On the affected
+  model this avoids a 4.375 GiB allocation for the whole table.
+- The node uses ComfyUI's scaled row lookup when available. Embeddings
+  with active weight patches continue through ComfyUI's regular lookup.
+
 ## 0.2.14 — 2026-11-06
 
 - Keep the result panel inside ComfyUI's allocated DOM widget when display

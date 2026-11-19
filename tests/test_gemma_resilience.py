@@ -8,12 +8,40 @@ from unittest.mock import Mock, patch
 import test_native
 from rs_tipo_native.gemma_json import decode_document
 from rs_tipo_native.gemma_prompt import parse_response, tag_response
-from rs_tipo_native.gemma_runtime import generate, run_scene
+from rs_tipo_native.gemma_runtime import _per_layer_embedding_rows, generate, run_scene
 
 INFO = {'seconds': .1, 'output_tokens': 5, 'exclusion': {'blocked_candidates': 0}}
 
 
 class ResilienceTests(unittest.TestCase):
+    def test_per_layer_lookup_rechecks_patches_and_restores_forward_on_interrupt(self):
+        import torch
+
+        class Embedding:
+            def forward(self, ids, out_dtype=None):
+                return 'regular lookup'
+
+        embed = Embedding()
+        embed._v = object()
+        embed.weight = torch.zeros((2, 3), dtype=torch.bfloat16)
+        embed.weight_function = []
+        embed.weight_lowvram_function = None
+        embed.host_rows = Mock(return_value='selected rows')
+        ops = SimpleNamespace(run_every_op=Mock())
+        transformer = SimpleNamespace(model=SimpleNamespace(embed_tokens_per_layer=embed))
+        ids = SimpleNamespace(device=torch.device('cuda'))
+        with patch.dict(sys.modules, {'comfy.ops': ops}):
+            with self.assertRaises(InterruptedError), _per_layer_embedding_rows(transformer) as report:
+                self.assertEqual(embed.forward(ids), 'selected rows')
+                embed.host_rows.assert_called_once_with(ids, out_dtype=torch.bfloat16)
+                embed.weight_function.append(object())
+                self.assertEqual(embed.forward(ids), 'regular lookup')
+                embed.weight_function.clear()
+                ops.run_every_op.side_effect = InterruptedError
+                embed.forward(ids)
+        self.assertEqual(report['host_lookups'], 1)
+        self.assertNotIn('forward', vars(embed))
+
     def test_extra_braces_do_not_regenerate_or_lose_any_of_ten_participants(self):
         for count in range(11):
             with self.subTest(count=count):

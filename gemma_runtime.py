@@ -401,6 +401,41 @@ def token_constraints(transformer, decode, excluded, interrupt, progress):
         report['blocked_candidates'] = sum(hits.values())
 
 
+@contextmanager
+def _per_layer_embedding_rows(transformer):
+    """Use Gemma's scaled host-row lookup during this node's generation."""
+    import torch
+    embed = getattr(getattr(transformer, 'model', None), 'embed_tokens_per_layer', None)
+    ops = sys.modules.get('comfy.ops')
+    check_interrupt = getattr(ops, 'run_every_op', None)
+    host_rows = getattr(embed, 'host_rows', None)
+    report = {'host_lookups': 0}
+    if not callable(host_rows) or not callable(check_interrupt) or 'forward' in vars(embed):
+        yield report
+        return
+
+    original = embed.forward
+
+    def forward(input_ids, out_dtype=None):
+        # A VBAR reservation can still need a full-table allocation on its first fault.
+        # Recheck the weight and its LoRA hooks after each ModelPatcher load.
+        weight = embed.weight
+        if (input_ids.device.type == 'cuda' and out_dtype is None and hasattr(embed, '_v')
+                and type(weight) in (torch.Tensor, torch.nn.Parameter) and weight.device.type == 'cpu'
+                and weight.dtype in (torch.float16, torch.bfloat16)
+                and embed.weight_lowvram_function is None and not embed.weight_function):
+            check_interrupt()
+            report['host_lookups'] += 1
+            return host_rows(input_ids, out_dtype=getattr(weight, '_model_dtype', weight.dtype))
+        return original(input_ids, out_dtype=out_dtype)
+
+    embed.forward = forward
+    try:
+        yield report
+    finally:
+        del embed.forward
+
+
 def generate(clip, instruction, *, max_tokens=2048, temperature=.3, seed=0, excluded=()):
     import torch
     import comfy.model_management as mm
@@ -415,7 +450,7 @@ def generate(clip, instruction, *, max_tokens=2048, temperature=.3, seed=0, excl
         with token_constraints(transformer, clip.decode, excluded,
                 mm.throw_exception_if_processing_interrupted,
                 lambda n: bar.update_absolute(n, max_tokens)) as exclusion:
-            with torch.inference_mode():
+            with torch.inference_mode(), _per_layer_embedding_rows(transformer) as embedding_rows:
                 ids = clip.generate(tokens, do_sample=temperature > 0, max_length=max_tokens,
                     temperature=max(.01, temperature), top_k=64, top_p=.95, min_p=.05,
                     repetition_penalty=1.05, seed=seed)
@@ -427,4 +462,4 @@ def generate(clip, instruction, *, max_tokens=2048, temperature=.3, seed=0, excl
     mm.throw_exception_if_processing_interrupted()
     return raw, {'seconds': round(time.monotonic()-started, 4), 'output_tokens': len(ids),
                  'finish_reason': 'empty' if not raw.strip() else ('length' if len(ids) >= max_tokens else 'stop'),
-                 'exclusion': exclusion}
+                 'exclusion': exclusion, 'per_layer_embedding': embedding_rows}
